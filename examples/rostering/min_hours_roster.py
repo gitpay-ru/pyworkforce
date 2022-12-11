@@ -1,8 +1,16 @@
 import json
 import os
 
+from pathlib import Path
+import sys
+path_root = Path(__file__).parents[2]
+sys.path.append(str(path_root))
+
 from pyworkforce.rostering.binary_programming import MinHoursRoster
 from pprint import PrettyPrinter
+
+
+from pyworkforce import plotters
 
 scheduler_data_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -23,4 +31,14 @@ solver = MinHoursRoster(num_days=shifts_info["num_days"],
                         resources_preferences=shifts_info["resources_preferences"],
                         resources_prioritization=shifts_info["resources_prioritization"])
 
-pp.pprint(solver.solve())
+solution = solver.solve()
+# pp.pprint(solution)
+print(solution)
+
+
+shifts_spec =     {"Morning": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 "Afternoon": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                     "Night": [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                     "Mixed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]}
+
+plotters.matplotlib.plot(solution, shifts_spec, shifts_info["num_days"], fig_size=(12,5))

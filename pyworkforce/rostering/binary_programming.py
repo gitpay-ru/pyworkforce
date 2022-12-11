@@ -204,6 +204,7 @@ class MinHoursRoster:
                     for s in range(self.num_shifts):
                         if self.solver.Value(shifted_resource[n][d][s]):
                             resource_shifts.append({
+                                'id': n,
                                 "resource": self.resources[n],
                                 "day": d,
                                 "shift": self.shifts[s]})
