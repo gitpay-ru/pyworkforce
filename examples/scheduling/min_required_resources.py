@@ -15,6 +15,11 @@ sys.path.append(str(path_root))
 
 from pyworkforce.scheduling import MinRequiredResources
 from pprint import PrettyPrinter
+from itertools import chain, repeat
+
+def ncycles(iterable, n):
+    "Returns the sequence elements n times"
+    return chain.from_iterable(repeat(tuple(iterable), n))
 
 # Columns are an hour of the day, rows are the days
 # N_dp
@@ -25,10 +30,10 @@ required_resources = [
 
 # Each entry of a shift, is an hour of the day (24 columns)
 # E_sp
-shifts_coverage = {"Morning": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+shifts_coverage = {"Morning":   [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    "Afternoon": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-                   "Night": [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-                   "Mixed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]}
+                   "Night":     [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                   "Mixed":     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]}
 
 # The cost of shifting a resource if each shift, if present, solver will minimize the total cost
 # C_s
@@ -44,3 +49,5 @@ scheduler = MinRequiredResources(num_days=1,  # S
 solution = scheduler.solve()
 pp = PrettyPrinter(indent=2)
 pp.pprint(solution)
+
+

@@ -3,7 +3,7 @@ import operator
 import numpy as np
 #! /usr/bin/env python
 
-def plot(solution, shifts_spec, num_days, shift_colors, img_filename=None,resource_height=1.0,show_task_labels=True,
+def plot(solution, shifts_spec, slot_min, num_days, shift_colors, img_filename=None,resource_height=1.0,show_task_labels=True,
          color_prec_groups=False,hide_tasks=[],hide_resources=[],task_colors=dict(),fig_size=(15,5),
      vertical_text=False) :
     """
@@ -22,38 +22,24 @@ def plot(solution, shifts_spec, num_days, shift_colors, img_filename=None,resour
         raise Exception('ERROR: matplotlib is not installed')
     import random
 
-    # print(solution)
-    # resource_sizes_count = len(solution['resources'])
-    shifted_hours = solution['shifted_hours']
-
     fig, ax = plt.subplots(1, 1, figsize=fig_size)
-
-    # colors = {
-    #   "Morning8":'#7EA7D8',
-    #   'Morning12': '#FFF79A',
-    #   'Afternoon': '#A1D372',
-    #   'Night':'#EB4845',
-    #   'Mixed':'#7BCDC8'
-    # }
-
-
     plt.ylim(0, solution['total_resources'])
+    ts = int(60.0 / slot_min)
     plt.xlim(0, num_days * 24)
-
 
     for i in solution['resource_shifts']:
         r = i['resource']
         id = i['id']
         day = i['day']
         shift_hours = shifts_spec[i['shift']]
-        # print(i['shift'])
+        
 
         for idx, j in enumerate(shift_hours):
             if(j > 0):
                 ax.add_patch(
                     patches.Rectangle(
-                    (day * 24 + idx, id),       # (x,y)
-                    1,   # width (1h)
+                    (day * 24 + idx / ts, id),       # (x,y)
+                    1 / ts,   # width (1h)
                     resource_height,   # height
                     color = shift_colors[i['shift']], #'#A1D372',
                     alpha=0.6
