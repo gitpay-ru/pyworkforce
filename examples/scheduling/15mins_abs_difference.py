@@ -13,44 +13,32 @@ import sys
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 
-from pyworkforce.scheduling import MinAbsDifference
+from pyworkforce.scheduling import MinAbsDifference, MinRequiredResources
 from pyworkforce.queuing import ErlangC
 from pprint import PrettyPrinter
 import pandas as pd
 import math
 import json
+import numpy as np
 from collections import deque
 
-from pyworkforce.plotters.scheduling import plot
-from pyworkforce.utils.shift_spec import get_shift_coverage, get_shift_colors, decode_shift_spec
+from pyworkforce.plotters.scheduling import plot, plot_xy_per_interval
+from pyworkforce.utils.shift_spec import get_shift_coverage, get_shift_colors, decode_shift_spec, unwrap_shift
+from pyworkforce.utils.common import get_datetime
 
-def upscale_and_shift(a, time_scale, shift_right_pos):
-  scaled = [val for val in a for _ in range(time_scale)]
-  items = deque(scaled)
-  items.rotate(shift_right_pos)
-  return list(items)
-
-def genereate_shifts_coverage(shift_hours, name, horizon_in_hours, start_hour, end_hour, step_mins):
-  time_scale = int(60 / step_mins)
-  slots = time_scale * (end_hour - start_hour)
-  res = {}
-  for i in range(slots):
-    s_name = f'{name}_{horizon_in_hours}_{start_hour + (i * step_mins // 60)}_{i * step_mins % 60}'
-    res[s_name] = upscale_and_shift(shift_hours, time_scale, i)
-  return res
+MAX_POS = int(5.0 / 7 * 375)
+MAX_PERIOD_CONCURRENCY = int(5.0 / 7 * 375)
 
 df = pd.read_csv('../scheduling_input.csv')
 
 def required_positions(call_volume, aht, interval, art, service_level):
-  erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 100.0, shrinkage=0.0)
+  erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)
   positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
   return positions_requirements['positions']
 
 df['positions'] = df.apply(lambda row: required_positions(row['call_volume'], row['aht'], 15, row['art'], row['service_level']), axis=1)
-
-from datetime import datetime
-def get_datetime(t):
-  return datetime.strptime(t, '%Y-%m-%d %H:%M:%S.%f')
+# df['cut_positions'] = df.apply(lambda row: row['positions'] if row['positions'] <= MAX_POS else MAX_POS, axis=1)
+df.to_csv('../scheduling_output_stage1.csv')
 
 min_date = get_datetime(min(df['tc']))
 max_date = get_datetime(max(df['tc']))
@@ -63,42 +51,34 @@ ts = int(HMin / step_min)
 required_resources = []
 for i in range(days):
   df0 = df[i * DayH * ts : (i + 1) * DayH * ts]
+  # required_resources.append(df0['cut_positions'].tolist())
   required_resources.append(df0['positions'].tolist())
 
-max_rr = int(df['positions'].max())
-max_rr_norm = math.ceil(max_rr / DayH * ts)
+shifts = ["Day_9_6_13_15", "Night_9_21_23_15"]
 
-shifts = ["Day_9_6_13_15", "Night_9_21_22_15"]
-shifts_spec = get_shift_coverage(shifts)
+shifts_spec = get_shift_coverage(shifts, with_breaks=True)
 
-cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
-print(cover_check)
+# cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
 
 scheduler = MinAbsDifference(num_days = days,  # S
                                  periods = 24 * ts,  # P
                                  shifts_coverage = shifts_spec,
                                  required_resources = required_resources,
+                                #  max_period_concurrency = MAX_PERIOD_CONCURRENCY,
+                                #  max_shift_concurrency = MAX_POS,
                                  max_period_concurrency = int(df['positions'].max()),  # gamma
                                  max_shift_concurrency=int(df['positions'].mean()),  # beta
                                  )
 
 solution = scheduler.solve()
-pp = PrettyPrinter(indent=2)
-pp.pprint(solution)
+# pp = PrettyPrinter(indent=2)
+# pp.pprint(solution)
+
+with open('../scheduling_output.json', 'w') as outfile:
+    outfile.write(json.dumps(solution, indent=2))
 
 shift_names = list(shifts_spec.keys())
 shift_colors = get_shift_colors(shift_names)
-
-# try:
-#     plot(solution, 
-#     shifts_spec, 
-#     step_min, 
-#     days, 
-#     shift_colors, 
-#     # f'image.png', 
-#     fig_size=(12,5))
-# except ArithmeticError:
-#     print("plot error")
 
 resources_shifts = solution['resources_shifts']
 
@@ -121,3 +101,16 @@ rostering['resources_prioritization'] = []
 
 with open('../scheduling_output_rostering_input.json', 'w') as outfile:
     outfile.write(json.dumps(rostering, indent=2))
+
+# Stat
+resources_shifts = solution['resources_shifts']
+df3 = pd.DataFrame(resources_shifts)
+df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
+df4 = df3[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
+np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
+df4.to_csv('../shifted_resources_per_slot.csv')
+arr = df4['shifted_resources_per_slot'].values
+arr = np.concatenate(arr)
+# df3 = pd.read_csv('../scheduling_output_stage1.csv')
+df['resources_shifts'] = arr.tolist()
+df.to_csv('../scheduling_output_stage2.csv')

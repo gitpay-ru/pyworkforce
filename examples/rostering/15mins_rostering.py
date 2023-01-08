@@ -12,6 +12,8 @@ from pprint import PrettyPrinter
 
 # from pyworkforce import plotters
 
+RATIO = 1.5
+
 scheduler_data_path = os.path.dirname(os.path.realpath(__file__))
 
 with open(os.path.join(scheduler_data_path, '../scheduling_output_rostering_input.json'), 'r') as f:
@@ -20,10 +22,12 @@ with open(os.path.join(scheduler_data_path, '../scheduling_output_rostering_inpu
 pp = PrettyPrinter(indent=2)
 pp.pprint(shifts_info)
 
-resources = [f'emp_{i}' for i in range(0, int(1.5 * shifts_info["num_resources"]) )]
+resources = [f'emp_{i}' for i in range(0, int(RATIO * shifts_info["num_resources"]) )]
 
 shift_names = shifts_info["shifts"]
 shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
+# print(shifts_hours)
+# exit()
 
 solver = MinHoursRoster(num_days=shifts_info["num_days"],
                         resources=resources,
