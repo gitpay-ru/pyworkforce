@@ -54,7 +54,7 @@ for i in range(days):
   # required_resources.append(df0['cut_positions'].tolist())
   required_resources.append(df0['positions'].tolist())
 
-shifts = ["Day_9_6_13_15", "Night_9_21_23_15"]
+shifts = ["Day_9_6_13_15", "Night_9_21_22_15"]
 
 shifts_spec = get_shift_coverage(shifts, with_breaks=True)
 
