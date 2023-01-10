@@ -7,7 +7,7 @@
      "min_working_hours": 176,
      "max_working_hours": 176,
      "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-     "utc": -3,
+     "utc": "Etc/GMT-3",
      "dup": 150
     }, 
   	{
@@ -15,16 +15,16 @@
      "min_working_hours": 176,
      "max_working_hours": 176,
      "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-     "utc": 0,
-     "dup": 150
+     "utc": "Etc/GMT-0",
+     "dup": 75
     },
     {
       "id":"f2b6508e-83f4-41e6-92bd-b901b247f577",
       "min_working_hours": 176,
       "max_working_hours": 176,
       "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-      "utc": -6,
-      "dup": 75
+      "utc": "Etc/GMT-6",
+      "dup": 150
      }
   ],
   "schemes": [
