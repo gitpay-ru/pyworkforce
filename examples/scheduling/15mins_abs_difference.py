@@ -13,7 +13,7 @@ import sys
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 
-from pyworkforce.scheduling import MinAbsDifference, MinRequiredResources
+from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.queuing import ErlangC
 from pprint import PrettyPrinter
 import pandas as pd
@@ -23,18 +23,19 @@ import numpy as np
 from collections import deque
 
 from pyworkforce.plotters.scheduling import plot, plot_xy_per_interval
-from pyworkforce.utils.shift_spec import get_shift_coverage, get_shift_colors, decode_shift_spec, unwrap_shift
+from pyworkforce.utils.shift_spec import get_shift_coverage, get_shift_colors, decode_shift_spec, required_positions, unwrap_shift
 from pyworkforce.utils.common import get_datetime
+
 
 MAX_POS = int(5.0 / 7 * 375)
 MAX_PERIOD_CONCURRENCY = int(5.0 / 7 * 375)
 
 df = pd.read_csv('../scheduling_input.csv')
 
-def required_positions(call_volume, aht, interval, art, service_level):
-  erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)
-  positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
-  return positions_requirements['positions']
+# def required_positions(call_volume, aht, interval, art, service_level):
+#   erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)
+#   positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
+#   return positions_requirements['positions']
 
 df['positions'] = df.apply(lambda row: required_positions(row['call_volume'], row['aht'], 15, row['art'], row['service_level']), axis=1)
 # df['cut_positions'] = df.apply(lambda row: row['positions'] if row['positions'] <= MAX_POS else MAX_POS, axis=1)
@@ -54,11 +55,22 @@ for i in range(days):
   # required_resources.append(df0['cut_positions'].tolist())
   required_resources.append(df0['positions'].tolist())
 
-shifts = ["Day_9_6_13_15", "Night_9_21_22_15"]
+# shifts = ["Day_9_6_13_15"]#, "Night_9_21_22_15"]
+# shifts = ["Night_9_21_22_15"]
+
+# MSK
+# shifts1 = ["Day_9_6_13_15"]
+# shifts2 = ["Day_9_10_16_15"] 
+# shifts = shift1 + shift2 <- csv_orig
+
+
+
 
 shifts_spec = get_shift_coverage(shifts, with_breaks=True)
 
-# cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
+cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
+print(cover_check)
+# exit()
 
 scheduler = MinAbsDifference(num_days = days,  # S
                                  periods = 24 * ts,  # P
@@ -114,3 +126,5 @@ arr = np.concatenate(arr)
 # df3 = pd.read_csv('../scheduling_output_stage1.csv')
 df['resources_shifts'] = arr.tolist()
 df.to_csv('../scheduling_output_stage2.csv')
+
+plot_xy_per_interval("scheduling_Night_9_21_22_15.png", df, x="tc", y=["positions", "resources_shifts"])

@@ -42,4 +42,4 @@ scheduler_data_path = os.path.dirname(os.path.realpath(__file__))
 
 df3 = pd.read_csv('../scheduling_output_stage2.csv')
 
-plot_xy_per_interval("positions_per_interval.png", df3, x="tc", y=["positions", "resources_shifts"])
+plot_xy_per_interval("scheduling.png", df3, x="tc", y=["positions", "resources_shifts"])

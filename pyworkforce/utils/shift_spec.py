@@ -1,8 +1,15 @@
 from collections import deque
 import numpy as np
 
+from pyworkforce.queuing.erlang import ErlangC
+
 HMin = 60
 DayH = 24
+
+def required_positions(call_volume, aht, interval, art, service_level):
+  erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)
+  positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
+  return positions_requirements['positions']
 
 def upscale_and_shift(a, time_scale, shift_right_pos):
   scaled = [val for val in a for _ in range(time_scale)]
