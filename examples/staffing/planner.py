@@ -25,17 +25,5 @@ input_meta_path = '../scheduling_meta_input.json'
 output_dir = '..'
 
 mzp = MultiZonePlanner(input_csv_path, input_meta_path, output_dir)
-res = mzp.solve()
-print(res)
-
-
-
-# # etc/GMT-0 
-# # Etc/GMT-3 msk
-# # Etc/GMT-6 omsk
-
-# df.index = df.index.tz_convert('Etc/GMT-6')
-# print(df)
-
-# df.index = df.index.tz_convert('Etc/GMT-0')
-# print(df)
+res = mzp.schedule()
+res = mzp.roster()
