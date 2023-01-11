@@ -6,6 +6,7 @@ from pyworkforce.utils.shift_spec import required_positions, get_shift_short_nam
 import math
 from datetime import datetime as dt
 from pyworkforce.utils.common import get_datetime
+from pyworkforce.scheduling import MinAbsDifference
 
 class MultiZonePlanner():
     def __init__(self,
@@ -41,11 +42,6 @@ class MultiZonePlanner():
 
         # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
         self.df.index = self.df.index.tz_localize(tz='Europe/Moscow')
-        print(self.df)
-
-        # self.df = self.df.shift(periods=-3, fill_value=0)
-        # print(self.df)
-        # exit()
         
         # Employes partitions by timezone from meta
         manpowers = np.array(list(map(lambda t: float(t['dup']), self.meta['employees'])))
@@ -60,11 +56,11 @@ class MultiZonePlanner():
         campaignUtc = int(self.meta['campaignUtc'])
 
         parties = list(zip(manpowers, timezones))
-        for i in parties:
-            tzone_shift = i[1] - campaignUtc
+        for party in parties:
+            tzone_shift = party[1] - campaignUtc
             df = self.df.copy()
 
-            df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * i[0]))
+            df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * party[0]))
             df = df.shift(periods=(-1 * ts * tzone_shift), fill_value = 0)
 
             required_resources = []
@@ -74,8 +70,20 @@ class MultiZonePlanner():
                 # print(required_resources)
                 # exit()
 
+            scheduler = MinAbsDifference(num_days = days,  # S
+                                periods = DayH * ts,  # P
+                                shifts_coverage = shifts_spec,
+                                required_resources = required_resources,
+                                max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
+                                max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
+                                )
+            solution = scheduler.solve()
+
+            tzone = str(party[1])
+            with open(f'../scheduling_output_{tzone}.json', 'w') as f:
+                f.write(json.dumps(solution, indent=2))
+
             # todo:
-            print("Do scheduling")
             print("Do rostering")
             print("combine")
 
