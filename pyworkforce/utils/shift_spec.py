@@ -3,8 +3,17 @@ import numpy as np
 
 from pyworkforce.queuing.erlang import ErlangC
 
+from datetime import datetime as dt
+
 HMin = 60
 DayH = 24
+
+def get_shift_short_name(t):
+    duration = dt.strptime(t['duration'], "%H:%M").hour
+    start = dt.strptime(t['sheduleTimeStart'], "%H:%M").hour
+    end = dt.strptime(t['sheduleTimeEndStart'], "%H:%M").hour
+    stepTime = t['stepTime']
+    return f'x_{duration}_{start}_{end}_{stepTime}'
 
 def required_positions(call_volume, aht, interval, art, service_level):
   erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)

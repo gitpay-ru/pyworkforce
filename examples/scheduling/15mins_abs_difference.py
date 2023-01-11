@@ -55,7 +55,7 @@ for i in range(days):
   # required_resources.append(df0['cut_positions'].tolist())
   required_resources.append(df0['positions'].tolist())
 
-# shifts = ["Day_9_6_13_15"]#, "Night_9_21_22_15"]
+shifts = ["Day_9_6_13_15", "Night_9_21_22_15"]
 # shifts = ["Night_9_21_22_15"]
 
 # MSK

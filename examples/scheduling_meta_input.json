@@ -1,5 +1,5 @@
 { 
-  "campaignUtc": -3,
+  "campaignUtc": 3,
   "min_working_hours": 176,
   "employees": [
     {
@@ -7,7 +7,7 @@
      "min_working_hours": 176,
      "max_working_hours": 176,
      "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-     "utc": "Etc/GMT-3",
+     "utc": "6",
      "dup": 150
     }, 
   	{
@@ -15,7 +15,7 @@
      "min_working_hours": 176,
      "max_working_hours": 176,
      "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-     "utc": "Etc/GMT-0",
+     "utc": "3",
      "dup": 75
     },
     {
@@ -23,7 +23,7 @@
       "min_working_hours": 176,
       "max_working_hours": 176,
       "schemes":["2d3b29ee-a719-4d3a-9f35-d810b897a87e"],
-      "utc": "Etc/GMT-6",
+      "utc": "-3",
       "dup": 150
      }
   ],
