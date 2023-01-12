@@ -8,8 +8,6 @@ def plot_xy_per_interval(filename,
     x,
     y,
     fig_size=(15,5)):
-    # print("test", filename)
-
     df.plot(y=y, use_index=True)
     plt.savefig(filename, dpi=150, bbox_inches='tight')
 
