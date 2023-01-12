@@ -173,6 +173,14 @@ class MultiZonePlanner():
             resource_shifts = rostering['resource_shifts']
             df = pd.DataFrame(resource_shifts)
             df = df[~df['id'].isin(id_to_drop)]
+
+            # print(df)
+            # exit()
+            rostering['resource_shifts'] = df
+            with open(f'../rostering_output_final_{tzone}.json', 'w') as f:
+                f.write(json.dumps(rostering, indent = 2))
+            break
+
             df['shifted_resources_per_slot'] = df.apply(lambda t: np.array(unwrap_shift(t['shift'])) * 1, axis=1)
             df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
 
