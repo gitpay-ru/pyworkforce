@@ -25,6 +25,6 @@ input_meta_path = '../scheduling_meta_input.json'
 output_dir = '..'
 
 mzp = MultiZonePlanner(input_csv_path, input_meta_path, output_dir)
-# mzp.schedule()
-# mzp.roster()
+mzp.schedule()
+mzp.roster()
 mzp.roster_postprocess()
