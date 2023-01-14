@@ -24,7 +24,7 @@ class Statuses(StrEnum):
     OPTIMAL = 'OPTIMAL'
 
     def is_ok(self):
-        return self not in [Statuses.OPTIMAL, Statuses.FEASIBLE]
+        return self in [Statuses.OPTIMAL, Statuses.FEASIBLE]
 
 class MultiZonePlanner():
     def __init__(self,
@@ -55,7 +55,7 @@ class MultiZonePlanner():
         for index, row in edf_g.iterrows():
             utc = index[0]
             shift_orig_name = index[1]
-            shift_name = self.get_shift_name_by_id(shift_orig_name)
+            shift_name = self.get_shift_name_by_id(shift_orig_name, utc)
             count = row['count']
             self.shift_with_names.append((shift_orig_name, utc, count, shift_name))
 
@@ -145,9 +145,9 @@ class MultiZonePlanner():
         shiftId = schema['shifts'][0]['shiftId']
         return shiftId
 
-    def get_shift_name_by_id(self, id):
+    def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
-        shift_name = get_shift_short_name(shift)
+        shift_name = get_shift_short_name(shift, utc)
         return shift_name
 
     def schedule(self):
@@ -314,5 +314,6 @@ class MultiZonePlanner():
 
     def recalculate_stats(self):
         # TODO:
-        self.__df_stats = calculate_stats(None, None, None)
+        if False:
+            self.__df_stats = calculate_stats(None, None, None)
 
