@@ -41,37 +41,39 @@ class MultiZonePlanner():
         self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
         # todo: replace this magic number with configured property or even better remove it
-        self.ratio = 1.5  # For rostering
+        self.rostering_ratio = 1.5  # For rostering
 
+        # shift_with_name:
+        #   (id, utc, employees_count, shift_name, employee_ratio)
+        self.shift_with_names = self.build_shifts()
+
+        self.status = Statuses.NOT_STARTED
+
+    def build_shifts(self):
         edf = pd.DataFrame(self.meta['employees'])
         edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
-
         edf_g = edf.groupby(['utc', 'shiftId'])['id'].agg(['count'])
-
         print(edf_g)
 
-        self.shift_with_names = []
+        shift_with_names = []
+
         # [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ('c8e4261e-3de3-4343-abda-dc65e4042495', '+3', 33, 'x_9_6_13_15', 0.09041095890410959), ('c8e4261e-3de3-4343-abda-dc65e4042490', '+3', 32, 'x_12_6_13_15', 0.08767123287671233), ('22e4261e-3de3-4343-abda-dc65e4042496', '-3', 150, 'x_9_6_13_15', 0.410958904109589)]
         for index, row in edf_g.iterrows():
             utc = index[0]
-            shift_orig_name = index[1]
-            shift_name = self.get_shift_name_by_id(shift_orig_name, utc)
-            count = row['count']
-            self.shift_with_names.append((shift_orig_name, utc, count, shift_name))
+            shift_orig_id = index[1]
+            shift_name = self.get_shift_name_by_id(shift_orig_id, utc)
+            employee_count = row['count']
 
-        
+            shift_with_names.append(
+                (shift_orig_id, utc, employee_count, shift_name)
+            )
 
-        # group_by_schemas = [(k, list(g)[0]) for k, g in itertools.groupby(self.meta['employees'], lambda x: x['schemes'][0])]
-        # map_to_shifts = [ (self.get_shift_by_schema(i[0]), i[1]['utc'], i[1]['dup']) for i in group_by_schemas]
-        # self.shift_with_names = [ i + (self.get_shift_name_by_id(i[0]),)  for i in map_to_shifts]
-        
+        manpowers = np.array([i[2] for i in shift_with_names])  # i[2] == count
+        manpowers_r = manpowers / manpowers.sum(axis=0)
+        for idx, i in enumerate(shift_with_names):
+            shift_with_names[idx] += (manpowers_r[idx],)
 
-        manpowers = np.array([i[2] for i in self.shift_with_names])
-        manpowers_r = manpowers / manpowers.sum(axis = 0)
-        for idx, i in enumerate(self.shift_with_names):
-            self.shift_with_names[idx] +=  (manpowers_r[idx],)
-
-        self.status = Statuses.NOT_STARTED
+        return shift_with_names
 
     @property
     def df_stats(self):
@@ -140,10 +142,10 @@ class MultiZonePlanner():
         with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'w') as outfile:
             outfile.write(json.dumps(rostering, indent=2))
 
-    def get_shift_by_schema(self, schema_guid):
-        schema = next(t for t in self.meta['schemas'] if t['id'] == schema_guid)
-        shiftId = schema['shifts'][0]['shiftId']
-        return shiftId
+    def get_shift_by_schema(self, schema_id):
+        schema = next(t for t in self.meta['schemas'] if t['id'] == schema_id)
+        shift_id = schema['shifts'][0]['shiftId']
+        return shift_id
 
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
@@ -154,7 +156,13 @@ class MultiZonePlanner():
         print("Start")
         print(self.shift_with_names)
 
-        self.df['positions'] = self.df.apply(lambda row: required_positions(row['call_volume'], row['aht'], 15, row['art'], row['service_level']), axis=1)
+        self.df['positions'] = self.df.apply(lambda row: required_positions(
+            call_volume=row['call_volume'],
+            aht=row['aht'],
+            interval=15,
+            art=row['art'],
+            service_level=row['service_level']
+        ), axis=1)
 
         # Prepare required_resources
         HMin = 60
@@ -241,7 +249,7 @@ class MultiZonePlanner():
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
             print(shift_names)
 
-            resources = [f'emp_{i}' for i in range(0, int(self.ratio * shifts_info["num_resources"]) )]
+            resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                         resources=resources,
