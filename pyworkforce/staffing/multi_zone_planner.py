@@ -2,6 +2,8 @@ from pathlib import Path
 import json
 import pandas as pd
 import numpy as np
+
+from pyworkforce.staffing.stats.calculate_stats import calculate_stats
 from pyworkforce.utils.shift_spec import required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
@@ -11,6 +13,18 @@ from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
 import random
 import itertools
+from strenum import StrEnum
+
+class Statuses(StrEnum):
+    NOT_STARTED = 'NOT_STARTED',
+    UNKNOWN = 'UNKNOWN',
+    MODEL_INVALID = 'MODEL_INVALID',
+    FEASIBLE = 'FEASIBLE',
+    INFEASIBLE = 'INFEASIBLE',
+    OPTIMAL = 'OPTIMAL'
+
+    def is_ok(self):
+        return self not in [Statuses.OPTIMAL, Statuses.FEASIBLE]
 
 class MultiZonePlanner():
     def __init__(self,
@@ -22,9 +36,12 @@ class MultiZonePlanner():
         self.output_dir = output_dir
         
         self.df = df
+        self.__df_stats = None
         self.meta = meta
         self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
-        self.ratio = 1.5 #For rostering
+
+        # todo: replace this magic number with configured property or even better remove it
+        self.ratio = 1.5  # For rostering
 
         group_by_schemas = [(k, list(g)[0]) for k, g in itertools.groupby(self.meta['employees'], lambda x: x['schemes'][0])]
         map_to_shifts = [ (self.get_shift_by_schema(i[0]), i[1]['utc'], i[1]['dup']) for i in group_by_schemas]
@@ -35,10 +52,34 @@ class MultiZonePlanner():
         for idx, i in enumerate(self.shift_with_names):
             self.shift_with_names[idx] +=  (manpowers_r[idx],)
 
+        self.status = Statuses.NOT_STARTED
+
+    @property
+    def df_stats(self):
+        return self.__df_stats
+
     def solve(self):
+        self.status = Statuses.NOT_STARTED
+
+        # 1. Schedule shift
         self.schedule()
+        if not self.status.is_ok():
+            return self.status
+
+        # 2. Assign resources per shifts
         self.roster()
+        if not self.status.is_ok():
+            return self.status
+
+        # 3. Process results before return
         self.roster_postprocess()
+
+        # 4. Recalculate statistics
+        self.recalculate_stats()
+
+        # return the latest status of the rostering model
+        # should be either OPTIMAL or FEASIBLE
+        return self.status
 
     def dump_stat_and_plot(self, shift_id, tzone, solution, df):
         resources_shifts = solution['resources_shifts']
@@ -64,17 +105,18 @@ class MultiZonePlanner():
 
         df2['combined']= df2.values.tolist()
 
-        rostering = {}
-        rostering['num_days'] = days
-        rostering['num_resources'] = num_resources
-        rostering['shifts'] = list(shifts_spec.keys())
-        rostering['min_working_hours'] = 176 # Dec 2022 #todo:
-        rostering['max_resting'] = 9 # Dec 2022
-        rostering['non_sequential_shifts'] = []
-        rostering['required_resources'] = df2['combined'].to_dict()
-        rostering['banned_shifts'] = []
-        rostering['resources_preferences'] = []
-        rostering['resources_prioritization'] = []
+        rostering = {
+            'num_days': days,
+            'num_resources': num_resources,
+            'shifts': list(shifts_spec.keys()),
+            'min_working_hours': 176,  # Dec 2022 #todo:
+            'max_resting': 9,  # Dec 2022
+            'non_sequential_shifts': [],
+            'required_resources': df2['combined'].to_dict(),
+            'banned_shifts': [],
+            'resources_preferences': [],
+            'resources_prioritization': []
+        }
 
         with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'w') as outfile:
             outfile.write(json.dumps(rostering, indent=2))
@@ -141,7 +183,13 @@ class MultiZonePlanner():
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 )
+
             solution = scheduler.solve()
+
+            # if solution not feasible -> stop it and return result
+            self.status = Statuses(solution['status'])
+            if not self.status.is_ok():
+                return
 
             self.dump_scheduling_output_rostering_input(
                 shift_id,
@@ -160,47 +208,6 @@ class MultiZonePlanner():
             )
 
         return "Done"
-
-
-    def roster_postprocess(self):
-        print("Start rostering postprocessing")
-
-        for party in self.shift_with_names:
-            shift_id = party[0]
-            tzone = party[1]
-            print(f'Shift: {shift_id}')
-
-            with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'r') as f:
-                shifts_info = json.load(f)
-
-            with open(f'../rostering_output_{shift_id}.json', 'r') as f:
-                rostering = json.load(f)
-
-            total_resources = rostering['total_resources']
-            needed_resource = shifts_info["num_resources"]
-
-            id_to_drop = random.sample(range(0, total_resources), total_resources - needed_resource)
-
-            resource_shifts = rostering['resource_shifts']
-            df = pd.DataFrame(resource_shifts)
-            df = df[~df['id'].isin(id_to_drop)]
-            
-            rostering['total_resources'] = needed_resource
-            rostering['resource_shifts'] = json.loads(df.to_json(orient='records'))
-
-            with open(f'../rostering_output_final_{shift_id}.json', 'w') as f:
-                f.write(json.dumps(rostering, indent = 2))
-
-            df['shifted_resources_per_slot'] = df.apply(lambda t: np.array(unwrap_shift(t['shift'])) * 1, axis=1)
-            df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
-
-            np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
-            arr = df1['shifted_resources_per_slot'].values
-            arr = np.concatenate(arr)
-            df3 = pd.read_csv(f'../scheduling_output_stage1_{shift_id}.csv')
-            df3['resources_shifts'] = arr.tolist()
-
-            plot_xy_per_interval(f'rostering_{shift_id}.png', df3, x='index', y=["positions", "resources_shifts"])
 
     def roster(self):
         print("Start rostering")
@@ -231,7 +238,62 @@ class MultiZonePlanner():
 
             solution = solver.solve()
 
+            # if solution not feasible -> stop it and return result
+            self.status = Statuses(solution['status'])
+            if not self.status.is_ok():
+                return
+
             with open(f'../rostering_output_{shift_id}.json', 'w') as f:
                 f.write(json.dumps(solution, indent = 2))
 
+        print("Done rostering")
         return "Done"
+
+    def roster_postprocess(self):
+        print("Start rostering postprocessing")
+
+        for party in self.shift_with_names:
+            shift_id = party[0]
+            tzone = party[1]
+            print(f'Shift: {shift_id}')
+
+            with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'r') as f:
+                shifts_info = json.load(f)
+
+            with open(f'../rostering_output_{shift_id}.json', 'r') as f:
+                rostering = json.load(f)
+
+            total_resources = rostering['total_resources']
+            needed_resource = shifts_info["num_resources"]
+
+            id_to_drop = random.sample(range(0, total_resources), total_resources - needed_resource)
+
+            resource_shifts = rostering['resource_shifts']
+            df = pd.DataFrame(resource_shifts)
+            df = df[~df['id'].isin(id_to_drop)]
+
+            rostering['total_resources'] = needed_resource
+            rostering['resource_shifts'] = json.loads(df.to_json(orient='records'))
+
+            with open(f'../rostering_output_final_{shift_id}.json', 'w') as f:
+                f.write(json.dumps(rostering, indent=2))
+
+            df['shifted_resources_per_slot'] = df.apply(lambda t: np.array(unwrap_shift(t['shift'])) * 1, axis=1)
+            df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)[
+                'shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis=0)).to_frame()
+
+            np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
+            arr = df1['shifted_resources_per_slot'].values
+            arr = np.concatenate(arr)
+            df3 = pd.read_csv(f'../scheduling_output_stage1_{shift_id}.csv')
+            df3['resources_shifts'] = arr.tolist()
+
+            plot_xy_per_interval(f'rostering_{shift_id}.png', df3, x='index', y=["positions", "resources_shifts"])
+
+        print("Done rostering postprocessing")
+        return "Done"
+
+    def recalculate_stats(self):
+        # TODO:
+        self.__df_stats = calculate_stats(None, None, None)
+
