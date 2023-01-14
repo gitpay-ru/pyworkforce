@@ -159,7 +159,7 @@ class MultiZonePlanner():
         self.df['positions'] = self.df.apply(lambda row: required_positions(
             call_volume=row['call_volume'],
             aht=row['aht'],
-            interval=15,
+            interval=15*60, # interval should be passed within the same dimension as aht & art
             art=row['art'],
             service_level=row['service_level']
         ), axis=1)

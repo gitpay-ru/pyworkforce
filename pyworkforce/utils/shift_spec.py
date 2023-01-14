@@ -15,8 +15,33 @@ def get_shift_short_name(t, utc):
     stepTime = dt.strptime(t['stepTime'], "%H:%M").minute
     return f'x_{utc}_{duration}_{start}_{end}_{stepTime}'
 
-def required_positions(call_volume, aht, interval, art, service_level):
-  erlang = ErlangC(transactions=call_volume, aht=aht / 60.0, interval=interval, asa=art / 60.0, shrinkage=0.0)
+def required_positions(call_volume: int, aht: int, interval: int, art: int, service_level: int) -> int:
+  """
+  Calculates the required number of resources to serve requests.
+  It calculates 'raw' positions, without any shrinkage etc.
+
+  Parameters
+  ----------
+  call_volume: int
+    Call intensivity over time, count
+  aht: int
+    average handling time of a single call, seconds
+  interval: int
+    an interval to plan for, seconds
+  art: int
+    Average response time, seconds
+  service_level: int
+    required service level to achieve 0-100
+
+  Returns
+  -------
+  The required number of resources.
+  It returns the closest int number of resources to achieve the requested service level.
+
+  E.g. if service level is defined as 80%, but required resource = 14,
+  then it could the future service level will be 82%, not 80% as it was requested.
+  """
+  erlang = ErlangC(transactions=call_volume, aht=aht, interval=interval, asa=art, shrinkage=0.0)
   positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
   return positions_requirements['positions']
 
