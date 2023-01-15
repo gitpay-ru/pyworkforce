@@ -62,7 +62,7 @@ class MultiZonePlanner():
             utc = index[0]
             shift_orig_id = index[1]
             shift_name = self.get_shift_name_by_id(shift_orig_id, utc)
-            employee_count = row['count']
+            employee_count = int(row['count'])  # by default its int64 -> non serializible
 
             shift_with_names.append(
                 (shift_orig_id, utc, employee_count, shift_name)
@@ -180,16 +180,12 @@ class MultiZonePlanner():
         campainUtc = int(self.meta['campainUtc'])
 
         for party in self.shift_with_names:
-            shift_id = party[0]
-            shift_name = party[3]
-            tzone = party[1]
+            (shift_id, tzone, positions_requested, shift_name, position_portion) = party
             tzone_shift = int(tzone) - campainUtc
-            position_portion = party[4]
-            position_requested = int(party[2])
 
             # shift = self.meta['shifts'][0] #todo map
             shift_names = [shift_name]
-            shifts_spec = get_shift_coverage(shift_names, with_breaks=True)
+            shifts_coverage = get_shift_coverage(shift_names, with_breaks=True)
             # cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
 
             df = self.df.copy()
@@ -205,7 +201,7 @@ class MultiZonePlanner():
 
             scheduler = MinAbsDifference(num_days = days,  # S
                                 periods = DayH * ts,  # P
-                                shifts_coverage = shifts_spec,
+                                shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
@@ -222,9 +218,9 @@ class MultiZonePlanner():
                 shift_id,
                 tzone,
                 days,
-                position_requested,
+                positions_requested,
                 solution,
-                shifts_spec
+                shifts_coverage
             )
 
             self.dump_stat_and_plot(
@@ -252,16 +248,17 @@ class MultiZonePlanner():
             resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
-                        resources=resources,
-                        shifts=shifts_info["shifts"],
-                        shifts_hours=shifts_hours,
-                        min_working_hours=shifts_info["min_working_hours"],
-                        max_resting=shifts_info["max_resting"],
-                        non_sequential_shifts=shifts_info["non_sequential_shifts"],
-                        banned_shifts=shifts_info["banned_shifts"],
-                        required_resources=shifts_info["required_resources"],
-                        resources_preferences=shifts_info["resources_preferences"],
-                        resources_prioritization=shifts_info["resources_prioritization"])
+                                    resources=resources,
+                                    shifts=shifts_info["shifts"],
+                                    shifts_hours=shifts_hours,
+                                    min_working_hours=shifts_info["min_working_hours"],
+                                    max_resting=shifts_info["max_resting"],
+                                    non_sequential_shifts=shifts_info["non_sequential_shifts"],
+                                    banned_shifts=shifts_info["banned_shifts"],
+                                    required_resources=shifts_info["required_resources"],
+                                    max_search_time=5*60,
+                                    strict_mode=False
+                                    )
 
             solution = solver.solve()
 
