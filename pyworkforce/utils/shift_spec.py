@@ -43,7 +43,7 @@ def required_positions(call_volume: int, aht: int, interval: int, art: int, serv
   """
   erlang = ErlangC(transactions=call_volume, aht=aht, interval=interval, asa=art, shrinkage=0.0)
   positions_requirements = erlang.required_positions(service_level=service_level / 100.0, max_occupancy=1.00)
-  return positions_requirements['positions']
+  return int(positions_requirements['positions'])
 
 def upscale_and_shift(a, time_scale, shift_right_pos):
   scaled = [val for val in a for _ in range(time_scale)]
@@ -103,15 +103,18 @@ def get_shift_coverage(shifts, with_breaks = False):
     shift_cover = {}
     for i in shifts:
         a = decode_shift_spec(i)
+
         if (with_breaks):
             base_spec = [1 if (i < a.duration and i != a.duration // 2) else 0 for i in range(DayH)]
         else:
             base_spec = [1 if (i < a.duration) else 0 for i in range(DayH)]
+
         base_spec = deque(base_spec)
         base_spec.rotate(a.start)
         base_spec = list(base_spec)
         res = genereate_shifts_coverage(base_spec, a.name, a.duration, a.start, a.end, a.step)
         shift_cover = shift_cover | res
+
     return shift_cover
 
 def get_shift_colors(shift_names):
