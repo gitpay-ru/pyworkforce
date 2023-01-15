@@ -283,6 +283,8 @@ class MultiZonePlanner():
             df.loc[nans, col] = [what for isnan in nans.values if isnan]
             return df
 
+        df_total = None
+
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
@@ -320,6 +322,13 @@ class MultiZonePlanner():
             df3['resources_shifts'] = arr.tolist()
 
             plot_xy_per_interval(f'rostering_{shift_name}.png', df3, x='index', y=["positions", "resources_shifts"])
+
+            if df_total is None:
+                df_total = df3
+            else:
+                df_total['resources_shifts'] += df3['resources_shifts']
+
+        plot_xy_per_interval(f'rostering.png', df_total, x='index', y=["positions", "resources_shifts"])
 
         print("Done rostering postprocessing")
         return "Done"
