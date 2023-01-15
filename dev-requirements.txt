@@ -14,7 +14,6 @@ numpydoc
 nbsphinx
 
 
-pyworkforce~=0.5.1
 pytz~=2022.7
 setuptools~=65.5.1
 StrEnum~=0.4.9
