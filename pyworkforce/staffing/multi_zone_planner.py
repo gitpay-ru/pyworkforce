@@ -41,10 +41,10 @@ class MultiZonePlanner():
         self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
         # todo: replace this magic number with configured property or even better remove it
-        self.rostering_ratio = 1.5  # For rostering
+        self.rostering_ratio = 1.0  # For rostering
 
         # shift_with_name:
-        #   (id, utc, employees_count, shift_name, employee_ratio)
+        #   (id, shift_name, utc, employees_count, , employee_ratio)
         self.shift_with_names = self.build_shifts()
 
         self.status = Statuses.NOT_STARTED
@@ -65,7 +65,7 @@ class MultiZonePlanner():
             employee_count = int(row['count'])  # by default its int64 -> non serializible
 
             shift_with_names.append(
-                (shift_orig_id, utc, employee_count, shift_name)
+                (shift_orig_id, shift_name, utc, employee_count, )
             )
 
         manpowers = np.array([i[2] for i in shift_with_names])  # i[2] == count
@@ -102,22 +102,22 @@ class MultiZonePlanner():
         # should be either OPTIMAL or FEASIBLE
         return self.status
 
-    def dump_stat_and_plot(self, shift_id, tzone, solution, df):
+    def dump_stat_and_plot(self, shift_suffix, solution, df):
         resources_shifts = solution['resources_shifts']
         df3 = pd.DataFrame(resources_shifts)
         df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
         df4 = df3[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
         np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
-        df4.to_csv(f'../shifted_resources_per_slot_{shift_id}.csv')
+        df4.to_csv(f'../shifted_resources_per_slot_{shift_suffix}.csv')
         arr = df4['shifted_resources_per_slot'].values
         arr = np.concatenate(arr)
         df['resources_shifts'] = arr.tolist()
-        df.to_csv(f'../scheduling_output_stage2_{shift_id}.csv')
+        df.to_csv(f'../scheduling_output_stage2_{shift_suffix}.csv')
 
-        plot_xy_per_interval(f'scheduling_{shift_id}.png', df, x='index', y=["positions", "resources_shifts"])
+        plot_xy_per_interval(f'scheduling_{shift_suffix}.png', df, x='index', y=["positions", "resources_shifts"])
 
-    def dump_scheduling_output_rostering_input(self, shift_id, tzone, days, num_resources, solution, shifts_spec):
-        with open(f'../scheduling_output_{shift_id}.json', 'w') as f:
+    def dump_scheduling_output_rostering_input(self, shift_suffix, days, num_resources, solution, shifts_spec):
+        with open(f'../scheduling_output_{shift_suffix}.json', 'w') as f:
                 f.write(json.dumps(solution, indent=2))
 
         resources_shifts = solution['resources_shifts']
@@ -139,7 +139,7 @@ class MultiZonePlanner():
             'resources_prioritization': []
         }
 
-        with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'w') as outfile:
+        with open(f'../scheduling_output_rostering_input_{shift_suffix}.json', 'w') as outfile:
             outfile.write(json.dumps(rostering, indent=2))
 
     def get_shift_by_schema(self, schema_id):
@@ -180,8 +180,8 @@ class MultiZonePlanner():
         campainUtc = int(self.meta['campainUtc'])
 
         for party in self.shift_with_names:
-            (shift_id, tzone, positions_requested, shift_name, position_portion) = party
-            tzone_shift = int(tzone) - campainUtc
+            (shift_id, shift_name, utc, positions_requested, position_portion) = party
+            utc_shift = int(utc) - campainUtc
 
             # shift = self.meta['shifts'][0] #todo map
             shift_names = [shift_name]
@@ -191,8 +191,10 @@ class MultiZonePlanner():
             df = self.df.copy()
 
             df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * position_portion))
-            df = df.shift(periods=(-1 * ts * tzone_shift), fill_value = 0)
-            df.to_csv(f'../scheduling_output_stage1_{shift_id}.csv')
+            df = df.shift(periods=(-1 * ts * utc_shift), fill_value = 0)
+
+            # shift_id -> shjft_name in prefix because id's will override each other from different zones
+            df.to_csv(f'../scheduling_output_stage1_{shift_name}.csv')
 
             required_resources = []
             for i in range(days):
@@ -215,8 +217,7 @@ class MultiZonePlanner():
                 return
 
             self.dump_scheduling_output_rostering_input(
-                shift_id,
-                tzone,
+                shift_name,
                 days,
                 positions_requested,
                 solution,
@@ -224,8 +225,7 @@ class MultiZonePlanner():
             )
 
             self.dump_stat_and_plot(
-                shift_id,
-                tzone,
+                shift_name,
                 solution,
                 df.copy()
             )
@@ -235,10 +235,10 @@ class MultiZonePlanner():
     def roster(self):
         print("Start rostering")
         for party in self.shift_with_names:
-            shift_id = party[0]
-            tzone = party[1]
-            print(f'Shift: {shift_id}')
-            with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'r') as f:
+            (shift_id, shift_name, utc, *_) = party
+
+            print(f'Shift: {shift_name}')
+            with open(f'../scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
             shift_names = shifts_info["shifts"]
@@ -267,7 +267,7 @@ class MultiZonePlanner():
             if not self.status.is_ok():
                 return
 
-            with open(f'../rostering_output_{shift_id}.json', 'w') as f:
+            with open(f'../rostering_output_{shift_name}.json', 'w') as f:
                 f.write(json.dumps(solution, indent = 2))
 
         print("Done rostering")
@@ -277,42 +277,43 @@ class MultiZonePlanner():
         print("Start rostering postprocessing")
 
         for party in self.shift_with_names:
-            shift_id = party[0]
-            tzone = party[1]
-            print(f'Shift: {shift_id}')
+            (shift_id, shift_name, utc, *_) = party
 
-            with open(f'../scheduling_output_rostering_input_{shift_id}.json', 'r') as f:
+            print(f'Shift: {shift_name} ({shift_id})')
+
+            with open(f'../scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
-            with open(f'../rostering_output_{shift_id}.json', 'r') as f:
+            with open(f'../rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
 
-            total_resources = rostering['total_resources']
-            needed_resource = shifts_info["num_resources"]
+            # total_resources = rostering['total_resources']
+            # needed_resource = shifts_info["num_resources"]
 
-            id_to_drop = random.sample(range(0, total_resources), total_resources - needed_resource)
+            # id_to_drop = random.sample(range(0, total_resources), total_resources - needed_resource)
 
-            resource_shifts = rostering['resource_shifts']
-            df = pd.DataFrame(resource_shifts)
-            df = df[~df['id'].isin(id_to_drop)]
+            # resource_shifts = rostering['resource_shifts']
+            df = pd.DataFrame(rostering['resource_shifts'])
+            # df = df[~df['id'].isin(id_to_drop)]
 
-            rostering['total_resources'] = needed_resource
-            rostering['resource_shifts'] = json.loads(df.to_json(orient='records'))
+            #rostering['total_resources'] = needed_resource
+            # rostering['resource_day_shifts'] = json.loads(df.to_json(orient='records'))
 
-            with open(f'../rostering_output_final_{shift_id}.json', 'w') as f:
-                f.write(json.dumps(rostering, indent=2))
+            # with open(f'../rostering_output_final_{shift_name}.json', 'w') as f:
+            #     f.write(json.dumps(rostering, indent=2))
 
             df['shifted_resources_per_slot'] = df.apply(lambda t: np.array(unwrap_shift(t['shift'])) * 1, axis=1)
+
             df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)[
                 'shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis=0)).to_frame()
 
             np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
             arr = df1['shifted_resources_per_slot'].values
             arr = np.concatenate(arr)
-            df3 = pd.read_csv(f'../scheduling_output_stage1_{shift_id}.csv')
+            df3 = pd.read_csv(f'../scheduling_output_stage1_{shift_name}.csv')
             df3['resources_shifts'] = arr.tolist()
 
-            plot_xy_per_interval(f'rostering_{shift_id}.png', df3, x='index', y=["positions", "resources_shifts"])
+            plot_xy_per_interval(f'rostering_{shift_name}.png', df3, x='index', y=["positions", "resources_shifts"])
 
         print("Done rostering postprocessing")
         return "Done"
