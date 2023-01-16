@@ -33,7 +33,7 @@ with open(input_meta_path, 'r', encoding='utf-8') as f:
 mzp = MultiZonePlanner(df, meta, output_dir)
 # mzp.solve()
 
-# mzp.schedule()
+mzp.schedule()
 # mzp.roster()
-mzp.roster_postprocess()
-mzp.recalculate_stats()
+# mzp.roster_postprocess()
+# mzp.recalculate_stats()

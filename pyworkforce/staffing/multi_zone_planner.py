@@ -53,8 +53,9 @@ class MultiZonePlanner():
 
     def build_shifts(self):
         edf = pd.DataFrame(self.meta['employees'])
+        edf['schemaId'] = edf.apply(lambda t: t['schemas'][0], axis=1)
         edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
-        edf_g = edf.groupby(['utc', 'shiftId'])['id'].agg(['count'])
+        edf_g = edf.groupby(['utc', 'schemaId', 'shiftId'])['id'].agg(['count'])
         print(edf_g)
 
         shift_with_names = []
@@ -62,15 +63,16 @@ class MultiZonePlanner():
         # [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ('c8e4261e-3de3-4343-abda-dc65e4042495', '+3', 33, 'x_9_6_13_15', 0.09041095890410959), ('c8e4261e-3de3-4343-abda-dc65e4042490', '+3', 32, 'x_12_6_13_15', 0.08767123287671233), ('22e4261e-3de3-4343-abda-dc65e4042496', '-3', 150, 'x_9_6_13_15', 0.410958904109589)]
         for index, row in edf_g.iterrows():
             utc = index[0]
-            shift_orig_id = index[1]
+            schema_orig_id = index[1]
+            shift_orig_id = index[2]
             shift_name = self.get_shift_name_by_id(shift_orig_id, utc)
             employee_count = int(row['count'])  # by default its int64 -> non serializible
 
             shift_with_names.append(
-                (shift_orig_id, shift_name, utc, employee_count, )
+                (schema_orig_id, shift_orig_id, shift_name, utc, employee_count, )
             )
 
-        manpowers = np.array([i[2] for i in shift_with_names])  # i[2] == count
+        manpowers = np.array([i[4] for i in shift_with_names])  # i[2] == count
         manpowers_r = manpowers / manpowers.sum(axis=0)
         for idx, i in enumerate(shift_with_names):
             shift_with_names[idx] += (manpowers_r[idx],)
@@ -182,7 +184,7 @@ class MultiZonePlanner():
         campainUtc = int(self.meta['campainUtc'])
 
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, positions_requested, position_portion) = party
+            (schema_id, shift_id, shift_name, utc, employee_count, position_portion) = party
             utc_shift = int(utc) - campainUtc
 
             # shift = self.meta['shifts'][0] #todo map
@@ -237,7 +239,7 @@ class MultiZonePlanner():
     def roster(self):
         print("Start rostering")
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, *_) = party
+            (schema_id, shift_id, shift_name, utc, *_) = party
 
             print(f'Shift: {shift_name}')
             with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
@@ -295,7 +297,7 @@ class MultiZonePlanner():
         df_total = None
 
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, *_) = party
+            (schema_id, shift_id, shift_name, utc, *_) = party
 
             print(f'Shift: {shift_name} ({shift_id})')
 
