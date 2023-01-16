@@ -97,7 +97,10 @@ class MultiZonePlanner():
         # 3. Process results before return
         self.roster_postprocess()
 
-        # 4. Recalculate statistics
+        # 4. Combine all in one json
+        self.combine_results()
+
+        # 5. Recalculate statistics
         self.recalculate_stats()
 
         # return the latest status of the rostering model
@@ -247,7 +250,16 @@ class MultiZonePlanner():
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
             print(shift_names)
 
-            resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
+
+            edf = pd.DataFrame(self.meta['employees'])
+            edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
+            edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
+            # print(list(tt['id']))
+
+            # resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
+
+            resources = list(edf_filtered['id'])
+            print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
@@ -295,18 +307,16 @@ class MultiZonePlanner():
             df['TimeStart'] = df.apply(
                 lambda t: get_start_from_shift_short_name(t['shift']), axis=1
             )
-            print(df)
-            exit()
-            # r = df.to_json(orient="records")
-            # print(r)
-            rostering['resource_shifts'] = df.to_json(orient="records")
+            
+            
+            rostering['resource_shifts'] = json.loads(df[['resource', 'day', 'TimeStart']].to_json(orient="records"))
             
 
             t['rostering'] = rostering
             combine.append(t)
 
-        with open(f'{self.output_dir}/rostering.json', 'w') as f:
-            f.write(json.dumps(combine, indent=2))
+        with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
+            f.write(json.dumps(combine, indent=2, ensure_ascii=False))
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
