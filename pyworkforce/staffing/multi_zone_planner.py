@@ -293,36 +293,26 @@ class MultiZonePlanner():
             "campainSchedule": []
         }
         campainSchedule = out['campainSchedule']
-        for party in self.shift_with_names:
-            
+        for party in self.shift_with_names:            
             (shift_name, shift_code, utc, mp, schema_name, q) = party
-
-            t = {
-                'utc': utc,
-                'shiftId': shift_name
-            }
 
             print(f'Shift: {shift_name} ({shift_name})')
 
             with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
                 rostering = json.load(f)
 
-            
             df = pd.DataFrame(rostering['resource_shifts'])
-            df['TimeStart'] = df.apply(
+            df['shiftTimeStart'] = df.apply(
                 lambda t: get_start_from_shift_short_name(t['shift']), axis=1
             )
             df['schemaId'] = schema_name
             df['shiftId'] = shift_name
+            df['employeeId'] = df['resource']
+            df['employeeUtc'] = utc
+            df['shiftDate'] = df['day']
             
-            # print(df)
-            # exit()
-            res = json.loads(df[['resource', 'day', 'TimeStart', 'schemaId', 'shiftId']].to_json(orient="records"))
+            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart']].to_json(orient="records"))
             campainSchedule.extend(res)
-            
-
-            # t['rostering'] = rostering
-            # combine.append(t)
 
         with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
             f.write(json.dumps(out, indent=2, ensure_ascii=False))
