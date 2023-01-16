@@ -288,8 +288,9 @@ class MultiZonePlanner():
         return "Done"
     
     def combine_results(self):
+        campainUtc = self.meta['campainUtc']
         out = {
-            "campainUtc": self.meta['campainUtc'],
+            "campainUtc": campainUtc,
             "campainSchedule": []
         }
         campainSchedule = out['campainSchedule']
@@ -302,9 +303,13 @@ class MultiZonePlanner():
                 rostering = json.load(f)
 
             df = pd.DataFrame(rostering['resource_shifts'])
-            df['shiftTimeStart'] = df.apply(
+            df['shiftTimeStartLocal'] = df.apply(
                 lambda t: get_start_from_shift_short_name(t['shift']), axis=1
             )
+            
+            delta = utc - campainUtc
+            from datetime import datetime, timedelta
+            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M:%S'), axis=1)
             df['schemaId'] = schema_name
             df['shiftId'] = shift_name
             df['employeeId'] = df['resource']
