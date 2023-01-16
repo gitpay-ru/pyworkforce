@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
-from pyworkforce.utils.shift_spec import required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
+from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
     all_zeros_shift
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
@@ -53,21 +53,21 @@ class MultiZonePlanner():
 
     def build_shifts(self):
         edf = pd.DataFrame(self.meta['employees'])
-        edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
-        edf_g = edf.groupby(['utc', 'shiftId'])['id'].agg(['count'])
-        print(edf_g)
-
+        edf['schema'] = edf.apply(lambda t: t['schemas'][0], axis=1)
+        edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schema']), axis=1)
+        edf_g = edf.groupby(['utc', 'shiftId', 'schema'])['id'].agg(['count'])
         shift_with_names = []
 
         # [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ('c8e4261e-3de3-4343-abda-dc65e4042495', '+3', 33, 'x_9_6_13_15', 0.09041095890410959), ('c8e4261e-3de3-4343-abda-dc65e4042490', '+3', 32, 'x_12_6_13_15', 0.08767123287671233), ('22e4261e-3de3-4343-abda-dc65e4042496', '-3', 150, 'x_9_6_13_15', 0.410958904109589)]
         for index, row in edf_g.iterrows():
             utc = index[0]
             shift_orig_id = index[1]
+            schema_name = index[2]
             shift_name = self.get_shift_name_by_id(shift_orig_id, utc)
             employee_count = int(row['count'])  # by default its int64 -> non serializible
 
             shift_with_names.append(
-                (shift_orig_id, shift_name, utc, employee_count, )
+                (shift_orig_id, shift_name, utc, employee_count, schema_name,)
             )
 
         manpowers = np.array([i[3] for i in shift_with_names])  # i[2] == count
@@ -97,7 +97,10 @@ class MultiZonePlanner():
         # 3. Process results before return
         self.roster_postprocess()
 
-        # 4. Recalculate statistics
+        # 4. Combine all in one json
+        self.combine_results()
+
+        # 5. Recalculate statistics
         self.recalculate_stats()
 
         # return the latest status of the rostering model
@@ -182,7 +185,7 @@ class MultiZonePlanner():
         campainUtc = int(self.meta['campainUtc'])
 
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, positions_requested, position_portion) = party
+            (shift_id, shift_name, utc, positions_requested, schema, position_portion) = party
             utc_shift = int(utc) - campainUtc
 
             # shift = self.meta['shifts'][0] #todo map
@@ -247,7 +250,16 @@ class MultiZonePlanner():
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
             print(shift_names)
 
-            resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
+
+            edf = pd.DataFrame(self.meta['employees'])
+            edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
+            edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
+            # print(list(tt['id']))
+
+            # resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
+
+            resources = list(edf_filtered['id'])
+            print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
@@ -274,6 +286,44 @@ class MultiZonePlanner():
 
         print("Done rostering")
         return "Done"
+    
+    def combine_results(self):
+        campainUtc = self.meta['campainUtc']
+        out = {
+            "campainUtc": campainUtc,
+            "campainSchedule": []
+        }
+        campainSchedule = out['campainSchedule']
+        for party in self.shift_with_names:            
+            (shift_name, shift_code, utc, mp, schema_name, q) = party
+
+            print(f'Shift: {shift_name} ({shift_name})')
+
+            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
+                rostering = json.load(f)
+
+            df = pd.DataFrame(rostering['resource_shifts'])
+            df['shiftTimeStartLocal'] = df.apply(
+                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
+            )
+            
+            delta = utc - campainUtc
+            from datetime import datetime, timedelta
+            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'), axis=1)
+            df['schemaId'] = schema_name
+            df['shiftId'] = shift_name
+            df['employeeId'] = df['resource']
+            df['employeeUtc'] = utc
+            df['activities'] = None
+            min_date = min(self.df.index)
+            
+            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
+            
+            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart', 'activities']].to_json(orient="records"))
+            campainSchedule.extend(res)
+
+        with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
+            f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
@@ -337,6 +387,7 @@ class MultiZonePlanner():
             else:
                 df_total['resources_shifts'] += df3['resources_shifts']
 
+        print(df_total)
         plot_xy_per_interval(f'{self.output_dir}/rostering.png', df_total, x='index', y=["positions", "resources_shifts"])
 
         self.__df_stats = to_df_stats(df_total)
