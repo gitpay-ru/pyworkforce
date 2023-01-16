@@ -10,7 +10,7 @@ class BreaksIntervalsScheduling:
     def __init__(self,
                  num_employees: int,
                  num_intervals: int,
-                 intervals_demand: list,
+                 # intervals_demand: list, # not used for the moment
                  employee_calendar: dict,
                  breaks: list,
                  break_delays,
@@ -25,7 +25,8 @@ class BreaksIntervalsScheduling:
         self.breaks = breaks
         (self.break_delays_min, self.break_delays_max) = break_delays
 
-        self.intervals_demand = intervals_demand
+        # not using it now
+        # self.intervals_demand = intervals_demand
 
     def solve(self):
 

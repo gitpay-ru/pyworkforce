@@ -59,7 +59,7 @@ def test_1_day_3_employee():
     model = BreaksIntervalsScheduling(
         num_employees=1,
         num_intervals=_1d_intervals * _days,
-        intervals_demand=[1 for _ in range(_1d_intervals * _days)],
+        # intervals_demand=[1 for _ in range(_1d_intervals * _days)],
         employee_calendar=calendar,
         breaks=_12_h_breaks,
         break_delays=(min_break_delay, max_break_delay)
@@ -89,7 +89,7 @@ def test_1_week_3_employee():
     model = BreaksIntervalsScheduling(
         num_employees=len(calendar),
         num_intervals=_1d_intervals * _days,
-        intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
+        # intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
         employee_calendar=calendar,
         breaks=_12_h_breaks,
         break_delays=(min_break_delay, max_break_delay)
@@ -118,7 +118,7 @@ def test_1_week_100_employee():
     model = BreaksIntervalsScheduling(
         num_employees=len(calendar),
         num_intervals=_1d_intervals * _days,
-        intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
+        # intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
         employee_calendar=calendar,
         breaks=_12_h_breaks,
         break_delays=(min_break_delay, max_break_delay)
@@ -146,7 +146,7 @@ def test_1_month_400_employee():
     model = BreaksIntervalsScheduling(
         num_employees=len(calendar),
         num_intervals=_1d_intervals * _days,
-        intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
+        # intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
         employee_calendar=calendar,
         breaks=_12_h_breaks,
         break_delays=(min_break_delay, max_break_delay)
