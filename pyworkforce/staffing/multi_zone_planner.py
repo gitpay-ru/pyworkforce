@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
-from pyworkforce.utils.shift_spec import required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
+from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
     all_zeros_shift
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
@@ -274,6 +274,39 @@ class MultiZonePlanner():
 
         print("Done rostering")
         return "Done"
+    
+    def combine_results(self):
+        combine = []
+        for party in self.shift_with_names:
+            (shift_id, shift_name, utc, *_) = party
+
+            t = {
+                'utc': utc,
+                'shiftId': shift_id
+            }
+
+            print(f'Shift: {shift_name} ({shift_id})')
+
+            with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
+                rostering = json.load(f)
+
+            
+            df = pd.DataFrame(rostering['resource_shifts'])
+            df['TimeStart'] = df.apply(
+                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
+            )
+            print(df)
+            exit()
+            # r = df.to_json(orient="records")
+            # print(r)
+            rostering['resource_shifts'] = df.to_json(orient="records")
+            
+
+            t['rostering'] = rostering
+            combine.append(t)
+
+        with open(f'{self.output_dir}/rostering.json', 'w') as f:
+            f.write(json.dumps(combine, indent=2))
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
@@ -337,6 +370,7 @@ class MultiZonePlanner():
             else:
                 df_total['resources_shifts'] += df3['resources_shifts']
 
+        print(df_total)
         plot_xy_per_interval(f'{self.output_dir}/rostering.png', df_total, x='index', y=["positions", "resources_shifts"])
 
         self.__df_stats = to_df_stats(df_total)
