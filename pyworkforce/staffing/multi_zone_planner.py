@@ -185,7 +185,7 @@ class MultiZonePlanner():
         campainUtc = int(self.meta['campainUtc'])
 
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, positions_requested, position_portion) = party
+            (shift_id, shift_name, utc, positions_requested, schema, position_portion) = party
             utc_shift = int(utc) - campainUtc
 
             # shift = self.meta['shifts'][0] #todo map
