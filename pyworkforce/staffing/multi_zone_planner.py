@@ -314,11 +314,12 @@ class MultiZonePlanner():
             df['shiftId'] = shift_name
             df['employeeId'] = df['resource']
             df['employeeUtc'] = utc
+            df['activities'] = None
             min_date = min(self.df.index)
             
             df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
             
-            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart']].to_json(orient="records"))
+            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart', 'activities']].to_json(orient="records"))
             campainSchedule.extend(res)
 
         with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
