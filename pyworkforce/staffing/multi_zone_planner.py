@@ -309,12 +309,14 @@ class MultiZonePlanner():
             
             delta = utc - campainUtc
             from datetime import datetime, timedelta
-            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M:%S'), axis=1)
+            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'), axis=1)
             df['schemaId'] = schema_name
             df['shiftId'] = shift_name
             df['employeeId'] = df['resource']
             df['employeeUtc'] = utc
-            df['shiftDate'] = df['day']
+            min_date = min(self.df.index)
+            
+            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
             
             res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart']].to_json(orient="records"))
             campainSchedule.extend(res)
