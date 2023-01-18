@@ -5,6 +5,7 @@ import json
 import pandas as pd
 import numpy as np
 
+from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
 from pyworkforce.utils.breaks_spec import build_break_spec, build_intervals_map
 from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_start_from_shift_short_name_mo, \
@@ -328,7 +329,7 @@ class MultiZonePlanner():
         def daily_start_index(day):
             return day*24*4
 
-        def get_working_intervals(edf: pandas.DataFrame):
+        def get_working_intervals(edf: pd.DataFrame):
             edf["day_interval"] = edf.apply(lambda row: daily_start_index(row["day"]), axis=1)
             edf["start_interval"] = \
                 edf["day_interval"] + edf.apply(lambda row: m[get_start_from_shift_short_name_mo(row["shift"])], axis=1)
@@ -361,7 +362,8 @@ class MultiZonePlanner():
             model = BreaksIntervalsScheduling(
                 employee_calendar=employee_schedule,
                 breaks=breaks_specs,
-                break_delays=(min_delay, max_delay)
+                break_min_delay=min_delay,
+                break_max_delay=max_delay
             )
 
             solution = model.solve()
