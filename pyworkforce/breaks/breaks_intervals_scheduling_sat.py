@@ -8,8 +8,6 @@ INTERVALS_PER_HOUR = 4
 
 class BreaksIntervalsScheduling:
     def __init__(self,
-                 num_employees: int,
-                 num_intervals: int,
                  # intervals_demand: list, # not used for the moment
                  employee_calendar: dict,
                  breaks: list,
@@ -17,11 +15,6 @@ class BreaksIntervalsScheduling:
                  break_max_delay: int,
                  *args, **kwargs):
 
-        self.num_intervals_per_day = INTERVALS_PER_HOUR * 24;
-        self.num_days = int(num_intervals / self.num_intervals_per_day)
-
-        self.num_intervals = num_intervals
-        self.num_employees = num_employees
         self.employee_calendar = employee_calendar
         self.breaks = breaks
         self.break_min_delay = break_min_delay
@@ -121,7 +114,7 @@ class BreaksIntervalsScheduling:
 
             scheduled_breaks = {}
 
-            for e in range(self.num_employees):
+            for e in self.employee_calendar.keys():
                 emp_breaks = []
                 for (break_id, break_start, break_end) in employee_rest[e]:
                     start_index = self.solver.Value(break_start)
@@ -139,9 +132,7 @@ class BreaksIntervalsScheduling:
                 "num_branches": self.solver.NumBranches(),
                 "num_conflicts": self.solver.NumConflicts(),
                 "wall_time": self.solver.WallTime(),
-                "num_intervals": self.num_intervals,
-                "num_intervals_per_day": self.num_intervals_per_day,
-                "num_resources": self.num_employees,
+                "num_resources": len(self.employee_calendar),
                 "resource_breaks": scheduled_breaks,
             }
 
@@ -152,9 +143,7 @@ class BreaksIntervalsScheduling:
                 "num_branches": -1,
                 "num_conflicts": -1,
                 "wall_time": -1,
-                "num_intervals": self.num_intervals,
-                "num_intervals_per_day": self.num_intervals_per_day,
-                "num_resources": self.num_employees,
+                "num_resources": len(self.employee_calendar.keys()),
                 "resource_breaks": {},
             }
 
