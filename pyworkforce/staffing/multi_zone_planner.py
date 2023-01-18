@@ -42,9 +42,6 @@ class MultiZonePlanner():
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
-        # todo: replace this magic number with configured property or even better remove it
-        self.rostering_ratio = 1.0  # For rostering
-
         # shift_with_name:
         #   (id, shift_name, utc, employees_count, , employee_ratio)
         self.shift_with_names = self.build_shifts()
@@ -287,43 +284,7 @@ class MultiZonePlanner():
         print("Done rostering")
         return "Done"
     
-    def combine_results(self):
-        campainUtc = self.meta['campainUtc']
-        out = {
-            "campainUtc": campainUtc,
-            "campainSchedule": []
-        }
-        campainSchedule = out['campainSchedule']
-        for party in self.shift_with_names:            
-            (shift_name, shift_code, utc, mp, schema_name, q) = party
 
-            print(f'Shift: {shift_name} ({shift_name})')
-
-            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
-                rostering = json.load(f)
-
-            df = pd.DataFrame(rostering['resource_shifts'])
-            df['shiftTimeStartLocal'] = df.apply(
-                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
-            )
-            
-            delta = utc - campainUtc
-            from datetime import datetime, timedelta
-            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'), axis=1)
-            df['schemaId'] = schema_name
-            df['shiftId'] = shift_name
-            df['employeeId'] = df['resource']
-            df['employeeUtc'] = utc
-            df['activities'] = None
-            min_date = min(self.df.index)
-            
-            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
-            
-            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart', 'activities']].to_json(orient="records"))
-            campainSchedule.extend(res)
-
-        with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
-            f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
@@ -348,9 +309,6 @@ class MultiZonePlanner():
             (shift_id, shift_name, utc, *_) = party
 
             print(f'Shift: {shift_name} ({shift_id})')
-
-            with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
-                shifts_info = json.load(f)
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
@@ -395,7 +353,46 @@ class MultiZonePlanner():
         print("Done rostering postprocessing")
         return "Done"
 
+    def combine_results(self):
+        campainUtc = self.meta['campainUtc']
+        out = {
+            "campainUtc": campainUtc,
+            "campainSchedule": []
+        }
+        campainSchedule = out['campainSchedule']
+        for party in self.shift_with_names:
+            (shift_name, shift_code, utc, mp, schema_name, q) = party
 
+            print(f'Shift: {shift_name} ({shift_name})')
+
+            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
+                rostering = json.load(f)
+
+            df = pd.DataFrame(rostering['resource_shifts'])
+            df['shiftTimeStartLocal'] = df.apply(
+                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
+            )
+
+            delta = utc - campainUtc
+            from datetime import datetime, timedelta
+            df['shiftTimeStart'] = df.apply(
+                lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'),
+                axis=1)
+            df['schemaId'] = schema_name
+            df['shiftId'] = shift_name
+            df['employeeId'] = df['resource']
+            df['employeeUtc'] = utc
+            df['activities'] = None
+            min_date = min(self.df.index)
+
+            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
+
+            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart',
+                                 'activities']].to_json(orient="records"))
+            campainSchedule.extend(res)
+
+        with open(f'{self.output_dir}/rostering.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def recalculate_stats(self):
         if self.__df_stats is None:

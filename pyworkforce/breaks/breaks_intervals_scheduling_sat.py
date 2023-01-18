@@ -13,7 +13,8 @@ class BreaksIntervalsScheduling:
                  # intervals_demand: list, # not used for the moment
                  employee_calendar: dict,
                  breaks: list,
-                 break_delays,
+                 break_min_delay: int,
+                 break_max_delay: int,
                  *args, **kwargs):
 
         self.num_intervals_per_day = INTERVALS_PER_HOUR * 24;
@@ -23,7 +24,8 @@ class BreaksIntervalsScheduling:
         self.num_employees = num_employees
         self.employee_calendar = employee_calendar
         self.breaks = breaks
-        (self.break_delays_min, self.break_delays_max) = break_delays
+        self.break_min_delay = break_min_delay
+        self.break_max_delay = break_max_delay
 
         # not using it now
         # self.intervals_demand = intervals_demand
@@ -71,8 +73,8 @@ class BreaksIntervalsScheduling:
                     rest = model.NewIntervalVar(start, duration, end, f'break_e{e}_{i}')
 
                     # Working time after break, to be ensure they aren't joint
-                    working_duration = model.NewIntVar(self.break_delays_min, self.break_delays_max, '')
-                    working_end = model.NewIntVar(day_work_start_interval, day_work_end_interval + self.break_delays_max, '')
+                    working_duration = model.NewIntVar(self.break_min_delay, self.break_max_delay, '')
+                    working_end = model.NewIntVar(day_work_start_interval, day_work_end_interval + self.break_max_delay, '')
                     working = model.NewIntervalVar(end, working_duration, working_end, '')
 
                     breaks.append(

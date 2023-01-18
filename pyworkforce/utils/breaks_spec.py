@@ -40,11 +40,11 @@ def build_break_spec(meta: dict, interval_minutes: int = 15):
     for a in meta["activities"]:
         id = a["id"]
         start = m[a["timeStart"]]
-        end = m[a["timeEndStart"]]
+        start_end = m[a["timeEndStart"]]
         duration = m[a["duration"]]
 
         break_spec.append(
-            (id, start, end, duration)
+            (id, start, start_end, duration)
         )
 
     return break_spec

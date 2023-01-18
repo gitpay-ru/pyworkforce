@@ -11,7 +11,7 @@ _30m = 2
 # employee shifts
 schedule = {}
 # workers
-for w in range(25):
+for w in range(20):
     _start = randrange(6 * _1h_interval, 12 * _1h_interval)
     schedule[w] = [(d * _1d_intervals + _start, d * _1d_intervals + _start + 12 * _1h_interval) for d in range(_days)]
 
@@ -45,7 +45,8 @@ model = BreaksIntervalsScheduling(
     # intervals_demand=[1 for _ in range(_1d_intervals * _days)],  # not used
     employee_calendar=schedule,
     breaks=_12_h_breaks,
-    break_delays=(min_break_delay, max_break_delay)
+    break_min_delay=int(1.5 * _1h_interval),
+    break_max_delay=int(3.5 * _1h_interval)
 )
 
 solution = model.solve()
