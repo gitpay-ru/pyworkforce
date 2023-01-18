@@ -1,5 +1,5 @@
 
-def build_intervals_map(interval_minutes: int, length_days: int = 1):
+def build_intervals_map(interval_minutes: int = 15, length_days: int = 1):
 
     _intervals_per_hour = 60/interval_minutes
     total_intervals = int(length_days*24*_intervals_per_hour)

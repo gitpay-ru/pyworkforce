@@ -1,12 +1,17 @@
+import codecs
 from pathlib import Path
 import json
 
+import pandas
 import pandas as pd
 import numpy as np
 
+from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
-from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
-    all_zeros_shift
+from pyworkforce.utils.breaks_spec import build_break_spec, build_intervals_map
+from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_start_from_shift_short_name_mo, \
+    required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
+    all_zeros_shift, get_duration_from_shift_short_name
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
 from datetime import datetime as dt
@@ -49,6 +54,11 @@ class MultiZonePlanner():
         #   (id, shift_name, utc, employees_count, , employee_ratio)
         self.shift_with_names = self.build_shifts()
 
+        # id -> (id, start_interval, endstart_interval, duration_interval)
+        self.activities_by_id = self.build_activities_specs()
+
+        self.shift_activities = self.build_shift_with_activities()
+
         self.status = Statuses.NOT_STARTED
 
     def build_shifts(self):
@@ -77,6 +87,28 @@ class MultiZonePlanner():
 
         return shift_with_names
 
+    def build_activities_specs(self):
+        activities_specs = build_break_spec(self.meta)
+        #   "9 часов день обед" -> ("9 часов день обед", "02:00", "07:00", "00:15")
+        activities_map = {**{b: (b, *_) for (b, *_) in activities_specs}}
+
+        return activities_map
+
+    def build_shift_with_activities(self):
+        (m, _) = build_intervals_map()
+        shifts = {}
+
+        for s in self.meta["shifts"]:
+            s_id = s["id"]
+            activities = s["activities"]
+            min_between = m[s["minIntervalBetweenActivities"]]
+            max_between = m[s["maxIntervalBetweenActivities"]]
+
+            # (activities_id[], min_interval_between, max_interval_between)
+            shifts[s_id] = (activities, min_between, max_between)
+
+        return shifts
+
     @property
     def df_stats(self):
         return self.__df_stats
@@ -94,13 +126,16 @@ class MultiZonePlanner():
         if not self.status.is_ok():
             return self.status
 
-        # 3. Process results before return
+        # 3. Roster breaks
+        self.roster_breaks()
+
+        # 4. Process results before return
         self.roster_postprocess()
 
-        # 4. Combine all in one json
+        # 5. Combine all in one json
         self.combine_results()
 
-        # 5. Recalculate statistics
+        # 6. Recalculate statistics
         self.recalculate_stats()
 
         # return the latest status of the rostering model
@@ -286,44 +321,60 @@ class MultiZonePlanner():
 
         print("Done rostering")
         return "Done"
-    
-    def combine_results(self):
-        campainUtc = self.meta['campainUtc']
-        out = {
-            "campainUtc": campainUtc,
-            "campainSchedule": []
-        }
-        campainSchedule = out['campainSchedule']
-        for party in self.shift_with_names:            
-            (shift_name, shift_code, utc, mp, schema_name, q) = party
 
-            print(f'Shift: {shift_name} ({shift_name})')
 
-            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
+    def roster_breaks(self):
+        print("Start breaks rostering")
+        (m, _) = build_intervals_map()
+
+        def daily_start_index(day):
+            return day*24*4
+
+        def get_working_intervals(edf: pandas.DataFrame):
+            edf["day_interval"] = edf.apply(lambda row: daily_start_index(row["day"]), axis=1)
+            edf["start_interval"] = \
+                edf["day_interval"] + edf.apply(lambda row: m[get_start_from_shift_short_name_mo(row["shift"])], axis=1)
+            edf["duration_interval"] = edf.apply(lambda row: get_duration_from_shift_short_name(row["shift"]), axis=1) * 4  # durations are in hours
+            edf["end_interval"] = edf["start_interval"] + edf["duration_interval"]
+
+            return edf[["start_interval", "end_interval"]].to_records(index=False).tolist()
+
+
+        # 0. iterate over known shifts, breaks are same for employees within given shift
+        for party in self.shift_with_names:
+            (shift_id, shift_name, utc, *_) = party
+
+            print(f'Shift: {shift_name} ({shift_id})')
+
+            # 1. Summarize breaks details
+            (breaks_ids, min_delay, max_delay) = self.shift_activities[shift_id]
+            breaks_specs = [self.activities_by_id[b] for b in breaks_ids]
+
+            # 2. Rostering gives Employee' schedules
+            with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
 
             df = pd.DataFrame(rostering['resource_shifts'])
-            df['shiftTimeStartLocal'] = df.apply(
-                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
-            )
-            
-            delta = utc - campainUtc
-            from datetime import datetime, timedelta
-            df['shiftTimeStart'] = df.apply(lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'), axis=1)
-            df['schemaId'] = schema_name
-            df['shiftId'] = shift_name
-            df['employeeId'] = df['resource']
-            df['employeeUtc'] = utc
-            df['activities'] = None
-            min_date = min(self.df.index)
-            
-            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
-            
-            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart', 'activities']].to_json(orient="records"))
-            campainSchedule.extend(res)
+            employee_schedule = {}
+            for (index, df_e) in df.groupby(["resource"]):
+                employee_schedule[index] = get_working_intervals(df_e)
 
-        with open(f'{self.output_dir}/rostering.json', 'w',  encoding='utf-8') as f:
-            f.write(json.dumps(out, indent=2, ensure_ascii=False))
+            # 3. Run model
+            model = BreaksIntervalsScheduling(
+                employee_calendar=employee_schedule,
+                breaks=breaks_specs,
+                break_delays=(min_delay, max_delay)
+            )
+
+            solution = model.solve()
+
+            with codecs.open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'w', encoding='utf-8') as f:
+                json.dump(solution, f, indent=2, ensure_ascii=False)
+
+
+        print("Done breaks rostering")
+        return "Done"
+
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
@@ -342,15 +393,13 @@ class MultiZonePlanner():
 
             return df
 
+
         df_total = None
 
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
             print(f'Shift: {shift_name} ({shift_id})')
-
-            with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
-                shifts_info = json.load(f)
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
@@ -395,7 +444,46 @@ class MultiZonePlanner():
         print("Done rostering postprocessing")
         return "Done"
 
+    def combine_results(self):
+        campainUtc = self.meta['campainUtc']
+        out = {
+            "campainUtc": campainUtc,
+            "campainSchedule": []
+        }
+        campainSchedule = out['campainSchedule']
+        for party in self.shift_with_names:
+            (shift_name, shift_code, utc, mp, schema_name, q) = party
 
+            print(f'Shift: {shift_name} ({shift_name})')
+
+            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
+                rostering = json.load(f)
+
+            df = pd.DataFrame(rostering['resource_shifts'])
+            df['shiftTimeStartLocal'] = df.apply(
+                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
+            )
+
+            delta = utc - campainUtc
+            from datetime import datetime, timedelta
+            df['shiftTimeStart'] = df.apply(
+                lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'),
+                axis=1)
+            df['schemaId'] = schema_name
+            df['shiftId'] = shift_name
+            df['employeeId'] = df['resource']
+            df['employeeUtc'] = utc
+            df['activities'] = None
+            min_date = min(self.df.index)
+
+            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
+
+            res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart',
+                                 'activities']].to_json(orient="records"))
+            campainSchedule.extend(res)
+
+        with open(f'{self.output_dir}/rostering.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def recalculate_stats(self):
         if self.__df_stats is None:
