@@ -35,7 +35,8 @@ mzp = MultiZonePlanner(df, meta, output_dir)
 
 # mzp.schedule()
 # mzp.roster()
+# mzp.roster_breaks()
 # mzp.roster_postprocess()
-# mzp.combine_results()
+mzp.combine_results()
 # mzp.recalculate_stats()
-mzp.roster_breaks()
+

@@ -191,6 +191,74 @@ class MultiZonePlanner():
         shift_name = get_shift_short_name(shift, utc)
         return shift_name
 
+    def get_breaks_intervals_per_slot(self, resource_break_intervals: dict):
+        # "resource" ->  [(break_id, start, end)]
+        _days = 31
+        _interval_per_hour = 4
+        empty_month = np.zeros(_days * 24 * _interval_per_hour).astype(int)
+        _eom = len(empty_month)
+
+        # output: [ (resource(string), day, [010101010101]) ]
+        result = []
+
+        for resource_id, bi in resource_break_intervals.items():
+            resource_month = empty_month.copy()
+            for (break_id, start, end) in bi:
+                # breaks are calculated with overnights also
+                # => for the last day of month it could plan for a day after that.
+                if start > _eom:
+                    continue
+                resource_month[start:end] = [1 for _ in range(start, min(end, _eom))]
+
+            for d in range(_days):
+                day_start = d * 24 * _interval_per_hour
+                day_end_exclusive = (d + 1) * 24 * _interval_per_hour
+                result.append(
+                    (str(resource_id), int(d), resource_month[day_start:day_end_exclusive])
+                )
+
+        return result
+
+    def get_breaks_per_day(self, resource_break_intervals: dict):
+        # "resource" ->  [(break_id, start, end)]
+        _days = 31
+        _interval_per_hour = 4
+        _full_day = 24*_interval_per_hour
+        _eom = _days * _full_day
+
+        (_, t) = build_intervals_map()
+
+        # output: [ (resource, day, break_id, start_time, end_time ]
+        result = []
+
+        for resource_id, bi in resource_break_intervals.items():
+            for (break_id, start, end) in bi:
+                # breaks are calculated with overnights also
+                # => for the last day of month it could plan for a day after that.
+                if start > _eom:
+                    continue
+
+                day_n = int(start/_full_day)
+
+                start_from_day = start - day_n*_full_day
+                # for overnight intervals -> return next day's time
+                if (start_from_day >= _full_day):
+                    start_from_day -= _full_day
+
+                end_from_day_inclusive = end - day_n*_full_day
+                #end_from_day_inclusive = (end - 1) - day_n * _full_day
+                if (end_from_day_inclusive >= _full_day):
+                    end_from_day_inclusive -= _full_day
+
+                start_time = t[start_from_day]
+                end_time = t[end_from_day_inclusive]
+
+                result.append(
+                    (str(resource_id), day_n, break_id, start_time, end_time)
+                )
+
+        return result
+
     def schedule(self):
         print("Start")
         print(self.shift_with_names)
@@ -393,7 +461,6 @@ class MultiZonePlanner():
 
             return df
 
-
         df_total = None
 
         for party in self.shift_with_names:
@@ -401,20 +468,25 @@ class MultiZonePlanner():
 
             print(f'Shift: {shift_name} ({shift_id})')
 
-            with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
-                shifts_info = json.load(f)
+            # Load breaks and converto to df
+            with open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'r', encoding='utf-8') as f:
+                breaks = json.load(f)
+            list_breaks = self.get_breaks_intervals_per_slot(breaks['resource_break_intervals'])
+            df_breaks = pd.DataFrame(list_breaks, columns=["resource", "day", "breaks"])
+            df_breaks.set_index(["resource", "day"], inplace=True)
 
+            # Load rostering data
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
-
             df = pd.DataFrame(rostering['resource_shifts'])
 
-            # this is virtual empty shift, to be used as a filler for rest days
+            # This is virtual empty shift, to be used as a filler for rest days
             empty_shift = np.array(all_zeros_shift()) * 1
             empty_schedule = pd.DataFrame(index = [i for i in range(31)])   # todo: fix 31 day constant
 
+            # Rostering - breaks = schedule
             df['shifted_resources_per_slot'] = df.apply(
-                lambda t: np.array(unwrap_shift(t['shift'])) * 1, axis=1
+                lambda t: np.array(unwrap_shift(t['shift'])) * 1 - df_breaks.loc[str(t['resource']), t['day']][0], axis=1
             )
 
             df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=True)[
@@ -459,6 +531,14 @@ class MultiZonePlanner():
 
             print(f'Shift: {shift_name} ({shift_name})')
 
+            # Load breaks and converto to df
+            with open(f'{self.output_dir}/breaks_output_{shift_code}.json', 'r', encoding='utf-8') as f:
+                breaks = json.load(f)
+            list_breaks = self.get_breaks_per_day(breaks['resource_break_intervals'])
+            # output: [ (resource, day, break_id, start_time, end_time ]
+            df_breaks = pd.DataFrame(list_breaks, columns=["resource", "day", "activityId", "activityTimeStart", "activityTimeEnd"])
+            df_breaks.set_index(["resource", "day"], inplace=True)
+
             with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
                 rostering = json.load(f)
 
@@ -476,10 +556,14 @@ class MultiZonePlanner():
             df['shiftId'] = shift_name
             df['employeeId'] = df['resource']
             df['employeeUtc'] = utc
-            df['activities'] = None
             min_date = min(self.df.index)
 
             df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
+
+            df['activities'] = df.apply(
+                lambda t: df_breaks.loc[str(t['employeeId']), t['day']],
+                axis=1
+            )
 
             res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart',
                                  'activities']].to_json(orient="records"))

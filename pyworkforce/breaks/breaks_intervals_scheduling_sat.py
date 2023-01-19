@@ -133,7 +133,7 @@ class BreaksIntervalsScheduling:
                 "num_conflicts": self.solver.NumConflicts(),
                 "wall_time": self.solver.WallTime(),
                 "num_resources": len(self.employee_calendar),
-                "resource_breaks": scheduled_breaks,
+                "resource_break_intervals": scheduled_breaks,
             }
 
         else:
@@ -144,7 +144,7 @@ class BreaksIntervalsScheduling:
                 "num_conflicts": -1,
                 "wall_time": -1,
                 "num_resources": len(self.employee_calendar.keys()),
-                "resource_breaks": {},
+                "resource_break_intervals": {},
             }
 
         return solution
