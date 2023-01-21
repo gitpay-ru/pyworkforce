@@ -363,6 +363,14 @@ class MultiZonePlanner():
             resources = list(edf_filtered['id'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
+            # constraint:
+            #   (hard_min, soft_min, penalty, soft_max, hard_max, penalty)
+            constraints = [
+                # minimum 4 day of work, but no more than 6 days of work - theses are hard constraints
+                # 5 -- is an optimal value, it penalize 1 in case of difference from 5
+                (4, 5, 1, 5, 6, 0)
+            ]
+
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
                                     shifts=shifts_info["shifts"],
@@ -373,7 +381,8 @@ class MultiZonePlanner():
                                     banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
                                     max_search_time=5*60,
-                                    strict_mode=False
+                                    strict_mode=False,
+                                    shift_constraints=constraints
                                     )
 
             solution = solver.solve()
