@@ -368,7 +368,10 @@ class MultiZonePlanner():
             constraints = [
                 # minimum 4 day of work, but no more than 6 days of work - theses are hard constraints
                 # 5 -- is an optimal value, it penalize 1 in case of difference from 5
-                (4, 5, 1, 5, 6, 0)
+                # (4, 5, 1, 5, 6, 0),
+
+                # no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
+                (0, 5, 0, 5, 5, 0)
             ]
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
