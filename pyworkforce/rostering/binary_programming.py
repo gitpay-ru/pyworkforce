@@ -282,10 +282,12 @@ class MinHoursRoster:
                 sch_model.Add(shifted_resource[resource_idx][day_idx][shift_idx] == 0)
 
         # Minimum working hours per resource in the horizon
-        # for n in range(self.num_resource):
-        #     sch_model.Add(
-        #         sum(shifted_resource[n][d][s] * self.shifts_hours[s]
-        #             for d in range(self._num_days) for s in range(self.num_shifts)) >= self.min_working_hours)
+        # AD: this is replaced by max_shifts_count
+        if self.min_working_hours > 0:
+            for n in range(self.num_resource):
+                sch_model.Add(
+                    sum(shifted_resource[n][d][s] * self.shifts_hours[s]
+                        for d in range(self._num_days) for s in range(self.num_shifts)) >= self.min_working_hours)
 
         # max number of shifts, todo: fix it
         if self.max_shifts_count > 0:
