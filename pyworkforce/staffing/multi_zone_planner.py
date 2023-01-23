@@ -352,6 +352,16 @@ class MultiZonePlanner():
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
             print(shift_names)
 
+            # todo: fix later
+            if shifts_hours[0] == 12:
+                # 12h shifts -> 10.5 * 16 = 176
+                max_shifts_count = 16
+            elif shifts_hours[0] == 9:
+                # 9h shifts -> 8 * 22 = 176
+                max_shifts_count = 22
+            else:
+                max_shifts_count = 0
+
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
@@ -379,7 +389,10 @@ class MultiZonePlanner():
                                     shifts=shifts_info["shifts"],
                                     shifts_hours=shifts_hours,
                                     min_working_hours=shifts_info["min_working_hours"],
-                                    max_resting=shifts_info["max_resting"],
+                                    max_shifts_count = max_shifts_count,
+                                    # max_resting=shifts_info["max_resting"],
+                                    # we don't have constraints on max resting time
+                                    max_resting=0,
                                     non_sequential_shifts=shifts_info["non_sequential_shifts"],
                                     banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
@@ -417,7 +430,6 @@ class MultiZonePlanner():
             edf["end_interval"] = edf["start_interval"] + edf["duration_interval"]
 
             return edf[["start_interval", "end_interval"]].to_records(index=False).tolist()
-
 
         # 0. iterate over known shifts, breaks are same for employees within given shift
         for party in self.shift_with_names:
