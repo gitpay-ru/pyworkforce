@@ -76,6 +76,7 @@ def upscale_and_shift(a, time_scale, shift_right_pos):
 
 
 def genereate_shifts_coverage(shift_hours, name, horizon_in_hours, start_hour, start_txt, end_hour, end_txt, step_mins):
+  time_scale = int(HMin / step_mins)
   if (start_hour == end_hour):
     start_min = int(start_txt.split(":")[1])
     end_min = int(end_txt.split(":")[1])
