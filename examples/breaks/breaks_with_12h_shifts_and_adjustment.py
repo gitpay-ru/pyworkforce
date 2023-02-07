@@ -1,5 +1,5 @@
 from random import randrange
-from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling
+from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling, AdjustmentMode
 from pyworkforce.breaks.breaks_printer import BreaksPrinter
 
 
@@ -46,7 +46,9 @@ model = BreaksIntervalsScheduling(
     employee_calendar=schedule,
     breaks=_12_h_breaks,
     break_min_delay=int(1.5 * _1h_interval),
-    break_max_delay=int(3.5 * _1h_interval)
+    break_max_delay=int(3.5 * _1h_interval),
+    make_adjustments=AdjustmentMode.ByExpectedAverage,
+    num_days=_days
 )
 
 solution = model.solve()

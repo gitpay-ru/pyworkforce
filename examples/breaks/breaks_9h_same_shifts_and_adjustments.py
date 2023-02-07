@@ -1,5 +1,5 @@
 from random import randrange
-from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling
+from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling, AdjustmentMode
 from pyworkforce.breaks.breaks_printer import BreaksPrinter
 
 
@@ -12,8 +12,7 @@ _30m = 2
 schedule = {}
 # workers
 for w in range(20):
-    _start = randrange(6 * _1h_interval, 12 * _1h_interval)
-    schedule[w] = [(d, d * _1d_intervals + _start, d * _1d_intervals + _start + 12 * _1h_interval) for d in range(_days)]
+    schedule[w] = [(d, d * _1d_intervals + 9 * _1h_interval, d * _1d_intervals + 18 * _1h_interval) for d in range(_days)]
 
 # Configuration of breaks
 # 1. Delays between breaks
@@ -23,14 +22,14 @@ max_break_delay = int(3.5 * _1h_interval)
 # 2. Break rules
 # (id, start)_index, end_index)
 _12_h_breaks = [
-    # lunch break: 03:00 -> 08:0, 30min
-    ('lunch', 3 * _1h_interval, 8 * _1h_interval, 2),
+    # lunch break: 02:00 -> 06:00, 30min
+    ('lunch', 2 * _1h_interval, 6 * _1h_interval, 2),
 
-    # just break: 05:30 -> 11:00, 15min
-    ('break1', 5 * _1h_interval + _30m, 11 * _1h_interval, 1),
+    # just break: 01:30 -> 07:00, 15min
+    ('break1', 1 * _1h_interval + _30m, 7 * _1h_interval, 1),
 
-    # just break: 01:00 -> 10:30, 15min
-    ('break2', 1 * _1h_interval, 10 * _1h_interval + _30m, 1),
+    # just break: 01:30 -> 07:00, 15min
+    ('break2', 1 * _1h_interval + _30m, 7 * _1h_interval, 1),
 ]
 
 pictures = {
@@ -46,7 +45,9 @@ model = BreaksIntervalsScheduling(
     employee_calendar=schedule,
     breaks=_12_h_breaks,
     break_min_delay=int(1.5 * _1h_interval),
-    break_max_delay=int(3.5 * _1h_interval)
+    break_max_delay=int(3.5 * _1h_interval),
+    make_adjustments=AdjustmentMode.ByExpectedAverage,
+    num_days=_days
 )
 
 solution = model.solve()
