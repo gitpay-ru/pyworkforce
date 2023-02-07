@@ -385,6 +385,9 @@ class MultiZonePlanner():
                 # no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
                 (0, 5, 0, 5, 5, 0)
             ]
+            print(shifts_hours)
+            print(resources)
+            exit()
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,

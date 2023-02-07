@@ -184,3 +184,10 @@ Output:
                                                 {'day': 1, 'shift': 'Night', 'resources': 23}, 
                                                 {'day': 1, 'shift': 'Mixed', 'resources': 0}]}
 ```
+
+
+#### Multizone plan:
+
+```python
+python planner.py -m meta12_2.json
+```
