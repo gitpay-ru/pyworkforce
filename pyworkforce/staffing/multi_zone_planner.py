@@ -415,6 +415,12 @@ class MultiZonePlanner():
                 (shift_data.work_min, shift_data.work_max, 0, shift_data.work_max, shift_data.work_max, 0)
             ]
 
+            rest_constraints = [
+                # 1 to 3 days of rest
+                # 'work_max' is both lower and upper soft intertval -> deltas are penalized by 1
+                (shift_data.holidays_min, shift_data.holidays_min, 0, shift_data.holidays_max, shift_data.holidays_max, 0)
+            ]
+
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
                                     shifts=shifts_info["shifts"],
@@ -430,7 +436,8 @@ class MultiZonePlanner():
                                     required_resources=shifts_info["required_resources"],
                                     max_search_time=5*60,
                                     strict_mode=False,
-                                    shift_constraints=work_constraints
+                                    shift_constraints=work_constraints,
+                                    rest_constraints=rest_constraints
                                     )
 
             solution = solver.solve()
