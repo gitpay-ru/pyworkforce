@@ -160,6 +160,7 @@ class MinHoursRoster:
                  num_search_workers=2,
                  strict_mode = True,
                  shift_constraints = [],
+                 rest_constraints = [],
                  max_shifts_count: int = 0):
 
         self._num_days = num_days
@@ -241,7 +242,7 @@ class MinHoursRoster:
                     objective_int_coeffs.append(self.__deficit_weight)
 
 
-        # # A resource can at most, work 1 shift per day
+        # A resource can at most, work 1 shift per day
         # AD: this is to be covered by shift constraint and dedicated IntVar (0,1)
         for n in range(self.num_resource):
             for d in range(self._num_days):
@@ -264,7 +265,6 @@ class MinHoursRoster:
                 self.non_sequential_shifts_indices[i_idx][j_idx] = 1
 
         # An resource can not have two consecutive shifts according to shifts dependencies
-
         for n in range(self.num_resource):
             for d in range(self._num_days - 1):
                 for s in range(self.num_shifts):

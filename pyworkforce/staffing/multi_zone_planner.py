@@ -11,7 +11,7 @@ from pyworkforce.staffing.stats.calculate_stats import calculate_stats
 from pyworkforce.utils.breaks_spec import build_break_spec, build_intervals_map
 from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_start_from_shift_short_name_mo, \
     required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
-    all_zeros_shift, get_duration_from_shift_short_name
+    all_zeros_shift, get_duration_from_shift_short_name, ShiftSchema
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
 from datetime import datetime as dt
@@ -52,6 +52,8 @@ class MultiZonePlanner():
         # todo: replace this magic number with configured property or even better remove it
         self.rostering_ratio = 1.0  # For rostering
 
+        # shift_name -> Shift
+        self.shift_data = {}  # will be filled by build_shifts()
         # shift_with_name:
         #   (id, shift_name, utc, employees_count, , employee_ratio)
         self.shift_with_names = self.build_shifts()
@@ -82,6 +84,24 @@ class MultiZonePlanner():
 
             shift_with_names.append(
                 (shift_orig_id, shift_name, utc, employee_count, schema_name,)
+            )
+
+            meta_shift = next(t for t in self.meta['shifts'] if t['id'] == shift_orig_id)
+            meta_schema = next(t for t in self.meta['schemas'] if t['id'] == schema_name)
+
+            self.shift_data[shift_name] = ShiftSchema(
+                shift_name = shift_name,
+                shift_id=shift_orig_id,
+                schema_id=schema_name,
+                utc=utc,
+                min_start_time=meta_shift['scheduleTimeStart'],
+                max_start_time=meta_shift['scheduleTimeEndStart'],
+                duration_time=meta_shift['duration'],
+                holidays_min=meta_schema['holidays']['minDaysInRow'],
+                holidays_max=meta_schema['holidays']['maxDaysInRow'],
+                work_min=meta_schema['shifts'][0]['minDaysInRow'],
+                work_max=meta_schema['shifts'][0]['maxDaysInRow'],
+                employee_count=employee_count
             )
 
         manpowers = np.array([i[3] for i in shift_with_names])  # i[2] == count
@@ -298,7 +318,7 @@ class MultiZonePlanner():
 
             # shift = self.meta['shifts'][0] #todo map
             shift_names = [shift_name]
-            shifts_coverage = get_shift_coverage(shift_names, with_breaks=True)
+            shifts_coverage = get_shift_coverage(shift_names)
             # cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
 
             df = self.df.copy()
@@ -308,6 +328,8 @@ class MultiZonePlanner():
 
             # shift_id -> shjft_name in prefix because id's will override each other from different zones
             df.to_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
+
+            employee_count = self.shift_data[shift_name].employee_count
 
             required_resources = []
             for i in range(days):
@@ -319,7 +341,8 @@ class MultiZonePlanner():
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
-                                max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
+                                # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
+                                max_shift_concurrency=employee_count,  # beta
                                 )
 
             solution = scheduler.solve()
@@ -379,15 +402,17 @@ class MultiZonePlanner():
             resources = list(edf_filtered['id'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
+            shift_data:ShiftSchema = self.shift_data[shift_name]
+
             # constraint:
             #   (hard_min, soft_min, penalty, soft_max, hard_max, penalty)
-            constraints = [
-                # minimum 4 day of work, but no more than 6 days of work - theses are hard constraints
-                # 5 -- is an optimal value, it penalize 1 in case of difference from 5
-                # (4, 5, 1, 5, 6, 0),
-
+            work_constraints = [
                 # no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
-                (0, 5, 0, 5, 5, 0)
+                # (0, 5, 0, 5, 5, 0)
+
+                # work at least 'work_min', but no more than 'work_max',
+                # 'work_max' is both lower and upper soft intertval -> deltas are penalized by 1
+                (shift_data.work_min, shift_data.work_max, 0, shift_data.work_max, shift_data.work_max, 0)
             ]
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
@@ -405,7 +430,7 @@ class MultiZonePlanner():
                                     required_resources=shifts_info["required_resources"],
                                     max_search_time=5*60,
                                     strict_mode=False,
-                                    shift_constraints=constraints
+                                    shift_constraints=work_constraints
                                     )
 
             solution = solver.solve()

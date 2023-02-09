@@ -146,15 +146,11 @@ def decode_shift_spec(encoded_shift_name):
     return t
 
 
-def get_shift_coverage(shifts, with_breaks = False):
+def get_shift_coverage(shifts):
     shift_cover = {}
     for i in shifts:
         a = decode_shift_spec(i)
-
-        if (with_breaks):
-            base_spec = [1 if (i < a.duration and i != a.duration // 2) else 0 for i in range(DayH)]
-        else:
-            base_spec = [1 if (i < a.duration) else 0 for i in range(DayH)]
+        base_spec = [1 if (i < a.duration) else 0 for i in range(DayH)]
 
         base_spec = deque(base_spec)
         base_spec.rotate(a.start)
@@ -214,3 +210,17 @@ def build_non_sequential_shifts(shift_names, h_distance, m_step):
                 })
     return res
 
+class ShiftSchema:
+    def __init__(self, shift_name, shift_id, schema_id, utc, min_start_time, max_start_time, duration_time, holidays_min, holidays_max, work_min, work_max, employee_count):
+        self.shift_name = shift_name
+        self.shift_id = shift_id
+        self.schema_id = schema_id
+        self.utc = utc
+        self.min_start_time = min_start_time
+        self.max_start_time = max_start_time
+        self.duration_time = duration_time
+        self.holidays_min = holidays_min
+        self.holidays_max = holidays_max
+        self.work_min = work_min
+        self.work_max = work_max
+        self.employee_count=employee_count
