@@ -102,10 +102,18 @@ class MinAbsDifference(BaseShiftScheduler):
         sch_model.Minimize(
             sum(transition_resources[d][p] for d in range(self.num_days) for p in range(self.num_periods)))
 
+
+
+        print("Solving started...")
+        # self.status = self.solver.Solve(sch_model)
+
+        self.solver = sch_model.CpSolver()
         self.solver.parameters.max_time_in_seconds = self.max_search_time
         self.solver.num_search_workers = self.num_search_workers
+        self.solver.parameters.log_search_progress = self.solver_params.do_logging
 
-        self.status = self.solver.Solve(sch_model)
+        solution_printer = cp_model.ObjectiveSolutionPrinter()
+        self.status = self.solver.Solve(sch_model, solution_printer)
 
         if self.status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             resources_shifts = []

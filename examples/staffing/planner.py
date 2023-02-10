@@ -33,13 +33,13 @@ df = pd.read_csv(input_csv_path, parse_dates=[0], index_col=0)
 with open(input_meta_path, 'r', encoding='utf-8') as f:
     meta = json.load(f)
 
-solver_params = SolverParams(do_logging=False, max_iteration_search_time=5*60, num_search_workers=16)
+solver_params = SolverParams(do_logging=True, max_iteration_search_time=10*60, num_search_workers=0)
 
 mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
-mzp.solve()
+# mzp.solve()
 
 # mzp.schedule()
-# mzp.roster()
+mzp.roster()
 # mzp.roster_breaks()
 # mzp.roster_postprocess()
 # mzp.combine_results()

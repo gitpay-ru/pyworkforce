@@ -437,7 +437,9 @@ class MultiZonePlanner():
                                     max_search_time=self.solver_params.max_iteration_search_time,
                                     num_search_workers=self.solver_params.num_search_workers,
                                     strict_mode=False,
-                                    shift_constraints=work_constraints
+                                    shift_constraints=work_constraints,
+                                    rest_constraints=rest_constraints,
+                                    logging = self.solver_params.do_logging
                                     )
 
             solution = solver.solve()
@@ -445,6 +447,7 @@ class MultiZonePlanner():
             # if solution not feasible -> stop it and return result
             self.status = Statuses(solution['status'])
             if not self.status.is_ok():
+                print(f'Status = {solution["status"]}')
                 return
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'w') as f:

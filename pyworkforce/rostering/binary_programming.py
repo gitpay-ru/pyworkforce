@@ -161,6 +161,7 @@ class MinHoursRoster:
                  strict_mode = True,
                  shift_constraints = [],
                  rest_constraints = [],
+                 logging = False,
                  max_shifts_count: int = 0):
 
         self.num_days = num_days
@@ -187,6 +188,7 @@ class MinHoursRoster:
         self.__deficit_weight = 1
         self.shift_constraints = shift_constraints
         self.rest_constraints = rest_constraints
+        self.logging = logging
 
         self._status = None
         self.solver = None
@@ -321,7 +323,8 @@ class MinHoursRoster:
         daily_resource = np.empty(shape=(self.num_resource, self.num_days), dtype='object')
         for n in range(self.num_resource):
             for d in range(self.num_days):
-                daily_resource[n][d] = sch_model.NewIntVar(0, 1, f'resource_day_n{n}d{d}')
+                # daily_resource[n][d] = sch_model.NewIntVar(0, 1, f'resource_day_n{n}d{d}')
+                daily_resource[n][d] = sch_model.NewBoolVar(f'resource_day_n{n}d{d}')
 
         # 2. Apply constraint on daily work - no more than 1 shift per day
         for n in range(self.num_resource):
@@ -371,9 +374,11 @@ class MinHoursRoster:
             sum(objective_bool_vars[i] * objective_bool_coeffs[i] for i in range(len(objective_bool_vars)))
         )
 
+        print("Solving started...")
         self.solver = cp_model.CpSolver()
         self.solver.parameters.max_time_in_seconds = self.max_search_time
         self.solver.num_search_workers = self.num_search_workers
+        self.solver.parameters.log_search_progress = self.logging
 
         solution_printer = cp_model.ObjectiveSolutionPrinter()
         self._status = self.solver.Solve(sch_model, solution_printer)
