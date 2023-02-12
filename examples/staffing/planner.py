@@ -1,5 +1,8 @@
 from pathlib import Path
 import sys
+
+from pyworkforce.solver_params import SolverParams
+
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 
@@ -8,18 +11,26 @@ import json
 import argparse
 from pyworkforce.staffing import MultiZonePlanner
 
+
 # input_csv_path = '../scheduling_input.csv'
 # input_meta_path = '../scheduling_meta_input.json'
 # output_dir = '../out'
 
-# mzp = MultiZonePlanner(df, meta, output_dir)
+
+with open(input_meta_path, 'r', encoding='utf-8') as f:
+    meta = json.load(f)
+
+solver_params = SolverParams(do_logging=False, max_iteration_search_time=5*60)
+
+mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
+
 # mzp.solve()
 
 # mzp.schedule()
 # mzp.roster()
-# mzp.roster_breaks()
-# mzp.roster_postprocess()
-# mzp.combine_results()
+mzp.roster_breaks()
+mzp.roster_postprocess()
+mzp.combine_results()
 # mzp.recalculate_stats()
 
 def parse_args():
