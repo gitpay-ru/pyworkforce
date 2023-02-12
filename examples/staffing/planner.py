@@ -26,7 +26,7 @@ eastern = pytz.timezone('US/Eastern')
 
 input_csv_path = '../data_file.csv'
 input_meta_path = '../meta_file.json'
-output_dir = '..'
+output_dir = '../out'
 
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 df = pd.read_csv(input_csv_path, parse_dates=[0], index_col=0)
