@@ -572,7 +572,7 @@ class MultiZonePlanner():
             df3 = pd.read_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
             df3['resources_shifts'] = arr.tolist()
 
-            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions", "resources_shifts"])
+            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions_quantile", "resources_shifts"])
 
             if df_total is None:
                 df_total = df3
