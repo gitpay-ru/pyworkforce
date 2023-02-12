@@ -190,4 +190,7 @@ Output:
 
 ```python
 python planner.py -m meta12_2.json
+python planner.py -i data_file.csv -m meta_file.json
+python planner.py -i data_file.csv -m meta_file.json -o out1
 ```
+

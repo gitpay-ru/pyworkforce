@@ -68,6 +68,8 @@ class MultiZonePlanner():
         edf_g = edf.groupby(['utc', 'shiftId', 'schema'])['id'].agg(['count'])
         shift_with_names = []
 
+
+
         # [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ('c8e4261e-3de3-4343-abda-dc65e4042495', '+3', 33, 'x_9_6_13_15', 0.09041095890410959), ('c8e4261e-3de3-4343-abda-dc65e4042490', '+3', 32, 'x_12_6_13_15', 0.08767123287671233), ('22e4261e-3de3-4343-abda-dc65e4042496', '-3', 150, 'x_9_6_13_15', 0.410958904109589)]
         for index, row in edf_g.iterrows():
             utc = index[0]
@@ -385,9 +387,9 @@ class MultiZonePlanner():
                 # no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
                 (0, 5, 0, 5, 5, 0)
             ]
-            print(shifts_hours)
-            print(resources)
-            exit()
+            # print(shifts_hours)
+            # print(resources)
+            # exit()
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
@@ -532,9 +534,11 @@ class MultiZonePlanner():
             arr = df1['shifted_resources_per_slot'].values
             arr = np.concatenate(arr)
             df3 = pd.read_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
+            # print(df3)
+            # exit()
             df3['resources_shifts'] = arr.tolist()
 
-            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions", "resources_shifts"])
+            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions_quantile", "resources_shifts"])
 
             if df_total is None:
                 df_total = df3

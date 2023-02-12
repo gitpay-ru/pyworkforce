@@ -210,7 +210,6 @@ class MinHoursRoster:
             for d in range(self._num_days):
                 for s in range(self.num_shifts):
                     shifted_resource[n][d][s] = sch_model.NewBoolVar(f'resource_shifts_n{n}d{d}s{s}')
-
         # Constraints
 
         objective_int_vars = []
@@ -223,22 +222,20 @@ class MinHoursRoster:
         # For non-strict mode - minimize deficit (=delta) penalty for the missed resources
         for d in range(self._num_days):
             for s in range(self.num_shifts):
-                works = sum(shifted_resource[n][d][s] for n in range(self.num_resource))
+                works = [shifted_resource[n][d][s] for n in range(self.num_resource)]
+                # print(works)
+                # exit()
                 demand = self.required_resources[self.shifts[s]][d]
 
                 if self.strict_mode:
-                    sch_model.Add(works >= demand)
+                    sch_model.Add(sum(works) >= demand)
                 else:
-                    delta = sch_model.NewIntVar(0, max(self.num_resource, demand), '')
-                    z1 = sch_model.NewIntVar(- demand, self.num_resource - demand, '')
-                    z2 = sch_model.NewIntVar(demand - self.num_resource, demand, '')
+                    epsilon = sch_model.NewIntVar(0, self.num_resource, f'delta_d{d}s{s}')
+                    sch_model.Add(sum(works) >= self.required_resources[self.shifts[s]][d] - epsilon)
+                    sch_model.Add(sum(works) <= self.required_resources[self.shifts[s]][d] + epsilon)
 
-                    sch_model.Add(z1 == works - demand)
-                    sch_model.Add(z2 == demand - works)
-                    sch_model.AddMaxEquality(delta, [z1, z2])
-
-                    objective_int_vars.append(delta)
-                    objective_int_coeffs.append(self.__deficit_weight)
+                    objective_int_vars.append(epsilon)
+                    objective_int_coeffs.append(1)
 
 
         # # A resource can at most, work 1 shift per day

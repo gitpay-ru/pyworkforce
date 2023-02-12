@@ -52,6 +52,8 @@ def do_planning(args):
         mzp.roster_breaks()
         mzp.roster_postprocess()
         mzp.combine_results()
+    elif(args.calculate == 'pp'):
+        mzp.roster_postprocess()
     else:
         mzp.solve()
 
