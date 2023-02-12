@@ -192,5 +192,6 @@ Output:
 python planner.py -m meta12_2.json
 python planner.py -i data_file.csv -m meta_file.json
 python planner.py -i data_file.csv -m meta_file.json -o out1
+python planner.py -i data_file.csv -m meta_file.json -o out3 -c rpp -s x_3_9_06-00_12-45_15
 ```
 

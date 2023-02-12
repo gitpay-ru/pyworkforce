@@ -1,10 +1,9 @@
 from pathlib import Path
 import sys
-
-from pyworkforce.solver_params import SolverParams
-
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
+
+from pyworkforce.solver_params import SolverParams
 
 import pandas as pd
 import json
@@ -17,20 +16,20 @@ from pyworkforce.staffing import MultiZonePlanner
 # output_dir = '../out'
 
 
-with open(input_meta_path, 'r', encoding='utf-8') as f:
-    meta = json.load(f)
+# with open(input_meta_path, 'r', encoding='utf-8') as f:
+#     meta = json.load(f)
 
-solver_params = SolverParams(do_logging=False, max_iteration_search_time=5*60)
+# solver_params = SolverParams(do_logging=False, max_iteration_search_time=5*60)
 
-mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
+# mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
 
-# mzp.solve()
+# # mzp.solve()
 
-# mzp.schedule()
-# mzp.roster()
-mzp.roster_breaks()
-mzp.roster_postprocess()
-mzp.combine_results()
+# # mzp.schedule()
+# # mzp.roster()
+# mzp.roster_breaks()
+# mzp.roster_postprocess()
+# mzp.combine_results()
 # mzp.recalculate_stats()
 
 def parse_args():
@@ -39,6 +38,7 @@ def parse_args():
     parser.add_argument('-m', '--meta', default='../scheduling_meta_input.json')
     parser.add_argument('-o', '--out', default='../out')
     parser.add_argument('-c', '--calculate', default='all')
+    parser.add_argument('-s', '--shift_name', default=None) #shift name to process x_3_9_06-00_12-45_15
     return parser.parse_args()
 
 def do_planning(args):
@@ -63,8 +63,9 @@ def do_planning(args):
         mzp.roster_breaks()
         mzp.roster_postprocess()
         mzp.combine_results()
-    elif(args.calculate == 'pp'):
-        mzp.roster_postprocess()
+    elif(args.calculate == 'rpp'):
+        mzp.roster(args.shift_name)
+        mzp.roster_postprocess(args.shift_name)
     else:
         mzp.solve()
 

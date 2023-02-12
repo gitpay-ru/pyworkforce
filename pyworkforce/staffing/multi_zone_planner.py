@@ -347,12 +347,17 @@ class MultiZonePlanner():
 
         return "Done"
 
-    def roster(self):
+    def roster(self, only_shift_name = None):
         print("Start rostering")
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
-            print(f'Shift: {shift_name}')
+            if (only_shift_name != None and only_shift_name != shift_name):
+                print(f'Skip {shift_name}')
+                continue
+            else:
+                print(f'Shift: {shift_name} {shift_id} {only_shift_name}')
+
             with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
@@ -482,7 +487,7 @@ class MultiZonePlanner():
         return "Done"
 
 
-    def roster_postprocess(self):
+    def roster_postprocess(self, only_shift_name = None):
         print("Start rostering postprocessing")
 
         # just a helper function to use
@@ -504,7 +509,11 @@ class MultiZonePlanner():
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
-            print(f'Shift: {shift_name} ({shift_id})')
+            if (only_shift_name != None and only_shift_name != shift_name):
+                print(f'Skip {shift_name}')
+                continue
+            else:
+                print(f'Shift: {shift_name} {shift_id} {only_shift_name}')
 
             # Load breaks and converto to df
             with open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'r', encoding='utf-8') as f:
