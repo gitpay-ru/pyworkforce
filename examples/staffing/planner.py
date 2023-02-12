@@ -1,10 +1,11 @@
 from pathlib import Path
 import sys
 
-from pyworkforce.solver_params import SolverParams
-
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
+
+from pyworkforce.solver_params import SolverParams
+
 
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.queuing import ErlangC
@@ -36,10 +37,10 @@ with open(input_meta_path, 'r', encoding='utf-8') as f:
 solver_params = SolverParams(do_logging=True, max_iteration_search_time=10*60, num_search_workers=0)
 
 mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
-# mzp.solve()
+mzp.solve()
 
 # mzp.schedule()
-mzp.roster()
+# mzp.roster()
 # mzp.roster_breaks()
 # mzp.roster_postprocess()
 # mzp.combine_results()

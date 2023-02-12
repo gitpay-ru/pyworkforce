@@ -107,10 +107,10 @@ class MinAbsDifference(BaseShiftScheduler):
         print("Solving started...")
         # self.status = self.solver.Solve(sch_model)
 
-        self.solver = sch_model.CpSolver()
+        self.solver = cp_model.CpSolver()
         self.solver.parameters.max_time_in_seconds = self.max_search_time
         self.solver.num_search_workers = self.num_search_workers
-        self.solver.parameters.log_search_progress = self.solver_params.do_logging
+        # self.solver.parameters.log_search_progress = self.solver_params.do_logging
 
         solution_printer = cp_model.ObjectiveSolutionPrinter()
         self.status = self.solver.Solve(sch_model, solution_printer)
