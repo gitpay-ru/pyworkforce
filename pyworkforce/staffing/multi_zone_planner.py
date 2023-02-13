@@ -343,6 +343,9 @@ class MultiZonePlanner():
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
+                                max_search_time=self.solver_params['schedule'].max_iteration_search_time,
+                                num_search_workers=self.solver_params['schedule'].num_search_workers,
+                                logging = self.solver_params['schedule'].do_logging
                                 )
 
             solution = scheduler.solve()
@@ -412,12 +415,12 @@ class MultiZonePlanner():
 
                 # work at least 'work_min', but no more than 'work_max',
                 # 'work_max' is both lower and upper soft intertval -> deltas are penalized by 1
-                (shift_data.work_min, shift_data.work_max, 0, shift_data.work_max, shift_data.work_max, 0)
+                (shift_data.work_min, shift_data.work_min, 0, shift_data.work_max, shift_data.work_max, 0)
             ]
 
             rest_constraints = [
-                # 1 to 3 days of rest
-                # 'work_max' is both lower and upper soft intertval -> deltas are penalized by 1
+
+                # 1 to 3 non penalized holidays
                 (shift_data.holidays_min, shift_data.holidays_min, 0, shift_data.holidays_max, shift_data.holidays_max, 0)
             ]
 
@@ -434,10 +437,12 @@ class MultiZonePlanner():
                                     non_sequential_shifts=shifts_info["non_sequential_shifts"],
                                     banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
-                                    max_search_time=5*60,
                                     strict_mode=False,
                                     shift_constraints=work_constraints,
-                                    rest_constraints=rest_constraints
+                                    rest_constraints=rest_constraints,
+                                    max_search_time=self.solver_params['roster'].max_iteration_search_time,
+                                    num_search_workers=self.solver_params['roster'].num_search_workers,
+                                    logging = self.solver_params['roster'].do_logging
                                     )
 
             solution = solver.solve()
@@ -445,6 +450,7 @@ class MultiZonePlanner():
             # if solution not feasible -> stop it and return result
             self.status = Statuses(solution['status'])
             if not self.status.is_ok():
+                print(f'Status = {solution["status"]}')
                 return
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'w') as f:
@@ -496,7 +502,7 @@ class MultiZonePlanner():
                 break_min_delay=min_delay,
                 break_max_delay=max_delay,
                 make_adjustments=AdjustmentMode.ByExpectedAverage,
-                solver_params=self.solver_params
+                solver_params=self.solver_params['roster_breaks']
             )
 
             solution = model.solve()
@@ -569,7 +575,7 @@ class MultiZonePlanner():
             df3 = pd.read_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
             df3['resources_shifts'] = arr.tolist()
 
-            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions", "resources_shifts"])
+            plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions_quantile", "resources_shifts"])
 
             if df_total is None:
                 df_total = df3

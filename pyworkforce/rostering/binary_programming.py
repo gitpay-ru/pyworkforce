@@ -161,6 +161,7 @@ class MinHoursRoster:
                  strict_mode = True,
                  shift_constraints = [],
                  rest_constraints = [],
+                 logging = False,
                  max_shifts_count: int = 0):
 
         self.num_days = num_days
@@ -187,6 +188,7 @@ class MinHoursRoster:
         self.__deficit_weight = 1
         self.shift_constraints = shift_constraints
         self.rest_constraints = rest_constraints
+        self.logging = logging
 
         self._status = None
         self.solver = None
@@ -225,19 +227,26 @@ class MinHoursRoster:
         # For non-strict mode - minimize deficit (=delta) penalty for the missed resources
         for d in range(self.num_days):
             for s in range(self.num_shifts):
-                works = sum(shifted_resource[n][d][s] for n in range(self.num_resource))
+                works = [shifted_resource[n][d][s] for n in range(self.num_resource)]
                 demand = self.required_resources[self.shifts[s]][d]
 
                 if self.strict_mode:
-                    sch_model.Add(works >= demand)
+                    sch_model.Add(sum(works) >= demand)
                 else:
-                    delta = sch_model.NewIntVar(0, max(self.num_resource, demand), '')
-                    z1 = sch_model.NewIntVar(- demand, self.num_resource - demand, '')
-                    z2 = sch_model.NewIntVar(demand - self.num_resource, demand, '')
+                    # delta = sch_model.NewIntVar(0, max(self.num_resource, demand), '')
+                    # z1 = sch_model.NewIntVar(- demand, self.num_resource - demand, '')
+                    # z2 = sch_model.NewIntVar(demand - self.num_resource, demand, '')
+                    #
+                    # sch_model.Add(z1 == works - demand)
+                    # sch_model.Add(z2 == demand - works)
+                    # sch_model.AddMaxEquality(delta, [z1, z2])
+                    #
+                    # objective_int_vars.append(delta)
+                    # objective_int_coeffs.append(self.__deficit_weight)
 
-                    sch_model.Add(z1 == works - demand)
-                    sch_model.Add(z2 == demand - works)
-                    sch_model.AddMaxEquality(delta, [z1, z2])
+                    delta = sch_model.NewIntVar(0, self.num_resource, f'delta_d{d}s{s}')
+                    sch_model.Add(sum(works) >= self.required_resources[self.shifts[s]][d] - delta)
+                    sch_model.Add(sum(works) <= self.required_resources[self.shifts[s]][d] + delta)
 
                     objective_int_vars.append(delta)
                     objective_int_coeffs.append(self.__deficit_weight)
@@ -344,19 +353,18 @@ class MinHoursRoster:
                 objective_bool_vars.extend(variables)
                 objective_bool_coeffs.extend(coeffs)
 
-        # 4. Apply sequence constraints of resource daily rest
-        for ct in self.rest_constraints:
-            (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = ct
+        # 4. Apply sequence constraints of resource rests between workdays,
+        for rct in self.rest_constraints:
+            (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = rct
             for n in range(self.num_resource):
-                works = [daily_resource[n, d].Not() for d in range(self.num_days)]
+                not_works = [daily_resource[n, d].Not() for d in range(self.num_days)]
                 variables, coeffs = add_soft_sequence_constraint(
-                    sch_model, works,
+                    sch_model, not_works,
                     hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
                     f'resource_rest_constraint_n{n}'
                 )
                 objective_bool_vars.extend(variables)
                 objective_bool_coeffs.extend(coeffs)
-
 
         # Objective function: Minimize the total number of shifted hours rewarded by resource preferences
 
@@ -373,9 +381,11 @@ class MinHoursRoster:
             sum(objective_bool_vars[i] * objective_bool_coeffs[i] for i in range(len(objective_bool_vars)))
         )
 
+        print("Solving started...")
         self.solver = cp_model.CpSolver()
         self.solver.parameters.max_time_in_seconds = self.max_search_time
         self.solver.num_search_workers = self.num_search_workers
+        self.solver.parameters.log_search_progress = self.logging
 
         solution_printer = cp_model.ObjectiveSolutionPrinter()
         self._status = self.solver.Solve(sch_model, solution_printer)
