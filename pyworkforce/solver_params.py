@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 
 class SolverParams:
     def __init__(self,
@@ -12,4 +14,4 @@ class SolverParams:
 
     @staticmethod
     def default():
-        return SolverParams(max_iteration_search_time=300, do_logging=False, num_search_workers=0)
+        return defaultdict(lambda: SolverParams(max_iteration_search_time=300.0, do_logging=False, num_search_workers=0))

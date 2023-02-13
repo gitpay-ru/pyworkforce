@@ -341,30 +341,30 @@ class MinHoursRoster:
                 )
 
         # 3. Apply sequence constraints of resource daily work
-        # for ct in self.shift_constraints:
-        #     (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = ct
-        #     for n in range(self.num_resource):
-        #         works = [daily_resource[n,d] for d in range(self.num_days)]
-        #         variables, coeffs = add_soft_sequence_constraint(
-        #             sch_model, works,
-        #             hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
-        #             f'resource_shifts_constraint_n{n}'
-        #         )
-        #         objective_bool_vars.extend(variables)
-        #         objective_bool_coeffs.extend(coeffs)
+        for ct in self.shift_constraints:
+            (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = ct
+            for n in range(self.num_resource):
+                works = [daily_resource[n,d] for d in range(self.num_days)]
+                variables, coeffs = add_soft_sequence_constraint(
+                    sch_model, works,
+                    hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
+                    f'resource_shifts_constraint_n{n}'
+                )
+                objective_bool_vars.extend(variables)
+                objective_bool_coeffs.extend(coeffs)
 
         # 4. Apply sequence constraints of resource rests between workdays,
-        # for rct in self.rest_constraints:
-        #     (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = rct
-        #     for n in range(self.num_resource):
-        #         not_works = [daily_resource[n, d].Not() for d in range(self.num_days)]
-        #         variables, coeffs = add_soft_sequence_constraint(
-        #             sch_model, not_works,
-        #             hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
-        #             f'resource_rest_constraint_n{n}'
-        #         )
-        #         objective_bool_vars.extend(variables)
-        #         objective_bool_coeffs.extend(coeffs)
+        for rct in self.rest_constraints:
+            (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = rct
+            for n in range(self.num_resource):
+                not_works = [daily_resource[n, d].Not() for d in range(self.num_days)]
+                variables, coeffs = add_soft_sequence_constraint(
+                    sch_model, not_works,
+                    hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
+                    f'resource_rest_constraint_n{n}'
+                )
+                objective_bool_vars.extend(variables)
+                objective_bool_coeffs.extend(coeffs)
 
         # Objective function: Minimize the total number of shifted hours rewarded by resource preferences
 

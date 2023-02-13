@@ -13,6 +13,7 @@ class MinAbsDifference(BaseShiftScheduler):
                  max_shift_concurrency: int,
                  max_search_time: float = 120.0,
                  num_search_workers=2,
+                 logging = False,
                  *args, **kwargs):
         """
         The "optimal" criteria is defined as the number of resources per shift
@@ -39,6 +40,8 @@ class MinAbsDifference(BaseShiftScheduler):
         num_search_workers: int, default = 2
             Number of workers to search for a solution
         """
+
+        self.logging = logging
 
         super().__init__(num_days,
                          periods,
@@ -102,15 +105,13 @@ class MinAbsDifference(BaseShiftScheduler):
         sch_model.Minimize(
             sum(transition_resources[d][p] for d in range(self.num_days) for p in range(self.num_periods)))
 
-
-
         print("Solving started...")
         # self.status = self.solver.Solve(sch_model)
 
         self.solver = cp_model.CpSolver()
         self.solver.parameters.max_time_in_seconds = self.max_search_time
         self.solver.num_search_workers = self.num_search_workers
-        # self.solver.parameters.log_search_progress = self.solver_params.do_logging
+        self.solver.parameters.log_search_progress = self.logging
 
         solution_printer = cp_model.ObjectiveSolutionPrinter()
         self.status = self.solver.Solve(sch_model, solution_printer)

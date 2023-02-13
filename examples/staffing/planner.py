@@ -1,11 +1,10 @@
 from pathlib import Path
 import sys
 
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
 from pyworkforce.solver_params import SolverParams
 
+path_root = Path(__file__).parents[2]
+sys.path.append(str(path_root))
 
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.queuing import ErlangC
@@ -34,7 +33,11 @@ df = pd.read_csv(input_csv_path, parse_dates=[0], index_col=0)
 with open(input_meta_path, 'r', encoding='utf-8') as f:
     meta = json.load(f)
 
-solver_params = SolverParams(do_logging=True, max_iteration_search_time=5*60, num_search_workers=0)
+solver_params = {
+    'schedule': SolverParams(do_logging=True, max_iteration_search_time=float(5*60), num_search_workers=16),
+    'roster': SolverParams(do_logging=True, max_iteration_search_time=float(120*60), num_search_workers=16),
+    'roster_breaks': SolverParams(do_logging=True, max_iteration_search_time=float(60*60), num_search_workers=16),
+}
 
 mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
 mzp.solve()
@@ -42,7 +45,7 @@ mzp.solve()
 # mzp.schedule()
 # mzp.roster()
 # mzp.roster_breaks()
-mzp.roster_postprocess()
-mzp.combine_results()
-mzp.recalculate_stats()
+# mzp.roster_postprocess()
+# mzp.combine_results()
+# mzp.recalculate_stats()
 

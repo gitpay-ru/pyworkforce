@@ -343,6 +343,9 @@ class MultiZonePlanner():
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
+                                max_search_time=self.solver_params['schedule'].max_iteration_search_time,
+                                num_search_workers=self.solver_params['schedule'].num_search_workers,
+                                logging = self.solver_params['schedule'].do_logging
                                 )
 
             solution = scheduler.solve()
@@ -434,12 +437,12 @@ class MultiZonePlanner():
                                     non_sequential_shifts=shifts_info["non_sequential_shifts"],
                                     banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
-                                    max_search_time=self.solver_params.max_iteration_search_time,
-                                    num_search_workers=self.solver_params.num_search_workers,
                                     strict_mode=False,
                                     shift_constraints=work_constraints,
                                     rest_constraints=rest_constraints,
-                                    logging = self.solver_params.do_logging
+                                    max_search_time=self.solver_params['roster'].max_iteration_search_time,
+                                    num_search_workers=self.solver_params['roster'].num_search_workers,
+                                    logging = self.solver_params['roster'].do_logging
                                     )
 
             solution = solver.solve()
@@ -499,7 +502,7 @@ class MultiZonePlanner():
                 break_min_delay=min_delay,
                 break_max_delay=max_delay,
                 make_adjustments=AdjustmentMode.ByExpectedAverage,
-                solver_params=self.solver_params
+                solver_params=self.solver_params['roster_breaks']
             )
 
             solution = model.solve()
