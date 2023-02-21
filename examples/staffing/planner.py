@@ -23,8 +23,9 @@ import pytz
 eastern = pytz.timezone('US/Eastern')
 
 
-input_csv_path = '../data_file.csv'
-input_meta_path = '../meta_file.json'
+input_csv_path = '../_data_file.csv'
+input_meta_path = '../_meta_file.json'
+solver_profile_path = '../_solver_profile_file.json'
 output_dir = '..'
 
 Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -33,9 +34,10 @@ df = pd.read_csv(input_csv_path, parse_dates=[0], index_col=0)
 with open(input_meta_path, 'r', encoding='utf-8') as f:
     meta = json.load(f)
 
-solver_params = SolverParams(do_logging=False, max_iteration_search_time=5*60)
+with open(solver_profile_path, 'r', encoding='utf-8') as f:
+    profile = json.load(f)
 
-mzp = MultiZonePlanner(df, meta, output_dir, solver_params)
+mzp = MultiZonePlanner(df, meta, output_dir, profile)
 # mzp.solve()
 
 # mzp.schedule()

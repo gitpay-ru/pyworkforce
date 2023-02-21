@@ -1,0 +1,5 @@
+{
+  "scheduling": { "logging": false, "max_iteration_search_time": 300 },
+  "rostering": { "logging": true, "max_iteration_search_time": 3600 },
+  "breaks": { "logging": false, "max_iteration_search_time": 300 }
+}

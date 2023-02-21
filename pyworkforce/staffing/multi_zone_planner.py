@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling, AdjustmentMode
-from pyworkforce.solver_params import SolverParams
+from pyworkforce.solver_profile import SolverProfile
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
 from pyworkforce.utils.breaks_spec import build_break_spec, build_intervals_map
 from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_start_from_shift_short_name_mo, \
@@ -38,8 +38,9 @@ class MultiZonePlanner():
     def __init__(self,
                  df: pd.DataFrame,
                  meta: any,
+                 solver_profile: any,
                  output_dir: str,
-                 solver_params: SolverParams = SolverParams.default()):
+             ):
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         self.output_dir = output_dir
@@ -48,9 +49,6 @@ class MultiZonePlanner():
         self.__df_stats = None
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
-
-        # todo: replace this magic number with configured property or even better remove it
-        self.rostering_ratio = 1.0  # For rostering
 
         # shift_with_name:
         #   (id, shift_name, utc, employees_count, , employee_ratio)
@@ -63,7 +61,10 @@ class MultiZonePlanner():
 
         self.status = Statuses.NOT_STARTED
 
-        self.solver_params = solver_params
+        if solver_profile != None:
+            self.solver_profile = SolverProfile.from_json(solver_profile)
+        else:
+            self.solver_profile = SolverProfile.default()
 
     def build_shifts(self):
         edf = pd.DataFrame(self.meta['employees'])
@@ -374,8 +375,6 @@ class MultiZonePlanner():
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
             # print(list(tt['id']))
 
-            # resources = [f'emp_{i}' for i in range(0, int(self.rostering_ratio * shifts_info["num_resources"]))]
-
             resources = list(edf_filtered['id'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
@@ -464,7 +463,7 @@ class MultiZonePlanner():
                 break_min_delay=min_delay,
                 break_max_delay=max_delay,
                 make_adjustments=AdjustmentMode.ByExpectedAverage,
-                solver_params=self.solver_params
+                solver_params=self.solver_profile.breaks_params
             )
 
             solution = model.solve()
