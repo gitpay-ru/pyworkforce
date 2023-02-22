@@ -344,9 +344,9 @@ class MultiZonePlanner():
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
-                                max_search_time=self.solver_params['schedule'].max_iteration_search_time,
-                                num_search_workers=self.solver_params['schedule'].num_search_workers,
-                                logging = self.solver_params['schedule'].do_logging
+                                max_search_time=self.solver_profile.scheduler_params.max_iteration_search_time,
+                                num_search_workers=self.solver_profile.scheduler_params.num_search_workers,
+                                logging = self.solver_profile.scheduler_params.do_logging
                                 )
 
             solution = scheduler.solve()
@@ -439,9 +439,9 @@ class MultiZonePlanner():
                                     strict_mode=False,
                                     shift_constraints=work_constraints,
                                     rest_constraints=rest_constraints,
-                                    max_search_time=self.solver_params['roster'].max_iteration_search_time,
-                                    num_search_workers=self.solver_params['roster'].num_search_workers,
-                                    logging = self.solver_params['roster'].do_logging
+                                    max_search_time=self.solver_profile.roster_params.max_iteration_search_time,
+                                    num_search_workers=self.solver_profile.roster_params.num_search_workers,
+                                    logging = self.solver_profile.roster_params.do_logging
                                     )
 
             solution = solver.solve()
