@@ -374,6 +374,7 @@ class MultiZonePlanner():
 
     def roster(self):
         print("Start rostering")
+        # exit()
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
@@ -383,7 +384,7 @@ class MultiZonePlanner():
 
             shift_names = shifts_info["shifts"]
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
-            print(shift_names)
+            # print(shift_names)
 
             # todo: fix later
             if shifts_hours[0] == 12:
@@ -399,9 +400,12 @@ class MultiZonePlanner():
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
-            # print(list(tt['id']))
+            print(edf_filtered)
+            
 
             resources = list(edf_filtered['id'])
+            resources_min_w_hours = list(edf_filtered['minWorkingHours'])
+            resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             shift_data:ShiftSchema = self.shift_data[shift_name]
@@ -425,6 +429,8 @@ class MultiZonePlanner():
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
+                                    resources_min_w_hours = resources_min_w_hours,
+                                    resources_max_w_hours = resources_max_w_hours,
                                     shifts=shifts_info["shifts"],
                                     shifts_hours=shifts_hours,
                                     min_working_hours=0,

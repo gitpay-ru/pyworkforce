@@ -147,6 +147,8 @@ class MinHoursRoster:
 
     def __init__(self, num_days: int,
                  resources: list,
+                 resources_min_w_hours: list,
+                 resources_max_w_hours: list,
                  shifts: list,
                  shifts_hours: list,
                  min_working_hours: int,
@@ -166,6 +168,8 @@ class MinHoursRoster:
 
         self.num_days = num_days
         self.resources = resources
+        self.resources_min_w_hours = resources_min_w_hours
+        self.resources_max_w_hours = resources_max_w_hours
         self.num_resource = len(self.resources)
         self.shifts = shifts
         self.num_shifts = len(shifts)
@@ -290,6 +294,18 @@ class MinHoursRoster:
                 shift_idx = self.shifts.index(ban['shift'])
                 day_idx = int(ban['day'])
                 sch_model.Add(shifted_resource[resource_idx][day_idx][shift_idx] == 0)
+
+        # Min w h
+        for n in range(self.num_resource):
+            sch_model.Add(
+                sum(shifted_resource[n][d][s] * self.shifts_hours[s]
+                    for d in range(self.num_days) for s in range(self.num_shifts)) >= self.resources_min_w_hours[n])
+        
+        # Max w h
+        for n in range(self.num_resource):
+            sch_model.Add(
+                sum(shifted_resource[n][d][s] * self.shifts_hours[s]
+                    for d in range(self.num_days) for s in range(self.num_shifts)) <= self.resources_max_w_hours[n])
 
         # Minimum working hours per resource in the horizon
         # AD: this is replaced by max_shifts_count
