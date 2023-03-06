@@ -370,7 +370,7 @@ class MultiZonePlanner():
                 df.copy()
             )
 
-        return "Done"
+        return "Done schedule"
 
     def roster(self):
         print("Start rostering")
@@ -449,14 +449,13 @@ class MultiZonePlanner():
             # if solution not feasible -> stop it and return result
             self.status = Statuses(solution['status'])
             if not self.status.is_ok():
-                print(f'Status = {solution["status"]}')
-                return
+                raise Exception(f'Rostering for {shift_name} failed with status {self.status}')
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'w') as f:
                 f.write(json.dumps(solution, indent = 2))
 
         print("Done rostering")
-        return "Done"
+        return
 
 
     def roster_breaks(self):
@@ -505,6 +504,10 @@ class MultiZonePlanner():
             )
 
             solution = model.solve()
+
+            self.status = Statuses(solution['status'])
+            if not self.status.is_ok():
+                raise Exception(f'Breakes for {shift_name} failed with status {self.status}')
 
             with codecs.open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'w', encoding='utf-8') as f:
                 json.dump(solution, f, indent=2, ensure_ascii=False)
