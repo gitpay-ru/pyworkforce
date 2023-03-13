@@ -1,0 +1,135 @@
+{
+  "campainUtc": 3,
+  "activities": [
+    {
+      "id": "eaf856e4-4c93-40bf-95c2-eb0ba72e159a",
+      "duration": "00:15",
+      "timeStart": "01:00",
+      "timeEndStart": "04:00",
+      "isPaid": false
+    },
+    {
+      "id": "57cfd71d-1e8f-42b5-8b0d-c75bfb711602",
+      "duration": "00:30",
+      "timeStart": "03:00",
+      "timeEndStart": "05:30",
+      "isPaid": false
+    },
+    {
+      "id": "0ec194a4-4ade-431b-b917-290514635561",
+      "duration": "00:15",
+      "timeStart": "05:30",
+      "timeEndStart": "08:00",
+      "isPaid": false
+    }
+  ],
+  "shifts": [
+    {
+      "id": "8b73ad1c-f897-4c0c-bb45-936ea7c8e71b",
+      "duration": "09:00",
+      "stepTime": "00:15",
+      "scheduleTimeStart": "06:00",
+      "scheduleTimeEndStart": "12:45",
+      "minIntervalBetweenActivities": "01:30",
+      "maxIntervalBetweenActivities": "03:30",
+      "activities": [
+        "eaf856e4-4c93-40bf-95c2-eb0ba72e159a",
+        "57cfd71d-1e8f-42b5-8b0d-c75bfb711602",
+        "0ec194a4-4ade-431b-b917-290514635561"
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "id": "922b1448-20d9-4e27-a8ca-5c7fd63a4c38",
+      "holidays": {
+        "minDaysInRow": 1,
+        "maxDaysInRow": 3,
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "shifts": [
+        {
+          "shiftId": "8b73ad1c-f897-4c0c-bb45-936ea7c8e71b",
+          "minDaysInRow": 1,
+          "maxDaysInRow": 5,
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ]
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "id": "0006aabe-0ba4-7a35-c0b0-bf6596f85159",
+      "utc": 3,
+      "minWorkingHours": 0,
+      "maxWorkingHours": 0,
+      "schemas": [
+        "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
+      ]
+    }
+  ]
+}
