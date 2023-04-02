@@ -208,6 +208,7 @@ class MultiZonePlanner():
             outfile.write(json.dumps(rostering, indent=2))
 
     def get_shift_by_schema(self, schema_id):
+        print(schema_id)
         schema = next(t for t in self.meta['schemas'] if t['id'] == schema_id)
         shift_id = schema['shifts'][0]['shiftId']
         return shift_id
