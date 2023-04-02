@@ -195,13 +195,13 @@ class MultiZonePlanner():
             'num_days': days,
             'num_resources': num_resources,
             'shifts': list(shifts_spec.keys()),
-            'min_working_hours': 176,  # Dec 2022 #todo:
-            'max_resting': 9,  # Dec 2022
-            'non_sequential_shifts': [],
+            # 'min_working_hours': 176,  # Dec 2022 #todo:
+            # 'max_resting': 9,  # Dec 2022
+            # 'non_sequential_shifts': [],
             'required_resources': df2['combined'].to_dict(),
-            'banned_shifts': [],
-            'resources_preferences': [],
-            'resources_prioritization': []
+            # 'banned_shifts': [],
+            # 'resources_preferences': [],
+            # 'resources_prioritization': []
         }
 
         with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_suffix}.json', 'w') as outfile:
@@ -375,7 +375,6 @@ class MultiZonePlanner():
 
     def roster(self):
         print("Start rostering")
-        # exit()
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
@@ -385,18 +384,6 @@ class MultiZonePlanner():
 
             shift_names = shifts_info["shifts"]
             shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
-            # print(shift_names)
-
-            # todo: fix later
-            if shifts_hours[0] == 12:
-                # 12h shifts -> 10.5 * 16 = 176
-                max_shifts_count = 16
-            elif shifts_hours[0] == 9:
-                # 9h shifts -> 8 * 22 = 176
-                max_shifts_count = 22
-            else:
-                max_shifts_count = 0
-
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
@@ -434,16 +421,7 @@ class MultiZonePlanner():
                                     resources_max_w_hours = resources_max_w_hours,
                                     shifts=shifts_info["shifts"],
                                     shifts_hours=shifts_hours,
-                                    min_working_hours=0,
-                                    # min_working_hours=shifts_info["min_working_hours"],
-                                    max_shifts_count = max_shifts_count,
-                                    # max_resting=shifts_info["max_resting"],
-                                    # we don't have constraints on max resting time
-                                    max_resting=0,
-                                    non_sequential_shifts=shifts_info["non_sequential_shifts"],
-                                    banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
-                                    strict_mode=False,
                                     shift_constraints=work_constraints,
                                     rest_constraints=rest_constraints,
                                     max_search_time=self.solver_profile.roster_params.max_iteration_search_time,

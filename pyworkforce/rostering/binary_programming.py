@@ -151,20 +151,12 @@ class MinHoursRoster:
                  resources_max_w_hours: list,
                  shifts: list,
                  shifts_hours: list,
-                 min_working_hours: int,
-                 banned_shifts: list,
-                 max_resting: int,
                  required_resources: list,
-                 non_sequential_shifts: list = None,
-                 resources_preferences: list = None,
-                 resources_prioritization: list = None,
                  max_search_time: float = 540,
                  num_search_workers=2,
-                 strict_mode = True,
                  shift_constraints = [],
                  rest_constraints = [],
-                 logging = False,
-                 max_shifts_count: int = 0):
+                 logging = False):
 
         self.num_days = num_days
         self.resources = resources
@@ -174,21 +166,9 @@ class MinHoursRoster:
         self.shifts = shifts
         self.num_shifts = len(shifts)
         self.shifts_hours = shifts_hours
-        self.min_working_hours = min_working_hours
-        self.max_shifts_count = max_shifts_count
-        self.banned_shifts = banned_shifts
-        self.max_resting = max_resting
         self.required_resources = required_resources
-        self.non_sequential_shifts = non_sequential_shifts
-        self.resources_preferences = resources_preferences
-        self.resources_prioritization = resources_prioritization
         self.max_search_time = max_search_time
         self.num_search_workers = num_search_workers
-        self.non_sequential_shifts_indices = None
-        self.resources_shifts_preferences = None
-        self.resources_shifts_weight = None
-
-        self.strict_mode = strict_mode
         self.__deficit_weight = 1
         self.shift_constraints = shift_constraints
         self.rest_constraints = rest_constraints
@@ -228,73 +208,20 @@ class MinHoursRoster:
         objective_bool_coeffs = []
 
         # The number of shifted resource must be >= that required resource, for each day and shift
-        # For strict mode - wants resource presence in the required quantity
-        # For non-strict mode - minimize deficit (=delta) penalty for the missed resources
         for d in range(self.num_days):
             for s in range(self.num_shifts):
                 works = [shifted_resource[n][d][s] for n in range(self.num_resource)]
-                demand = self.required_resources[self.shifts[s]][d]
+                delta = sch_model.NewIntVar(0, self.num_resource, f'delta_d{d}s{s}')
+                sch_model.Add(sum(works) >= self.required_resources[self.shifts[s]][d] - delta)
+                sch_model.Add(sum(works) <= self.required_resources[self.shifts[s]][d] + delta)
 
-                if self.strict_mode:
-                    sch_model.Add(sum(works) >= demand)
-                else:
-                    # delta = sch_model.NewIntVar(0, max(self.num_resource, demand), '')
-                    # z1 = sch_model.NewIntVar(- demand, self.num_resource - demand, '')
-                    # z2 = sch_model.NewIntVar(demand - self.num_resource, demand, '')
-                    #
-                    # sch_model.Add(z1 == works - demand)
-                    # sch_model.Add(z2 == demand - works)
-                    # sch_model.AddMaxEquality(delta, [z1, z2])
-                    #
-                    # objective_int_vars.append(delta)
-                    # objective_int_coeffs.append(self.__deficit_weight)
-
-                    delta = sch_model.NewIntVar(0, self.num_resource, f'delta_d{d}s{s}')
-                    sch_model.Add(sum(works) >= self.required_resources[self.shifts[s]][d] - delta)
-                    sch_model.Add(sum(works) <= self.required_resources[self.shifts[s]][d] + delta)
-
-                    objective_int_vars.append(delta)
-                    objective_int_coeffs.append(self.__deficit_weight)
-
+                objective_int_vars.append(delta)
+                objective_int_coeffs.append(self.__deficit_weight)
 
         # A resource can at most, work 1 shift per day
-        # AD: this is to be covered by shift constraint and dedicated IntVar (0,1)
         for n in range(self.num_resource):
             for d in range(self.num_days):
                 sch_model.Add(sum(shifted_resource[n][d][s] for s in range(self.num_shifts)) <= 1)
-
-        # The number of days that an resource rest is not greater that the max allowed
-        # if self.max_resting > 0:
-        #     working_days = self.num_days - self.max_resting
-        #     for n in range(self.num_resource):
-        #         sch_model.Add(
-        #             sum(shifted_resource[n][d][s] for d in range(self.num_days) for s in range(self.num_shifts))
-        #             >= working_days)
-
-        # Create bool matrix of shifts dependencies
-        # self.non_sequential_shifts_indices = np.zeros(shape=(self.num_shifts, self.num_shifts), dtype='object')
-        # if self.non_sequential_shifts:
-        #     for dependence in self.non_sequential_shifts:
-        #         i_idx = self.shifts.index(dependence['origin'])
-        #         j_idx = self.shifts.index(dependence['destination'])
-        #         self.non_sequential_shifts_indices[i_idx][j_idx] = 1
-
-        # An resource can not have two consecutive shifts according to shifts dependencies
-        # for n in range(self.num_resource):
-        #     for d in range(self.num_days - 1):
-        #         for s in range(self.num_shifts):
-        #             sch_model.Add(
-        #                 sum(shifted_resource[n][d][s] * self.non_sequential_shifts_indices[s][j] +
-        #                     shifted_resource[n][d + 1][j]
-        #                     for j in range(self.num_shifts)) <= 1)
-
-        # resource can't be assigned to banned shifts
-        # if self.banned_shifts is not None:
-        #     for ban in self.banned_shifts:
-        #         resource_idx = self.resources.index(ban['resource'])
-        #         shift_idx = self.shifts.index(ban['shift'])
-        #         day_idx = int(ban['day'])
-        #         sch_model.Add(shifted_resource[resource_idx][day_idx][shift_idx] == 0)
 
         # Min w h
         for n in range(self.num_resource):
@@ -308,50 +235,6 @@ class MinHoursRoster:
             sch_model.Add(
                 sum(shifted_resource[n][d][s] * self.shifts_hours[s]
                     for d in range(self.num_days) for s in range(self.num_shifts)) <= self.resources_max_w_hours[n])
-
-        # max_days = 5
-        # for n in range(self.num_resource):
-        #     for d in range(self.num_days - max_days):
-        #         for s in range(self.num_shifts):
-        #             sch_model.Add(
-        #                 sum(shifted_resource[n][d][s] +
-        #                     shifted_resource[n][d + 1][j] + 
-        #                     shifted_resource[n][d + 2][j] + 
-        #                     shifted_resource[n][d + 3][j] + 
-        #                     shifted_resource[n][d + 4][j]
-        #                     for j in range(self.num_shifts)) <= max_days)
-
-        # Minimum working hours per resource in the horizon
-        # AD: this is replaced by max_shifts_count
-        # if self.min_working_hours > 0:
-        #     for n in range(self.num_resource):
-        #         sch_model.Add(
-        #             sum(shifted_resource[n][d][s] * self.shifts_hours[s]
-        #                 for d in range(self.num_days) for s in range(self.num_shifts)) >= self.min_working_hours)
-
-        # max number of shifts, todo: fix it
-        # if self.max_shifts_count > 0:
-        #     for n in range(self.num_resource):
-        #         works = [shifted_resource[n][d][s] for d in range(self.num_days) for s in range(self.num_shifts)]
-        #         sch_model.Add(
-        #             sum(works) == self.max_shifts_count)
-
-        # resource shifts preferences
-
-        # self.resources_shifts_preferences = np.zeros(shape=(self.num_resource, self.num_shifts), dtype='object')
-
-        # if self.resources_preferences:
-        #     for preference in self.resources_preferences:
-        #         resource_idx = self.resources.index(preference['resource'])
-        #         shift_idx = self.shifts.index(preference['shift'])
-        #         self.resources_shifts_preferences[resource_idx][shift_idx] = 1
-
-        # resource relative weight for shift preferences
-        # self.resources_shifts_weight = np.ones(shape=self.num_resource, dtype='object')
-        # if self.resources_prioritization:
-        #     for prioritization in self.resources_prioritization:
-        #         resource_idx = self.resources.index(prioritization['resource'])
-        #         self.resources_shifts_weight[resource_idx] = prioritization['weight']
 
         # Resource shift constraints -- for all employees are same (per day)
         # 1. First we create a new matrix which represents resource working per day
@@ -375,7 +258,6 @@ class MinHoursRoster:
             (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = ct
             for n in range(self.num_resource):
                 works = [daily_resource[n,d] for d in range(self.num_days)]
-                # works = [shifted_resource[n][d][s] for d in range(self.num_days) for s in range(self.num_shifts)]
                 variables, coeffs = add_soft_sequence_constraint(
                     sch_model, works,
                     hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
@@ -389,7 +271,6 @@ class MinHoursRoster:
             (hard_min, soft_min, min_cost, soft_max, hard_max, max_cost) = rct
             for n in range(self.num_resource):
                 not_works = [daily_resource[n, d].Not() for d in range(self.num_days)]
-                # not_works = [shifted_resource[n][d][s].Not() for d in range(self.num_days) for s in range(self.num_shifts)]
                 variables, coeffs = add_soft_sequence_constraint(
                     sch_model, not_works,
                     hard_min, soft_min, min_cost, soft_max, hard_max, max_cost,
@@ -399,16 +280,7 @@ class MinHoursRoster:
                 objective_bool_coeffs.extend(coeffs)
 
         # Objective function: Minimize the total number of shifted hours rewarded by resource preferences
-
         sch_model.Minimize(
-            # sum(objective_int_vars[i] * 1 for i in range(len(objective_int_vars)))
-            # sum(shifted_resource[n][d][s] * (self.shifts_hours[s]
-            #                                  - self.resources_shifts_weight[n] *
-            #                                  self.resources_shifts_preferences[n][s])
-            #     for n in range(self.num_resource)
-            #     for d in range(self.num_days)
-            #     for s in range(self.num_shifts))
-            # +
             sum(objective_int_vars[i] * objective_int_coeffs[i] for i in range(len(objective_int_vars)))
             +
             sum(objective_bool_vars[i] * objective_bool_coeffs[i] for i in range(len(objective_bool_vars)))
@@ -424,12 +296,6 @@ class MinHoursRoster:
         self._status = self.solver.Solve(sch_model, solution_printer)
 
         # Output
-
-        # print('Penalties:')
-        # for i, var in enumerate(objective_int_vars):
-        #     if self.solver.Value(var) > 0:
-        #         print(f'  {var.Name()} violated by {self.solver.Value(var)}, linear penalty={objective_int_coeffs[i]}')
-
         if self._status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             resource_shifts = []
             resting_resource = []
