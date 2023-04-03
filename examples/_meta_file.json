@@ -1286,8 +1286,8 @@
     {
       "id": "0006aabe-0ba4-7a35-c0b0-bf6596f85159",
       "utc": 3,
-      "minWorkingHours": 150,
-      "maxWorkingHours": 189,
+      "minWorkingHours": 50,
+      "maxWorkingHours": 90,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
