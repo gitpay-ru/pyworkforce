@@ -1296,7 +1296,7 @@
       "id": "0029f088-c57a-d3b6-ec58-9f9ba4f7a057",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1305,7 +1305,7 @@
       "id": "003a8eb4-813b-e2f8-c5ad-692ff1866162",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1314,7 +1314,7 @@
       "id": "00b99e87-221c-9afb-0c0c-23c3fb403307",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1323,7 +1323,7 @@
       "id": "010c4611-3fd1-9c0c-dd74-4d4538e07518",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -1332,7 +1332,7 @@
       "id": "01c9d2c5-b3ff-5cbb-a349-ec39a570b5e3",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1341,7 +1341,7 @@
       "id": "02a4f951-55ad-3032-1d3a-88b53b85f2d6",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1350,7 +1350,7 @@
       "id": "02c28f84-c46d-eb0b-9930-10f76fef4c0d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1359,7 +1359,7 @@
       "id": "030869ec-c70e-9978-04fe-ed92f3a8fbdc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -1368,7 +1368,7 @@
       "id": "0314ae78-de42-f6db-7888-cb0aa9e0b80e",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1377,7 +1377,7 @@
       "id": "03b2ceb7-3723-f8b5-3cd5-33e4fba898ee",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1386,7 +1386,7 @@
       "id": "03e4405e-9d70-a335-d331-c3c9b97ae418",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1395,7 +1395,7 @@
       "id": "058d7325-57d3-b439-eb2f-fdd074bbf347",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1404,7 +1404,7 @@
       "id": "05da33ea-b200-f4c5-b5ba-3ed05beb2ec5",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1413,7 +1413,7 @@
       "id": "06997f04-a7db-9246-6a2b-aa6ebc8b872d",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1422,7 +1422,7 @@
       "id": "06b5f621-8cc4-7f55-b40a-9c165b39c10b",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1431,7 +1431,7 @@
       "id": "06d25652-fd4d-2f20-2bff-043f7ae5c504",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1440,7 +1440,7 @@
       "id": "07088553-c7d6-c044-0eaa-1567febda186",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1449,7 +1449,7 @@
       "id": "07c5807d-0d92-7dcd-0980-f86024e5208b",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1458,7 +1458,7 @@
       "id": "08f36fcf-88c0-a84c-19a6-ed437b9cbcc9",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1467,7 +1467,7 @@
       "id": "098f2ddd-79cd-296b-ad7b-7b41c2b68a3b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1476,7 +1476,7 @@
       "id": "0a09b1d6-3341-c622-851a-50e02d48e19c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1485,7 +1485,7 @@
       "id": "0aaf6172-3a35-2ba7-ea1b-e4502df85765",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1494,7 +1494,7 @@
       "id": "0b42ee75-98a0-141d-fa08-77206df38f9c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1503,7 +1503,7 @@
       "id": "0d81f8d2-278a-750f-06f9-fd48fe57cef0",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1512,7 +1512,7 @@
       "id": "0f004440-ba0c-8f1c-cc5c-355f3d77207f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1521,7 +1521,7 @@
       "id": "0f541ecc-c4dc-49cc-19da-7ca4594fad27",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1530,7 +1530,7 @@
       "id": "0f8a6c16-89a5-5493-6774-26059495e532",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1539,7 +1539,7 @@
       "id": "11110cf6-4018-6971-37ca-db77b6aee9f8",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1548,7 +1548,7 @@
       "id": "112a8e92-dced-cda4-237d-e18e9126b2d2",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "8a2e6f2a-77df-455e-aaa1-9bf482b89f8f"
       ]
@@ -1557,7 +1557,7 @@
       "id": "12b5fc79-04a4-ed8e-390a-03143b2cc10b",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1566,7 +1566,7 @@
       "id": "135be22c-f992-5e82-9549-d95e75bac07a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1575,7 +1575,7 @@
       "id": "1424b9b9-7976-fd6a-10e4-6c9f8aa72597",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1584,7 +1584,7 @@
       "id": "144c3b42-25a9-a225-90d2-e9b5392007a4",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1593,7 +1593,7 @@
       "id": "14aca739-0e63-1593-dae3-ff39e46e15ad",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1602,7 +1602,7 @@
       "id": "1683c30d-b912-8315-5060-d1b8a7cb807a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1611,7 +1611,7 @@
       "id": "172188c0-dacb-4870-75bd-c0c9afd757b2",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1620,7 +1620,7 @@
       "id": "17e0ce48-c87a-8885-fe8b-82c21cb17ecf",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1629,7 +1629,7 @@
       "id": "18b67afe-2782-9441-b084-5c36bfbc30d1",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1638,7 +1638,7 @@
       "id": "1aa7690e-43a5-471b-7344-591df7afb611",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1647,7 +1647,7 @@
       "id": "1ac395bb-4e47-9617-b0dd-8fe0d4ad4d82",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1656,7 +1656,7 @@
       "id": "1b421972-0cc0-3460-e2e6-5140f5bad4db",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -1665,7 +1665,7 @@
       "id": "1c9fcae7-1462-73d7-443f-5b7eac02d56d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1674,7 +1674,7 @@
       "id": "1d9e93e7-4dda-5258-e7fe-bd6b52502418",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1683,7 +1683,7 @@
       "id": "1e5e1435-c95e-420a-1cd3-4d3202769c18",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1692,7 +1692,7 @@
       "id": "20d135f0-f281-85b8-4a4c-f7aa51f29500",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1701,7 +1701,7 @@
       "id": "21f08cc6-cfc5-6fdb-eade-7c9d8bd78aa1",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1710,7 +1710,7 @@
       "id": "228bbc2f-87ca-eb21-bb7f-6949fddcb91d",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1719,7 +1719,7 @@
       "id": "2389ceb1-6e2c-c394-1618-a5f9055840d0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1728,7 +1728,7 @@
       "id": "2425ad56-cc45-acbd-2fc4-4f149d69a9b8",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1737,7 +1737,7 @@
       "id": "24510415-57a2-2145-b370-1b0184109cab",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1746,7 +1746,7 @@
       "id": "247c0a95-3f3a-082b-8344-3b3dfccedffb",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1755,7 +1755,7 @@
       "id": "252e98b1-8570-7e59-5a7c-40e615c0da8c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1764,7 +1764,7 @@
       "id": "2668a710-5966-cae6-e239-01495176b8f9",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1773,7 +1773,7 @@
       "id": "26c79831-bb09-706f-44a4-e975518b1997",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1782,7 +1782,7 @@
       "id": "26ed695e-9b7b-9f64-63ef-4bc1fd74fc87",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1791,7 +1791,7 @@
       "id": "26fcf9e1-2702-3b55-bc1d-ab3feacf45a8",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1800,7 +1800,7 @@
       "id": "2723ad49-bd0d-27b9-7b73-5e4822085e12",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -1809,7 +1809,7 @@
       "id": "27545182-21cf-bc8d-25c1-3a06a4cb8421",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1818,7 +1818,7 @@
       "id": "2823f479-7102-ce1a-1aec-05359cc16dd9",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1827,7 +1827,7 @@
       "id": "285f89b8-02bc-b265-1801-455c86d78f2a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1836,7 +1836,7 @@
       "id": "2c27a260-f16a-d309-8393-cc529f391f4a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1845,7 +1845,7 @@
       "id": "2ccec25c-9dd1-4baf-6eef-cf64304fa638",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1854,7 +1854,7 @@
       "id": "2cfa3753-d6a5-2471-1acb-5fce38eeca1a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1863,7 +1863,7 @@
       "id": "2cfd2232-2a83-2d77-3c42-18f4559fa174",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1872,7 +1872,7 @@
       "id": "2d5321f0-8137-7537-0f77-4070cad46fbe",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1881,7 +1881,7 @@
       "id": "2d6c3e40-2316-5b5a-9951-5b9bf87cb41d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1890,7 +1890,7 @@
       "id": "2f7eaf16-ecee-c07f-c19c-93090e90033a",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1899,7 +1899,7 @@
       "id": "2fefc978-e857-3441-bb22-120ecc62ac7d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1908,7 +1908,7 @@
       "id": "3328bdf9-a4b9-504b-9398-284244fe97c2",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1917,7 +1917,7 @@
       "id": "3467a9a9-6db4-f23d-5f45-b0f5eaeaff06",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1926,7 +1926,7 @@
       "id": "34d63021-8575-caa7-98d3-11dceab39cc9",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1935,7 +1935,7 @@
       "id": "34f81500-45a9-76a9-5a6a-16248623f28b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1944,7 +1944,7 @@
       "id": "361f984f-f004-0fbc-17be-3547788ad9f3",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -1953,7 +1953,7 @@
       "id": "36dac211-003e-cc5d-d496-ab254f06bba6",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -1962,7 +1962,7 @@
       "id": "3765802a-8076-28e3-ece9-dbd30ca00a21",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1971,7 +1971,7 @@
       "id": "37915daf-6e87-2d58-791b-5e5cb144fc4a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1980,7 +1980,7 @@
       "id": "3895c46a-b7fd-5281-08dc-9da3d3745f88",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1989,7 +1989,7 @@
       "id": "390e9825-18a5-0e28-0d8e-2b535462ec1f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -1998,7 +1998,7 @@
       "id": "3930fd50-d70d-5c2b-3ec0-9a08e2370851",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2007,7 +2007,7 @@
       "id": "3a98773b-bbf5-7f8f-1901-0e2d754e1cb0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2016,7 +2016,7 @@
       "id": "3cdacdba-0a3e-4bf9-31fb-e577ee4f94f7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2025,7 +2025,7 @@
       "id": "3dce18d1-9981-52ee-b1b5-fe47ab64cf1d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2034,7 +2034,7 @@
       "id": "3e9f7c16-bd1c-dea7-8f8e-2eea72dfdfbe",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2043,7 +2043,7 @@
       "id": "3fbb8f37-336f-ad94-af96-e09ac656809a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2052,7 +2052,7 @@
       "id": "3fe78a8a-cf5f-da99-de95-303940a2420c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2061,7 +2061,7 @@
       "id": "415585bd-389b-6965-9223-807d77a96791",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -2070,7 +2070,7 @@
       "id": "424f7ef1-be19-5c6e-fc2a-19439b152a81",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2079,7 +2079,7 @@
       "id": "429b5c14-c4ec-c85d-e798-1da4090eb68f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2088,7 +2088,7 @@
       "id": "4375b189-9f2a-38ba-3d4c-7d08793325ec",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2097,7 +2097,7 @@
       "id": "437d7d1d-9791-7cd6-27a3-4a6a0fb41136",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2106,7 +2106,7 @@
       "id": "44b4596c-7a97-9aa7-e4fc-820c07fd78fe",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2115,7 +2115,7 @@
       "id": "460d2456-c49e-58db-b01c-6723f6a3a560",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2124,7 +2124,7 @@
       "id": "46a4378f-835d-c804-0c80-57beb6a2da52",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2133,7 +2133,7 @@
       "id": "46c3b2e8-4687-fd51-1019-29492e53fced",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2142,7 +2142,7 @@
       "id": "47a65822-9eb2-368a-99f1-d032c8848542",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "8a2e6f2a-77df-455e-aaa1-9bf482b89f8f"
       ]
@@ -2151,7 +2151,7 @@
       "id": "47f5d6b9-ad18-d160-95cd-0d4fc758b168",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2160,7 +2160,7 @@
       "id": "481d462e-46c2-ab97-6294-271a175b8929",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2169,7 +2169,7 @@
       "id": "48af87b5-8703-6693-d6a3-caf03db7dc02",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2178,7 +2178,7 @@
       "id": "48d4167a-0f3b-c106-86a1-ad20a8008c73",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2187,7 +2187,7 @@
       "id": "493c465c-0ff3-13ad-b2a8-164d3cdee573",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2196,7 +2196,7 @@
       "id": "494ad0d2-4e15-c7da-81c7-ea265c7f4cb4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2205,7 +2205,7 @@
       "id": "49ad9d54-23f3-fcc6-9626-dcbfb7bddb48",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2214,7 +2214,7 @@
       "id": "4c40792e-5998-965f-3002-47b4b43a879b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2223,7 +2223,7 @@
       "id": "4ca987e0-2bbb-f558-114f-8c0633e2c7ac",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2232,7 +2232,7 @@
       "id": "4df14e7b-a7f3-122f-a391-492bdf8d59a7",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2241,7 +2241,7 @@
       "id": "4e246a38-1baf-2ce0-38b3-b0f82c7d6fb4",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2250,7 +2250,7 @@
       "id": "4f0bf7b7-b1ac-a9ad-1531-7a0b4efdca14",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2259,7 +2259,7 @@
       "id": "4f8a3184-0306-3fea-7518-13e0991d5bf6",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2268,7 +2268,7 @@
       "id": "50de294b-9d49-87a3-c89b-4a5cc4bdea62",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2277,7 +2277,7 @@
       "id": "50e1781e-60d7-2536-5a74-d585a2734062",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -2286,7 +2286,7 @@
       "id": "51516ca3-355d-dd16-6917-6f3c766ff881",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2295,7 +2295,7 @@
       "id": "523f4369-3bfa-6c60-7d2f-e43b43ba96fd",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2304,7 +2304,7 @@
       "id": "52fb7387-2f43-bca8-9971-14b07211f53b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2313,7 +2313,7 @@
       "id": "53a321a3-dd5f-ec15-174c-52abc7dca46a",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2322,7 +2322,7 @@
       "id": "53c04118-df11-2c13-a8c3-4b38343b9c10",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2331,7 +2331,7 @@
       "id": "5487315b-1286-f907-1659-07aa8fc96619",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2340,7 +2340,7 @@
       "id": "5499e632-2460-5f2e-b134-06af0af5b76d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2349,7 +2349,7 @@
       "id": "58b4095f-b533-5282-cc3f-de57c643da38",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2358,7 +2358,7 @@
       "id": "58c6ee5f-6908-cd66-1c40-7e3847bc2d6f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2367,7 +2367,7 @@
       "id": "59623901-3dbd-ab45-91ce-fef9be5a5f58",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2376,7 +2376,7 @@
       "id": "59b5a32e-f220-91b6-057d-844141c0bafd",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2385,7 +2385,7 @@
       "id": "5a45d7ba-e2d4-d070-61d3-e882475b049b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2394,7 +2394,7 @@
       "id": "5e056558-ced8-fa42-4fac-c20b1ba2369c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2403,7 +2403,7 @@
       "id": "5e4c4233-882f-7f4d-db6e-14d961f31b03",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2412,7 +2412,7 @@
       "id": "5e6bd7a6-970c-d432-5e58-7f02667f7f73",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2421,7 +2421,7 @@
       "id": "5f13c563-6de3-3b88-2a9e-d872a2985dff",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2430,7 +2430,7 @@
       "id": "5f41caa0-7641-b4b1-9aaf-61278a061920",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2439,7 +2439,7 @@
       "id": "5fd513e8-9cc6-56d9-c7ab-2bca4168a4f2",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2448,7 +2448,7 @@
       "id": "5fedcaff-c4ab-a6e5-7a35-63b1c7d60c1d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2457,7 +2457,7 @@
       "id": "606c90a0-6173-d696-82fe-b83037a68fec",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2466,7 +2466,7 @@
       "id": "6070e54f-b696-14dc-e3d0-6d1ae4682d37",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2475,7 +2475,7 @@
       "id": "60bb8062-ea8e-0c7f-f17b-b2e484cd223a",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2484,7 +2484,7 @@
       "id": "61180d33-250a-ddaa-3b07-e23e110c04f4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2493,7 +2493,7 @@
       "id": "614f4f0d-8a78-0ed1-8742-f0193cd31af4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2502,7 +2502,7 @@
       "id": "61995373-0129-0499-0791-9279f29bd9d7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2511,7 +2511,7 @@
       "id": "62bf90d9-e45d-aa96-7b5d-68fcc482a0a7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2520,7 +2520,7 @@
       "id": "6346db6a-68f6-3231-8af0-c2a474b9eb34",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -2529,7 +2529,7 @@
       "id": "6432821a-1d5b-2b35-b3c4-7142fbf29a02",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2538,7 +2538,7 @@
       "id": "6483a599-028c-6f20-aa6f-40c3b507420d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2547,7 +2547,7 @@
       "id": "65b22292-b232-047a-c742-de249504db02",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2556,7 +2556,7 @@
       "id": "663772ea-0883-60f9-5bac-3dc7ffb841be",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2565,7 +2565,7 @@
       "id": "665ff684-47af-5123-6240-372e4ce5a774",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2574,7 +2574,7 @@
       "id": "67850e18-42b9-a870-8881-7efe86d05e1d",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2583,7 +2583,7 @@
       "id": "67ed992a-321b-ccb1-66b8-c25ad190f33c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2592,7 +2592,7 @@
       "id": "680ee49e-2883-4678-a71b-b58c41f3ec62",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2601,7 +2601,7 @@
       "id": "68729376-17af-85db-5a39-a5243e858d1f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -2610,7 +2610,7 @@
       "id": "69a5b599-5110-b36a-9a34-7898d97a610e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2619,7 +2619,7 @@
       "id": "69e6b62c-2088-742a-dd07-e1ea717d68e8",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2628,7 +2628,7 @@
       "id": "6c8dba7d-0df1-c4a7-9dd0-7646be9a26c8",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2637,7 +2637,7 @@
       "id": "6c97cd07-663b-0992-53bc-569fe8d342bb",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2646,7 +2646,7 @@
       "id": "6cd9313e-d34e-f58b-ad3f-dd504355e72c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2655,7 +2655,7 @@
       "id": "706449df-952e-e5a6-8b92-454ec61a18c4",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2664,7 +2664,7 @@
       "id": "7071a9c8-7037-26d7-8b0a-3089ce26457b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2673,7 +2673,7 @@
       "id": "71f6278d-140a-f599-e06a-d9bf1ba03cb0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2682,7 +2682,7 @@
       "id": "7248f120-44a0-790c-d993-3886d17234eb",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2691,7 +2691,7 @@
       "id": "73bff383-58ee-f9fa-431a-f325f5eaf8e0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2700,7 +2700,7 @@
       "id": "74707d06-4c4e-eda1-2c3b-f2f1807a7198",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2709,7 +2709,7 @@
       "id": "754b8fde-508b-e747-48bb-02907c2409d9",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2718,7 +2718,7 @@
       "id": "761a0c71-4184-cab2-456d-17bdfbb8d550",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2727,7 +2727,7 @@
       "id": "7658d0dd-31ff-8ec1-2a39-33f064e000a1",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2736,7 +2736,7 @@
       "id": "776af967-1dbf-a3ac-15c6-e0711001bdea",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2745,7 +2745,7 @@
       "id": "77bb909a-2d2e-a5c4-2602-592012e43474",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2754,7 +2754,7 @@
       "id": "77bd061c-0e64-5ca4-2b08-7a6d0d06c019",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2763,7 +2763,7 @@
       "id": "784ff396-84c7-a23c-fa09-e77719256e20",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2772,7 +2772,7 @@
       "id": "78b8d662-0afc-d434-a4b7-fb41b22e595b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2781,7 +2781,7 @@
       "id": "7a4d21f4-0402-d068-ec53-69232b395901",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2790,7 +2790,7 @@
       "id": "7a54f013-04f2-b104-69ad-493314ad2b5e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2799,7 +2799,7 @@
       "id": "7a7b4862-f2e6-9483-a113-f471c2f98acf",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2808,7 +2808,7 @@
       "id": "7aaba5f3-511f-5612-8e71-30c2973e0503",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2817,7 +2817,7 @@
       "id": "7ad45ac2-157d-7280-1438-b07dffcbbb20",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2826,7 +2826,7 @@
       "id": "7b4848a7-38dc-c0cd-ec27-a76906693b3e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2835,7 +2835,7 @@
       "id": "7ecd070e-606a-fbf0-7a07-c32e7267051f",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2844,7 +2844,7 @@
       "id": "7fd80429-5ef7-f6a2-822b-f4c61f9dc4a8",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2853,7 +2853,7 @@
       "id": "7ffe8174-0cad-e70f-9263-a9975441c473",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2862,7 +2862,7 @@
       "id": "809c21ab-eab1-b61f-a578-f1bc473aa3eb",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2871,7 +2871,7 @@
       "id": "813b6a28-cc4a-c72d-2442-66161e3e2eb4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2880,7 +2880,7 @@
       "id": "821e779c-fa8e-08b2-6602-8c1955cf8ab7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2889,7 +2889,7 @@
       "id": "8288eb46-2e80-418e-70a3-93d245a984ce",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2898,7 +2898,7 @@
       "id": "8392cfa1-ba85-1b4b-f973-01d6416725ac",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2907,7 +2907,7 @@
       "id": "8430b32b-5bac-908e-765d-f8813d4405c5",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2916,7 +2916,7 @@
       "id": "84b30ffe-622e-26fd-c1e9-2969e4e874cc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2925,7 +2925,7 @@
       "id": "86109d40-0f0e-d29e-840b-47ed72777c84",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2934,7 +2934,7 @@
       "id": "86cfe916-93a0-0fce-cb6b-093bec3d293f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2943,7 +2943,7 @@
       "id": "86d5cf1c-d2af-ee60-5557-c297315be15b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -2952,7 +2952,7 @@
       "id": "871ee402-e7a9-a1cc-25c0-2e0e0b1bb08c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -2961,7 +2961,7 @@
       "id": "87245f4b-1d0d-12cf-1aaa-77bc289037d4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2970,7 +2970,7 @@
       "id": "872de53a-900f-3250-ae56-49ea19e5c381",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2979,7 +2979,7 @@
       "id": "88c26011-1b63-62d7-2c61-018f03aba757",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -2988,7 +2988,7 @@
       "id": "8a16ccb2-68bb-be68-0385-ddccfbe61737",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -2997,7 +2997,7 @@
       "id": "8ab9bb97-ce35-0803-38be-74dc6375e0ed",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3006,7 +3006,7 @@
       "id": "8b78af9b-5b1a-c274-5410-ef836e697a1c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "8a2e6f2a-77df-455e-aaa1-9bf482b89f8f"
       ]
@@ -3015,7 +3015,7 @@
       "id": "8ba9f740-1e1f-60f3-024a-d195d4a24d8e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3024,7 +3024,7 @@
       "id": "8ce6790c-c6a9-4e65-f17f-908f462fae85",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3033,7 +3033,7 @@
       "id": "8cf290e6-f48e-f39e-24b2-d88e1dc7b5df",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3042,7 +3042,7 @@
       "id": "8d566a33-8d77-58ba-07b0-fade172590cc",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3051,7 +3051,7 @@
       "id": "8d98ea39-2614-1565-4200-fc3faa058283",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -3060,7 +3060,7 @@
       "id": "8e695f42-b94d-9a6c-e647-a0232d1b7c59",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3069,7 +3069,7 @@
       "id": "8e8a773d-bf95-24b9-c37c-127d50ec4d26",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3078,7 +3078,7 @@
       "id": "8e9cd83f-2adc-f2a0-64c2-b35d3564e075",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3087,7 +3087,7 @@
       "id": "8edd7215-8ccd-2a87-9f79-cb2538568fdc",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3096,7 +3096,7 @@
       "id": "8f7b2d91-0057-7f77-aa8f-bb4f51c0366e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3105,7 +3105,7 @@
       "id": "8fc4bc38-0e61-85d2-f37a-64f0c8f34a93",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "72a733e7-2121-4919-bfa9-4afd28db7ab6"
       ]
@@ -3114,7 +3114,7 @@
       "id": "9005e22c-1f6a-9126-9cfa-f51aedb6e83b",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3123,7 +3123,7 @@
       "id": "90db9da4-fc54-14ab-55a9-fe495d555c06",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3132,7 +3132,7 @@
       "id": "911b10b7-3d26-005b-82c8-d2b5256f2403",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3141,7 +3141,7 @@
       "id": "920dcd7a-5a8e-7d5c-afb7-ae27f3783966",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3150,7 +3150,7 @@
       "id": "9246ebba-512d-e14e-7628-3df2772bba5c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3159,7 +3159,7 @@
       "id": "9261dd1b-310a-1949-370f-3ec6e8aa78ea",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3168,7 +3168,7 @@
       "id": "945e01e4-dfc8-3449-d9ed-c77e001e2c0c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3177,7 +3177,7 @@
       "id": "946af355-5203-afdb-63e5-71b873e419f6",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3186,7 +3186,7 @@
       "id": "94f0b006-108b-4e0b-7024-060797631346",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3195,7 +3195,7 @@
       "id": "969a086e-0717-a9b4-96dd-0e9a50ec8010",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3204,7 +3204,7 @@
       "id": "97cc7b6c-7b91-cf6b-4718-df7341c89d20",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3213,7 +3213,7 @@
       "id": "97d0e032-9055-e6dd-aaaf-2335a2509231",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3222,7 +3222,7 @@
       "id": "97d874c5-aaa9-be3f-a256-de891418b0d7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3231,7 +3231,7 @@
       "id": "9a093d72-9036-a5bd-4736-e03c5d634501",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3240,7 +3240,7 @@
       "id": "9a9c759a-3bc0-7fef-5eba-f9d2eea33dc1",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3249,7 +3249,7 @@
       "id": "9afa24d3-da74-5fd5-606e-7d710a0763eb",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3258,7 +3258,7 @@
       "id": "9bf3dbf0-c2ef-d551-ca83-2b9b6800749c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3267,7 +3267,7 @@
       "id": "9d0fd14c-56f1-5732-cb89-4bec23bd6a13",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3276,7 +3276,7 @@
       "id": "9d28de8f-f9bb-6a3f-a41f-ddfdc28f3bc1",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3285,7 +3285,7 @@
       "id": "9d5a76df-2515-4ff3-9e70-52fa9c3234a6",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3294,7 +3294,7 @@
       "id": "9d6251bb-a689-4c49-8e50-515528c546df",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3303,7 +3303,7 @@
       "id": "a0046ad4-c1ba-fc4e-f04e-41e755f28368",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3312,7 +3312,7 @@
       "id": "a0519cba-56fb-fc7a-dac9-c0a3d313b27d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3321,7 +3321,7 @@
       "id": "a0f1a068-6c4e-cffb-f795-ea2d2a42817e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3330,7 +3330,7 @@
       "id": "a1255c9d-bdcd-6351-43d1-72dee1b8c0fe",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3339,7 +3339,7 @@
       "id": "a1519de5-b5d4-4b31-a01d-e013b9b51a80",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "8a2e6f2a-77df-455e-aaa1-9bf482b89f8f"
       ]
@@ -3348,7 +3348,7 @@
       "id": "a1f69f60-00f7-a8b5-883b-7134fcf8d558",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -3357,7 +3357,7 @@
       "id": "a284df11-55ec-3e67-2860-80500df36a9a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3366,7 +3366,7 @@
       "id": "a2ce8f17-06e5-2936-dfad-516c23904e3e",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3375,7 +3375,7 @@
       "id": "a34bacf8-39b9-2377-0b2c-360eefa26748",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3384,7 +3384,7 @@
       "id": "a4c42bfd-5f51-30dd-f96e-34a036c75e0a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3393,7 +3393,7 @@
       "id": "a54505e6-a589-aa3b-3867-4ef107da13c1",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3402,7 +3402,7 @@
       "id": "a584750e-807e-7315-9a3e-c38cf03ec65f",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3411,7 +3411,7 @@
       "id": "a588a619-9fef-f5ba-4840-2883d9b72700",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3420,7 +3420,7 @@
       "id": "a5d4c8d6-8d67-86a7-7956-f96e2cb5f73c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3429,7 +3429,7 @@
       "id": "a64a1476-544d-b9bd-76a6-d1f024a3a8c6",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -3438,7 +3438,7 @@
       "id": "a70a3a17-4938-bdf2-0e7b-87062c015792",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3447,7 +3447,7 @@
       "id": "a73d2d60-ed47-2454-a036-0027aa039bdb",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3456,7 +3456,7 @@
       "id": "a7ef1270-d275-a787-9bf0-1af8385dbd91",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3465,7 +3465,7 @@
       "id": "a8acc287-34d4-fe90-ea24-353d901ae678",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3474,7 +3474,7 @@
       "id": "a8bfe36f-a885-d468-1437-8912f268a8a1",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3483,7 +3483,7 @@
       "id": "a8dbb2be-c6ec-3e82-cef9-06b52cebbe7d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3492,7 +3492,7 @@
       "id": "a91edecd-508c-d9e5-b304-9e1918f0c6eb",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3501,7 +3501,7 @@
       "id": "a97484e0-7cad-027a-9fb8-28764c1dcf6a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3510,7 +3510,7 @@
       "id": "a98a009d-68ca-d18a-e7b1-d3576bb01924",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3519,7 +3519,7 @@
       "id": "aa36c88c-2765-0af3-b986-8b723ae15dfc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3528,7 +3528,7 @@
       "id": "abec16f4-83ab-b4f1-810c-a029aadf8446",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3537,7 +3537,7 @@
       "id": "ac53fab4-7b54-7a0d-47b7-7e424cf119ba",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3546,7 +3546,7 @@
       "id": "acc564da-afaa-f26d-45b5-d37c5e68384e",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3555,7 +3555,7 @@
       "id": "ace668d8-45c2-84b9-352d-e506cb046628",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3564,7 +3564,7 @@
       "id": "adc961e9-beb6-7689-b0ee-5d49ee0b711d",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3573,7 +3573,7 @@
       "id": "aea93b39-fbf6-af64-f578-5c9514c1ef39",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3582,7 +3582,7 @@
       "id": "aec3e4a8-bf7a-9a78-686f-7973d4c848b1",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3591,7 +3591,7 @@
       "id": "af3632b9-be2c-1cf9-b507-427e6fd9e9fe",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3600,7 +3600,7 @@
       "id": "af3b0930-d888-e15a-07a3-6b9987b70858",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3609,7 +3609,7 @@
       "id": "afda3322-45e2-af43-1fb7-b672a68b659d",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3618,7 +3618,7 @@
       "id": "afdec700-5cc9-f143-02cd-0474fd0f3c96",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3627,7 +3627,7 @@
       "id": "b0ba5c44-aaf6-5f6c-a34c-f116e6d82ebf",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -3636,7 +3636,7 @@
       "id": "b0e9b8f9-26e4-2416-6471-bab7d40a686b",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3645,7 +3645,7 @@
       "id": "b16257c9-6b98-44ac-e63d-499838c2b71a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3654,7 +3654,7 @@
       "id": "b1b207a0-9a44-e6a5-528f-b4c90ae85143",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3663,7 +3663,7 @@
       "id": "b20ab15a-36e8-643d-5204-1a1cbce997e5",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3672,7 +3672,7 @@
       "id": "b3f25f67-fa76-62de-c75e-006a97770e6c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3681,7 +3681,7 @@
       "id": "b41fa11b-adee-2d79-d4fb-e0a53f8d7a15",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3690,7 +3690,7 @@
       "id": "b458b8fe-bcef-7e8b-854e-bdd7eda80b96",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "20725504-1b94-4fe4-a8e8-f22c7f20a010"
       ]
@@ -3699,7 +3699,7 @@
       "id": "b56ecb91-e505-cc30-ffba-96419af1cf19",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3708,7 +3708,7 @@
       "id": "b5baa9c2-3ac3-e015-ad28-7b17a3d4afa3",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3717,7 +3717,7 @@
       "id": "b5c70374-930b-7333-790c-fef5c80f3bd8",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3726,7 +3726,7 @@
       "id": "b64bd4b2-d025-a763-5eab-f84b086f65fe",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3735,7 +3735,7 @@
       "id": "b6c8cf4c-587f-2ead-0c08-955ee6e2502b",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3744,7 +3744,7 @@
       "id": "b7f91ee1-b94f-1ed3-dbb2-959607f4b784",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "20725504-1b94-4fe4-a8e8-f22c7f20a010"
       ]
@@ -3753,7 +3753,7 @@
       "id": "b820fc86-8475-ef54-4228-c3c8fa6a685e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3762,7 +3762,7 @@
       "id": "b887d8d5-e65a-c4de-c393-4028fe23ad72",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3771,7 +3771,7 @@
       "id": "b9e4093f-9702-51d5-bcf8-88b76944a4bc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3780,7 +3780,7 @@
       "id": "ba01738f-996a-524b-d59e-9a05c929ac06",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3789,7 +3789,7 @@
       "id": "ba0a4d6e-cea3-e9e1-26dd-3b6d77291c97",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3798,7 +3798,7 @@
       "id": "ba1b3eba-322e-ab5d-895a-a3023fe78b9c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3807,7 +3807,7 @@
       "id": "ba32ac47-8109-9e7f-fe65-f42e3cdf3d34",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3816,7 +3816,7 @@
       "id": "bacdf41f-d247-d01b-0203-e599892f99ba",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3825,7 +3825,7 @@
       "id": "bb319a95-4eef-4a99-b72e-60f9b295f123",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3834,7 +3834,7 @@
       "id": "bb43b255-f1e4-020e-7ad8-f6cd9d39fa9d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3843,7 +3843,7 @@
       "id": "bb44c2e2-4438-b59f-0d21-09fec67f6b20",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3852,7 +3852,7 @@
       "id": "bc02850c-eec6-4042-2e0c-d11a6a4b827e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3861,7 +3861,7 @@
       "id": "bcc0d400-2887-93e8-bdcd-7c19a8ac0c2b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3870,7 +3870,7 @@
       "id": "be1bfa4e-216c-c405-ab97-94353bdbe655",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3879,7 +3879,7 @@
       "id": "beb22fb6-94d5-13ed-cf55-33cf006dfeae",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3888,7 +3888,7 @@
       "id": "bf477629-0aaf-c806-f1c8-92156a3a9d52",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3897,7 +3897,7 @@
       "id": "c064251d-2c99-adbe-e465-c50f05bda944",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3906,7 +3906,7 @@
       "id": "c0db9e6e-2275-1932-5ef2-007b71cef88e",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3915,7 +3915,7 @@
       "id": "c0e8517b-1fe0-b527-0f3f-41d4b56d6118",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3924,7 +3924,7 @@
       "id": "c1fcffd5-1eb7-c38b-7209-a6106d66cc84",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3933,7 +3933,7 @@
       "id": "c2040acf-fc30-ed5c-6145-ba880466705f",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -3942,7 +3942,7 @@
       "id": "c2b8ebbd-e383-625a-81ba-05a0f7b7192d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3951,7 +3951,7 @@
       "id": "c2de2e6b-bf07-cd38-7733-66898f06f3d5",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3960,7 +3960,7 @@
       "id": "c31de864-11f6-43ec-08e0-4b38ae397efc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3969,7 +3969,7 @@
       "id": "c53eb508-9337-7ca2-87be-8ce398855353",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -3978,7 +3978,7 @@
       "id": "c5b3966b-d2d4-c690-da36-8b3ecbece868",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -3987,7 +3987,7 @@
       "id": "c64c1dc4-0ade-60a3-aba8-332e10260c93",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -3996,7 +3996,7 @@
       "id": "c6b7a3f8-83eb-dc29-cbe6-17ea59b74987",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4005,7 +4005,7 @@
       "id": "c70341de-2c11-2a6b-3496-aec1f631dddd",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4014,7 +4014,7 @@
       "id": "c80bcf42-c220-b8f5-c41f-85344242f1b0",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4023,7 +4023,7 @@
       "id": "c9fa5a72-863b-86fe-0c7d-c5902e21fb17",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4032,7 +4032,7 @@
       "id": "cb5e1674-92be-00a8-d04f-ff1532fd0ec4",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4041,7 +4041,7 @@
       "id": "cbeed2b0-64ab-e2fb-4b0e-a8b769027bee",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4050,7 +4050,7 @@
       "id": "cd50a664-0d62-8499-2905-dc447fd7701d",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "921091fd-ff53-4b72-a9e0-50f1d87d0a27"
       ]
@@ -4059,7 +4059,7 @@
       "id": "d00dd56b-0a7e-8080-6566-4f82c16eb658",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4068,7 +4068,7 @@
       "id": "d01ae29d-5449-df16-318a-a3760c9665b3",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4077,7 +4077,7 @@
       "id": "d0aaf39f-31ae-d7d7-bec1-137e15d335b6",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4086,7 +4086,7 @@
       "id": "d1d5923f-c822-531b-bfd9-d87d4760914b",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4095,7 +4095,7 @@
       "id": "d2674b94-792c-7f0a-fc26-b56eabc95b30",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4104,7 +4104,7 @@
       "id": "d282ef26-3719-ab84-2e05-382dc235f69e",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4113,7 +4113,7 @@
       "id": "d29af1fd-577b-0370-33dd-1149e816d521",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4122,7 +4122,7 @@
       "id": "d6c651dd-cd97-183b-2e40-bc464231c962",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4131,7 +4131,7 @@
       "id": "d79aac07-5930-c83c-2f1e-369a511148fe",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4140,7 +4140,7 @@
       "id": "d801eb0f-d6c4-a9a6-d5f7-e5c76c6a60fc",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4149,7 +4149,7 @@
       "id": "d81f29a9-985d-0eb4-adc0-279e79a9ec75",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4158,7 +4158,7 @@
       "id": "d8cda2f3-5a02-ca45-9421-ded6f9a5e868",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4167,7 +4167,7 @@
       "id": "d9376cb8-4f00-869b-10eb-6203c61e705c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4176,7 +4176,7 @@
       "id": "da441fc2-59be-c560-a674-60b17f4b657e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4185,7 +4185,7 @@
       "id": "daea32ad-cae6-abcb-5481-34fa98f139f9",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4194,7 +4194,7 @@
       "id": "db0cf003-e7db-9592-288d-809665cfeb2a",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4203,7 +4203,7 @@
       "id": "dd2bdf6c-b881-176b-c2c0-c568e1a180fa",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4212,7 +4212,7 @@
       "id": "dd3765ac-4f23-d2cc-861b-8dbff12de05e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4221,7 +4221,7 @@
       "id": "dfa54381-225d-763c-c2e6-b12d2d6c64ac",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4230,7 +4230,7 @@
       "id": "dfc69ee4-c48a-622e-2bcd-a2c3d2a219d0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -4239,7 +4239,7 @@
       "id": "e08dfc13-a6d1-06f0-32f4-9aca8caa4f2f",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4248,7 +4248,7 @@
       "id": "e16e74a6-3567-ecb4-4ade-5c87002bb1d9",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4257,7 +4257,7 @@
       "id": "e17a886e-fc21-fa45-b9dc-49a17c29dcf1",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4266,7 +4266,7 @@
       "id": "e30c5701-e13a-4e6e-137d-71eb71c416b4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4275,7 +4275,7 @@
       "id": "e3292c4c-18ea-e706-134c-3a5874c6384e",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4284,7 +4284,7 @@
       "id": "e35026a2-b91f-352d-b22b-fef0e693c2e3",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4293,7 +4293,7 @@
       "id": "e417baa9-cdf3-4202-f71b-55a27da899e8",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4302,7 +4302,7 @@
       "id": "e52c9599-ea82-e008-7458-96110ba2804a",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4311,7 +4311,7 @@
       "id": "e555ebe0-ce42-6f7f-9b2b-ef0706315e0c",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4320,7 +4320,7 @@
       "id": "e58cc5ca-9427-0aca-ceed-13bc82dfedf7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4329,7 +4329,7 @@
       "id": "e6a4f65e-7355-bb8b-7671-c3a18003b146",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4338,7 +4338,7 @@
       "id": "e6e97acf-ea8d-0d3b-34ff-d456ab9f665c",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4347,7 +4347,7 @@
       "id": "e7c09382-9bea-4de0-7b0b-8f7ed4f8cbb4",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4356,7 +4356,7 @@
       "id": "e832d017-3156-75c7-9731-378fad5c15e6",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4365,7 +4365,7 @@
       "id": "e8a079d6-a3db-abc7-bcfa-0047f63e475c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4374,7 +4374,7 @@
       "id": "e8d92f99-edd2-5e2c-ef48-eca48320a1a5",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4383,7 +4383,7 @@
       "id": "e900ad3b-2019-268e-3182-123407fda545",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4392,7 +4392,7 @@
       "id": "ebf4a67a-d8e6-4265-c877-7f8c0fe5c1c4",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4401,7 +4401,7 @@
       "id": "ec5aa0b7-8460-82a2-415f-0902f0da88f2",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4410,7 +4410,7 @@
       "id": "ed582716-bfb4-738c-cd92-405301122e66",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4419,7 +4419,7 @@
       "id": "ee0e9524-9268-b86f-f205-3bef214bfeda",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4428,7 +4428,7 @@
       "id": "ee3e2bda-9df6-2dc0-c091-db891154cf34",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4437,7 +4437,7 @@
       "id": "eeee5e57-59e8-8c42-b584-6f5f06094dc3",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4446,7 +4446,7 @@
       "id": "ef1e491a-766c-e312-7556-063d49bc2f98",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4455,7 +4455,7 @@
       "id": "ef2ee09e-a955-1de8-8bc1-1fd7eeea93b0",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4464,7 +4464,7 @@
       "id": "ef58947d-c33e-8fc8-5af0-f246352112f7",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4473,7 +4473,7 @@
       "id": "efee1278-c617-2f73-61d1-900617faede2",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "23ce5337-ad0a-4cb3-92d5-bf83b9beab7e"
       ]
@@ -4482,7 +4482,7 @@
       "id": "f0b875eb-6cff-6fd5-f491-e6b6521c7510",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4491,7 +4491,7 @@
       "id": "f0f07e68-0de4-07b0-f12a-bf15bd520097",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4500,7 +4500,7 @@
       "id": "f12ee973-4e1e-df70-ed02-d9829018b3d9",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4509,7 +4509,7 @@
       "id": "f1f3fa16-a9b4-0415-6622-b361d6a39ef5",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4518,7 +4518,7 @@
       "id": "f2691acb-7745-bc99-f901-5f0953200cf1",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4527,7 +4527,7 @@
       "id": "f2853e5d-e732-df8a-70c4-ca081fc81119",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -4536,7 +4536,7 @@
       "id": "f2ee555e-877c-9bd7-239e-2a2d4e5c4f25",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4545,7 +4545,7 @@
       "id": "f300f602-b2d8-1630-7064-2579d398466b",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4554,7 +4554,7 @@
       "id": "f357918b-9afb-be4c-2913-6d76033fc2ea",
       "utc": 7,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "802e29ae-563d-4ea1-94b6-100aa4b0f4b0"
       ]
@@ -4563,7 +4563,7 @@
       "id": "f39f6f54-273c-c68d-91eb-7443932a64ad",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4572,7 +4572,7 @@
       "id": "f3d205b3-f8c2-bb28-c46e-204c6f1b499d",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4581,7 +4581,7 @@
       "id": "f4beeba0-dd6c-190c-6ac0-2f85e7b3691c",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4590,7 +4590,7 @@
       "id": "f678a3b7-005a-6251-cb0c-f3a28f523cb3",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4599,7 +4599,7 @@
       "id": "fb4c4860-8ce8-825b-558c-cf07169a3421",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4608,7 +4608,7 @@
       "id": "fb8e9511-71a9-61a8-23a8-f4081a5d8c08",
       "utc": 4,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "a5ccd346-ac6a-447c-94dc-12d7f77c6dc3"
       ]
@@ -4617,7 +4617,7 @@
       "id": "fbad540b-2f3b-5638-a9be-9aa6a4d8e450",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4626,7 +4626,7 @@
       "id": "fbf6e9ff-ad68-f73e-4661-98206987dedc",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4635,7 +4635,7 @@
       "id": "fca758e5-2635-df5a-640f-7063ddb9cdcb",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "13520b46-7de5-46e5-bf6a-56fdcc589c42"
       ]
@@ -4644,7 +4644,7 @@
       "id": "fd37f7a1-dfa1-da55-6ff4-2338d7f27186",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]
@@ -4653,7 +4653,7 @@
       "id": "fddd7938-a71d-b5f8-1fcc-621673ab67b7",
       "utc": 3,
       "minWorkingHours": 150,
-      "maxWorkingHours": 198,
+      "maxWorkingHours": 176,
       "schemas": [
         "922b1448-20d9-4e27-a8ca-5c7fd63a4c38"
       ]

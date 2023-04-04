@@ -208,10 +208,37 @@ class MultiZonePlanner():
             outfile.write(json.dumps(rostering, indent=2))
 
     def get_shift_by_schema(self, schema_id):
-        print(schema_id)
         schema = next(t for t in self.meta['schemas'] if t['id'] == schema_id)
         shift_id = schema['shifts'][0]['shiftId']
         return shift_id
+    
+    def get_shift_size(self, shift_id):
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+        return dt.strptime(shift['duration'], "%H:%M").hour
+
+    def get_activities_by_schema(self, schema_id):
+        shift_id = self.get_shift_by_schema(schema_id)
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+
+        cx = 0
+        # lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") + timedelta(hours=delta), '%H:%M'),
+        for activity_id in shift['activities']:
+            activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
+            if activity != None:
+                cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
+        return cx
+
+    def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
+        if shiftSize == 12:
+            # 12h shifts -> 10.5 * 16 = 176
+            max_shifts_count = 16
+        elif shiftSize == 9:
+            # 9h shifts -> 8 * 22 = 176
+            max_shifts_count = 22
+        else:
+            max_shifts_count = 0
+
+        return max_shifts_count * activitiesHoursPerSchema
 
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
@@ -387,13 +414,19 @@ class MultiZonePlanner():
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
+            edf['shiftSize'] = edf.apply(lambda t: self.get_shift_size(t['shiftId']), axis=1)
+            edf['activitiesHoursPerShift'] = edf.apply(lambda t: self.get_activities_by_schema(t['schemas'][0]), axis=1)
+            edf['activitiesHoursPerHorizon'] = edf.apply(lambda t: self.get_activities_hours_per_horizon_by_schema(t['maxWorkingHours'], t['shiftSize'], t['activitiesHoursPerShift']), axis=1)
+
+            edf['minWorkingHoursWithActivities'] = edf.apply(lambda t: t['minWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
+            edf['maxWorkingHoursWithActivities'] = edf.apply(lambda t: t['maxWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
+
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
-            print(edf_filtered)
-            
+            # print(edf_filtered)
 
             resources = list(edf_filtered['id'])
-            resources_min_w_hours = list(edf_filtered['minWorkingHours'])
-            resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
+            resources_min_w_hours = list(edf_filtered['minWorkingHoursWithActivities'])
+            resources_max_w_hours = list(edf_filtered['maxWorkingHoursWithActivities'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             shift_data:ShiftSchema = self.shift_data[shift_name]
