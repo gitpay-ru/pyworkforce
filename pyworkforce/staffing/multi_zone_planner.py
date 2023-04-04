@@ -238,7 +238,7 @@ class MultiZonePlanner():
         else:
             max_shifts_count = 0
 
-        return max_shifts_count * activitiesHoursPerSchema
+        return int(max_shifts_count * activitiesHoursPerSchema) #todo will work correct only with even number (22 16)
 
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
@@ -422,7 +422,7 @@ class MultiZonePlanner():
             edf['maxWorkingHoursWithActivities'] = edf.apply(lambda t: t['maxWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
 
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
-            # print(edf_filtered)
+            print(edf_filtered)
 
             resources = list(edf_filtered['id'])
             resources_min_w_hours = list(edf_filtered['minWorkingHoursWithActivities'])
