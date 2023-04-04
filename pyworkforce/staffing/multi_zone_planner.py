@@ -181,7 +181,7 @@ class MultiZonePlanner():
 
         plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_suffix}.png', df, x='index', y=["positions", "resources_shifts"])
 
-    def dump_scheduling_output_rostering_input(self, shift_suffix, days, num_resources, solution, shifts_spec):
+    def dump_scheduling_output_rostering_input(self, shift_suffix, shift_id, days, num_resources, solution, shifts_spec):
         with open(f'{self.output_dir}/scheduling_output_{shift_suffix}.json', 'w') as f:
                 f.write(json.dumps(solution, indent=2))
 
@@ -194,6 +194,7 @@ class MultiZonePlanner():
         rostering = {
             'num_days': days,
             'num_resources': num_resources,
+            'shift_id': shift_id,
             'shifts': list(shifts_spec.keys()),
             # 'min_working_hours': 176,  # Dec 2022 #todo:
             # 'max_resting': 9,  # Dec 2022
@@ -227,6 +228,17 @@ class MultiZonePlanner():
             if activity != None:
                 cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
+
+    def get_unpaid_activities_by_shift(self, shift_id):
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+        cx = 0
+        for activity_id in shift['activities']:
+            activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
+            if activity != None:
+                if not activity['isPaid']:
+                    cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
+        return cx
+
 
     def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
         if shiftSize == 12:
@@ -386,6 +398,7 @@ class MultiZonePlanner():
 
             self.dump_scheduling_output_rostering_input(
                 shift_name,
+                shift_id,
                 days,
                 positions_requested,
                 solution,
@@ -405,28 +418,29 @@ class MultiZonePlanner():
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
-            print(f'Shift: {shift_name}')
+            print(f'Shift: {shift_name} {shift_id}')
             with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
             shift_names = shifts_info["shifts"]
-            shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
+            unpaid_hours = self.get_unpaid_activities_by_shift(shifts_info['shift_id'])
+            shifts_hours = [int(i.split('_')[1]) - unpaid_hours for i in shifts_info["shifts"]]
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
             edf['shiftSize'] = edf.apply(lambda t: self.get_shift_size(t['shiftId']), axis=1)
-            edf['activitiesHoursPerShift'] = edf.apply(lambda t: self.get_activities_by_schema(t['schemas'][0]), axis=1)
-            edf['activitiesHoursPerHorizon'] = edf.apply(lambda t: self.get_activities_hours_per_horizon_by_schema(t['maxWorkingHours'], t['shiftSize'], t['activitiesHoursPerShift']), axis=1)
+            # edf['activitiesHoursPerShift'] = edf.apply(lambda t: self.get_activities_by_schema(t['schemas'][0]), axis=1)
+            # edf['activitiesHoursPerHorizon'] = edf.apply(lambda t: self.get_activities_hours_per_horizon_by_schema(t['maxWorkingHours'], t['shiftSize'], t['activitiesHoursPerShift']), axis=1)
 
-            edf['minWorkingHoursWithActivities'] = edf.apply(lambda t: t['minWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
-            edf['maxWorkingHoursWithActivities'] = edf.apply(lambda t: t['maxWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
+            # edf['minWorkingHoursWithActivities'] = edf.apply(lambda t: t['minWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
+            # edf['maxWorkingHoursWithActivities'] = edf.apply(lambda t: t['maxWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
 
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
             print(edf_filtered)
 
             resources = list(edf_filtered['id'])
-            resources_min_w_hours = list(edf_filtered['minWorkingHoursWithActivities'])
-            resources_max_w_hours = list(edf_filtered['maxWorkingHoursWithActivities'])
+            resources_min_w_hours = list(edf_filtered['minWorkingHours'])
+            resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             shift_data:ShiftSchema = self.shift_data[shift_name]
