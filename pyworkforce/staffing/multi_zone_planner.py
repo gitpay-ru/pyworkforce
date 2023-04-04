@@ -425,21 +425,9 @@ class MultiZonePlanner():
             shift_names = shifts_info["shifts"]
             unpaid_hours = self.get_unpaid_activities_by_shift(shifts_info['shift_id'])
             shifts_hours = [int(i.split('_')[1]) - unpaid_hours for i in shifts_info["shifts"]]
-            # shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
-
-            # print(unpaid_hours)
-            # print(shifts_hours)
-            # exit()
-            
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
-            edf['shiftSize'] = edf.apply(lambda t: self.get_shift_size(t['shiftId']), axis=1)
-            # edf['activitiesHoursPerShift'] = edf.apply(lambda t: self.get_activities_by_schema(t['schemas'][0]), axis=1)
-            # edf['activitiesHoursPerHorizon'] = edf.apply(lambda t: self.get_activities_hours_per_horizon_by_schema(t['maxWorkingHours'], t['shiftSize'], t['activitiesHoursPerShift']), axis=1)
-
-            # edf['minWorkingHoursWithActivities'] = edf.apply(lambda t: t['minWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
-            # edf['maxWorkingHoursWithActivities'] = edf.apply(lambda t: t['maxWorkingHours'] + t['activitiesHoursPerHorizon'], axis=1)
 
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
             print(edf_filtered)
@@ -449,14 +437,7 @@ class MultiZonePlanner():
             resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
-            # print(resources_min_w_hours)
-            # print(resources_max_w_hours)
-            # exit()
-
             shift_data:ShiftSchema = self.shift_data[shift_name]
-            
-            # print(shift_data.work_max)
-            # exit()
 
             # constraint:
             #   (hard_min, soft_min, penalty, soft_max, hard_max, penalty)
