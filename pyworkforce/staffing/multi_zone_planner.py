@@ -181,7 +181,7 @@ class MultiZonePlanner():
 
         plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_suffix}.png', df, x='index', y=["positions", "resources_shifts"])
 
-    def dump_scheduling_output_rostering_input(self, shift_suffix, days, num_resources, solution, shifts_spec):
+    def dump_scheduling_output_rostering_input(self, shift_suffix, shift_id, days, num_resources, solution, shifts_spec):
         with open(f'{self.output_dir}/scheduling_output_{shift_suffix}.json', 'w') as f:
                 f.write(json.dumps(solution, indent=2))
 
@@ -194,14 +194,15 @@ class MultiZonePlanner():
         rostering = {
             'num_days': days,
             'num_resources': num_resources,
+            'shift_id': shift_id,
             'shifts': list(shifts_spec.keys()),
-            'min_working_hours': 176,  # Dec 2022 #todo:
-            'max_resting': 9,  # Dec 2022
-            'non_sequential_shifts': [],
+            # 'min_working_hours': 176,  # Dec 2022 #todo:
+            # 'max_resting': 9,  # Dec 2022
+            # 'non_sequential_shifts': [],
             'required_resources': df2['combined'].to_dict(),
-            'banned_shifts': [],
-            'resources_preferences': [],
-            'resources_prioritization': []
+            # 'banned_shifts': [],
+            # 'resources_preferences': [],
+            # 'resources_prioritization': []
         }
 
         with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_suffix}.json', 'w') as outfile:
@@ -211,6 +212,45 @@ class MultiZonePlanner():
         schema = next(t for t in self.meta['schemas'] if t['id'] == schema_id)
         shift_id = schema['shifts'][0]['shiftId']
         return shift_id
+    
+    def get_shift_size(self, shift_id):
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+        return dt.strptime(shift['duration'], "%H:%M").hour
+
+    def get_activities_by_schema(self, schema_id):
+        shift_id = self.get_shift_by_schema(schema_id)
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+
+        cx = 0
+        # lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") + timedelta(hours=delta), '%H:%M'),
+        for activity_id in shift['activities']:
+            activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
+            if activity != None:
+                cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
+        return cx
+
+    def get_unpaid_activities_by_shift(self, shift_id):
+        shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
+        cx = 0
+        for activity_id in shift['activities']:
+            activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
+            if activity != None:
+                if not activity['isPaid']:
+                    cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
+        return cx
+
+
+    def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
+        if shiftSize == 12:
+            # 12h shifts -> 10.5 * 16 = 176
+            max_shifts_count = 16
+        elif shiftSize == 9:
+            # 9h shifts -> 8 * 22 = 176
+            max_shifts_count = 22
+        else:
+            max_shifts_count = 0
+
+        return int(max_shifts_count * activitiesHoursPerSchema) #todo will work correct only with even number (22 16)
 
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
@@ -358,6 +398,7 @@ class MultiZonePlanner():
 
             self.dump_scheduling_output_rostering_input(
                 shift_name,
+                shift_id,
                 days,
                 positions_requested,
                 solution,
@@ -377,31 +418,23 @@ class MultiZonePlanner():
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
 
-            print(f'Shift: {shift_name}')
+            print(f'Shift: {shift_name} {shift_id}')
             with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
             shift_names = shifts_info["shifts"]
-            shifts_hours = [int(i.split('_')[1]) for i in shifts_info["shifts"]]
-            print(shift_names)
-
-            # todo: fix later
-            if shifts_hours[0] == 12:
-                # 12h shifts -> 10.5 * 16 = 176
-                max_shifts_count = 16
-            elif shifts_hours[0] == 9:
-                # 9h shifts -> 8 * 22 = 176
-                max_shifts_count = 22
-            else:
-                max_shifts_count = 0
-
+            unpaid_hours = self.get_unpaid_activities_by_shift(shifts_info['shift_id'])
+            shifts_hours = [int(i.split('_')[1]) - unpaid_hours for i in shifts_info["shifts"]]
 
             edf = pd.DataFrame(self.meta['employees'])
             edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schemas'][0]), axis=1)
+
             edf_filtered = edf[(edf['utc'] == utc) & (edf['shiftId'] == shift_id)]
-            # print(list(tt['id']))
+            print(edf_filtered)
 
             resources = list(edf_filtered['id'])
+            resources_min_w_hours = list(edf_filtered['minWorkingHours'])
+            resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
             shift_data:ShiftSchema = self.shift_data[shift_name]
@@ -425,18 +458,11 @@ class MultiZonePlanner():
 
             solver = MinHoursRoster(num_days=shifts_info["num_days"],
                                     resources=resources,
+                                    resources_min_w_hours = resources_min_w_hours,
+                                    resources_max_w_hours = resources_max_w_hours,
                                     shifts=shifts_info["shifts"],
                                     shifts_hours=shifts_hours,
-                                    min_working_hours=0,
-                                    # min_working_hours=shifts_info["min_working_hours"],
-                                    max_shifts_count = max_shifts_count,
-                                    # max_resting=shifts_info["max_resting"],
-                                    # we don't have constraints on max resting time
-                                    max_resting=0,
-                                    non_sequential_shifts=shifts_info["non_sequential_shifts"],
-                                    banned_shifts=shifts_info["banned_shifts"],
                                     required_resources=shifts_info["required_resources"],
-                                    strict_mode=False,
                                     shift_constraints=work_constraints,
                                     rest_constraints=rest_constraints,
                                     max_search_time=self.solver_profile.roster_params.max_iteration_search_time,
