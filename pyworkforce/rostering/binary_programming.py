@@ -114,35 +114,26 @@ class MinHoursRoster:
         Number of days needed to schedule
     resources: list[str],
         Resources available to shift
+    resources_min_w_hours: list[str],
+        Min working hours for each employee
+    resources_max_w_hours: list[str],
+        Max working hours for each employee
     shifts: list,
         Array of shifts names
     shifts_hours: list,
         Array of size [shifts] with the total hours within the shift
-    min_working_hours: int,
-        Minimum working hours per resource in the horizon
-    banned_shifts: list[dict]
-        Each element {"resource": resource_index, "shift": shift_name, "day": day_number} indicating
-        that the resource can't be assigned to that shift that particular day
-        example: banned_shifts": [{"resource":"e.johnston@randatmail.com", "shift": "Night", "day":  0}],
-    max_resting: int,
-        Maximum number of resting days per resource in the total interval
     required_resources: dict[list]
         Each key of the dict must be one of the shifts, the value must be a  list of length [days]
         specifying the number of resources to shift in each day for that shift
-    non_sequential_shifts: List[dict]
-        Each element must have the form {"origin": first_shift, "destination": second_shift}
-        to make sure that destination shift can't be after origin shift.
-        example: [{"origin":"Night", "destination":"Morning"}]
-    resources_preferences: list[dict]
-        Each element must have the form {"resource": resource_idx, "shifts":shift_name}
-        indicating the resources that have preference for shift
-    resources_prioritization: list[dict], default=None
-        Each element must have the form {"resource": resource_idx, "weight": weight_percentage}
-        this represent the relative importance for resources_preferences assignment
     max_search_time: float, default = 240
         Maximum time in seconds to search for a solution
     num_search_workers: int, default = 2
         Number of workers to search for a solution
+    shift_constraints: list
+        Work days contraints
+    rest_constraints: list
+        Rest days contraints
+    logging: boolean
     """
 
     def __init__(self, num_days: int,
