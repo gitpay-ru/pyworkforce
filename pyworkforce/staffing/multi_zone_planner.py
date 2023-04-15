@@ -15,7 +15,7 @@ from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_st
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
 from datetime import datetime as dt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pyworkforce.utils.common import get_datetime
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
@@ -326,6 +326,16 @@ class MultiZonePlanner():
 
         return result
 
+
+    def roll_rows(self, df: pd.DataFrame, count) -> pd.DataFrame:
+        # roll every column,
+        # this is like shift() but in a cyclic way
+        for column in df:
+            df[column] = np.roll(df[column], count)
+
+        return df
+
+
     def schedule(self):
         print("Start")
         print(self.shift_with_names)
@@ -338,6 +348,9 @@ class MultiZonePlanner():
             service_level=row['service_level']
         ), axis=1)
 
+        campaign_utc = int(self.meta['campainUtc'])
+        campaign_tz = timezone(timedelta(hours=campaign_utc))
+
         # Prepare required_resources
         HMin = 60
         DayH = 24
@@ -349,13 +362,11 @@ class MultiZonePlanner():
         step_min = int(date_diff.total_seconds() / HMin)
         ts = int(HMin / step_min)
 
-        self.df.index = self.df.index.tz_localize(tz='Europe/Moscow')
-
-        campainUtc = int(self.meta['campainUtc'])
+        self.df.index = self.df.index.tz_localize(tz=campaign_tz)
 
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, positions_requested, schema, position_portion) = party
-            utc_shift = int(utc) - campainUtc
+            utc_shift = int(utc) - campaign_utc
 
             # shift = self.meta['shifts'][0] #todo map
             shift_names = [shift_name]
@@ -365,7 +376,11 @@ class MultiZonePlanner():
             df = self.df.copy()
 
             df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * position_portion))
-            df = df.shift(periods=(-1 * ts * utc_shift), fill_value = 0)
+            # df = df.shift(periods=(-1 * ts * utc_shift), fill_value = 0) # - this is wrong, need go to opposite direction
+            # df = df.shift(periods=(ts * utc_shift), fill_value=0)
+            if utc_shift != 0:
+                # original idea - use np.roll to avoid replacing with zeros
+                df = self.roll_rows(df, ts * utc_shift)
 
             # shift_id -> shjft_name in prefix because id's will override each other from different zones
             df.to_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
@@ -382,6 +397,7 @@ class MultiZonePlanner():
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
+                                # max_period_concurrency=employee_count,
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
                                 max_search_time=self.solver_profile.scheduler_params.max_iteration_search_time,
@@ -437,7 +453,7 @@ class MultiZonePlanner():
             resources_max_w_hours = list(edf_filtered['maxWorkingHours'])
             print(f'Rostering num: {shifts_info["num_resources"]} {len(resources)}')
 
-            shift_data:ShiftSchema = self.shift_data[shift_name]
+            shift_data: ShiftSchema = self.shift_data[shift_name]
 
             # constraint:
             #   (hard_min, soft_min, penalty, soft_max, hard_max, penalty)
@@ -591,7 +607,7 @@ class MultiZonePlanner():
             df1 = df[['day', 'shifted_resources_per_slot']].groupby('day', as_index=True)[
                 'shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis=0)).to_frame()
 
-            # on missed indexes (=days), nan will be placed, because there are no any rest days in df1
+            # on missed indexes (=days), NaN will be placed, because there are no any rest days in df1
             df1 = pd.concat([df1, empty_schedule], axis=1)
             df1 = replace_nan(df1, 'shifted_resources_per_slot', empty_shift)
             # new items are at the end with propper index - just sort them to be moved to correct position
@@ -628,7 +644,7 @@ class MultiZonePlanner():
         for party in self.shift_with_names:
             (shift_name, shift_code, utc, mp, schema_name, q) = party
 
-            print(f'Shift: {shift_name} ({shift_name})')
+            print(f'Shift: {shift_code} ({shift_name})')
 
             # Load breaks and converto to df
             with open(f'{self.output_dir}/breaks_output_{shift_code}.json', 'r', encoding='utf-8') as f:
@@ -655,16 +671,16 @@ class MultiZonePlanner():
             min_date = min(self.df.index)
 
             df['shiftTimeStart'] = df.apply(
-                lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") + timedelta(hours=delta), '%H:%M'),
+                lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") - timedelta(hours=delta), '%H:%M'),
                 axis=1)
-            df['shiftDate'] = df.apply(lambda t: format(min_date + timedelta(hours=delta) + timedelta(days=t['day']), "%d.%m.%y"), axis=1)
+            df['shiftDate'] = df.apply(lambda t: format(min_date - timedelta(hours=delta) - timedelta(days=t['day']), "%d.%m.%y"), axis=1)
 
             df_breaks['activityTimeStart'] = df_breaks.apply(
-                lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") + timedelta(hours=delta), '%H:%M'),
+                lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") - timedelta(hours=delta), '%H:%M'),
                 axis=1)
 
             df_breaks['activityTimeEnd'] = df_breaks.apply(
-                lambda t: format(dt.strptime(t['activityTimeEnd'], "%H:%M") + timedelta(hours=delta), '%H:%M'),
+                lambda t: format(dt.strptime(t['activityTimeEnd'], "%H:%M") - timedelta(hours=delta), '%H:%M'),
                 axis=1)
 
             df['activities'] = df.apply(
