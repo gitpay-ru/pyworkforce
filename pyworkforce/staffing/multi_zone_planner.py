@@ -15,7 +15,7 @@ from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_st
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
 import math
 from datetime import datetime as dt
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta, timezone, time, date
 from pyworkforce.utils.common import get_datetime
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
@@ -33,6 +33,52 @@ class Statuses(StrEnum):
 
     def is_ok(self):
         return self in [Statuses.OPTIMAL, Statuses.FEASIBLE]
+
+
+def roll_rows(df: pd.DataFrame, count) -> pd.DataFrame:
+    # roll every column,
+    # this is like shift() but in a cyclic way
+    for column in df:
+        df[column] = np.roll(df[column], count)
+
+    return df
+
+
+def hh_mm(time_string):
+    hh = int(time_string.split(":")[0])
+    mm = int(time_string.split(":")[1])
+
+    return (hh, mm)
+
+
+def hh_mm_time(time_string) -> time:
+    (hh, mm) = hh_mm(time_string)
+    return time(hour=hh, minute=mm)
+
+
+def hh_mm_timedelta(time_string) -> timedelta:
+    (hh, mm) = hh_mm(time_string)
+    return  timedelta(hours=hh, minutes=mm)
+
+
+def get_1Day_df(time_start: time, time_end: time) -> pd.DataFrame:
+    intervals = int(24*60/15)
+    t = [time(hour=int(i * 15 / 60), minute=i * 15 % 60) for i in range(intervals)]
+
+    if time_end > time_start:
+        presence = [1 if (t[i] >= time_start and t[i] < time_end) else 0 for i in range(intervals)]
+    else:
+        presence = [1 if (t[i] >= time_start or t[i] < time_end) else 0 for i in range(intervals)]
+
+    data = {
+        "tc": t,
+        "works": presence
+    }
+
+    df = pd.DataFrame(data, columns=['tc', 'works'])
+    df.set_index('tc', inplace=True)
+    return df
+
 
 class MultiZonePlanner():
     def __init__(self,
@@ -59,6 +105,9 @@ class MultiZonePlanner():
         # id -> (id, start_interval, endstart_interval, duration_interval)
         self.activities_by_id = self.build_activities_specs()
 
+        # id -> (time_start_start, time_start_end, duration, time_end)
+        self.shift_meta_by_id = self.build_shift_meta()
+
         self.shift_activities = self.build_shift_with_activities()
 
         self.status = Statuses.NOT_STARTED
@@ -68,7 +117,48 @@ class MultiZonePlanner():
         else:
             self.solver_profile = SolverProfile.default()
 
+
+    def build_shift_meta(self):
+        shifts = {}
+
+        for s in self.meta['shifts']:
+            hh_duration, _ = hh_mm(s['duration'])
+            duration = hh_mm_timedelta(s['duration'])
+            start_start = hh_mm_time(s['scheduleTimeStart'])
+            start_end = hh_mm_time(s['scheduleTimeEndStart'])
+            end = (dt.combine(date.today(), start_end) + duration).time()
+
+            shifts[s['id']] = (
+                start_start, start_end, duration, end
+            )
+
+        return shifts
+
+
+    def build_capacity_df(self) -> pd.DataFrame:
+        campaign_utc = self.meta['campainUtc']
+
+        dfs = []
+        for party in self.shift_with_names:
+            (shift_id, shift_name, employee_utc, employee_count, schema) = party
+            (shift_start, *_, shift_end) = self.shift_meta_by_id[shift_id]
+
+            delta_utc = campaign_utc - employee_utc
+            df = get_1Day_df(shift_start, shift_end)  # "tc": time, "works": int
+            df[shift_name] = df['works'] * employee_count
+
+            # make utc shift from employee local daytime to campaign datetime
+            df = roll_rows(df, delta_utc * 4)
+            dfs.append(df[[shift_name]])
+
+        df_shifts = pd.concat(dfs, axis=1)
+        df_shifts['total'] = df_shifts.sum(axis=1)
+
+
+        return df_shifts
+
     def build_shifts(self):
+
         edf = pd.DataFrame(self.meta['employees'])
         edf['schema'] = edf.apply(lambda t: t['schemas'][0], axis=1)
         edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schema']), axis=1)
@@ -104,11 +194,6 @@ class MultiZonePlanner():
                 work_max=meta_schema['shifts'][0]['maxDaysInRow'],
                 employee_count=employee_count
             )
-
-        manpowers = np.array([i[3] for i in shift_with_names])  # i[2] == count
-        manpowers_r = manpowers / manpowers.sum(axis=0)
-        for idx, i in enumerate(shift_with_names):
-            shift_with_names[idx] += (manpowers_r[idx],)
 
         return shift_with_names
 
@@ -327,15 +412,6 @@ class MultiZonePlanner():
         return result
 
 
-    def roll_rows(self, df: pd.DataFrame, count) -> pd.DataFrame:
-        # roll every column,
-        # this is like shift() but in a cyclic way
-        for column in df:
-            df[column] = np.roll(df[column], count)
-
-        return df
-
-
     def schedule(self):
         print("Start")
         print(self.shift_with_names)
@@ -364,8 +440,10 @@ class MultiZonePlanner():
 
         self.df.index = self.df.index.tz_localize(tz=campaign_tz)
 
+        df_capacity = self.build_capacity_df()
+
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, positions_requested, schema, position_portion) = party
+            (shift_id, shift_name, utc, employee_count, schema) = party
             utc_shift = int(utc) - campaign_utc
 
             # shift = self.meta['shifts'][0] #todo map
@@ -375,27 +453,48 @@ class MultiZonePlanner():
 
             df = self.df.copy()
 
-            df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * position_portion))
+            df_my_capacity = df_capacity[[shift_name, 'total']]
+            df_my_capacity.rename(columns={shift_name: 'capacity'}, inplace=True)
+            df_my_capacity['capacity'] = df_my_capacity['capacity'].astype(int)
+            df_my_capacity['frac'] = df_my_capacity['capacity'] / df_my_capacity['total']
+
+            df = df.reset_index()
+            df['time'] = df['tc'].apply(lambda t: t.time())
+
+            df.set_index('time', inplace=True)
+            # since capacity is by time (not by datetime!!!) - then need to merge by time portion only
+
+            df = pd.merge(df, df_my_capacity[['frac', 'capacity']], how='inner', left_index=True, right_index=True)
+            df = df.reset_index(drop=True)  # don't need 'time' index anymore, was used got joins only
+            df.set_index('tc', inplace=True)
+            df.sort_index(inplace=True)
+
+            df['positions_quantile'] = np.ceil(df['positions'] * df['frac'])
+            df['positions_quantile'] = df['positions_quantile'].astype(int)
+            # df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * employee_count))
+
             # df = df.shift(periods=(-1 * ts * utc_shift), fill_value = 0) # - this is wrong, need go to opposite direction
             # df = df.shift(periods=(ts * utc_shift), fill_value=0)
             if utc_shift != 0:
                 # original idea - use np.roll to avoid replacing with zeros
-                df = self.roll_rows(df, ts * utc_shift)
+                df = roll_rows(df, ts * utc_shift)
 
             # shift_id -> shjft_name in prefix because id's will override each other from different zones
             df.to_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
 
-            employee_count = self.shift_data[shift_name].employee_count
-
             required_resources = []
+            capacity = []
+
             for i in range(days):
                 df_short = df[i * DayH * ts : (i + 1) * DayH * ts]
                 required_resources.append(df_short['positions_quantile'].tolist())
+                capacity.append(df_short['capacity'].tolist())
 
             scheduler = MinAbsDifference(num_days = days,  # S
                                 periods = DayH * ts,  # P
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
+                                # max_period_concurrency=capacity,  # gamma
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
                                 # max_period_concurrency=employee_count,
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
@@ -416,7 +515,7 @@ class MultiZonePlanner():
                 shift_name,
                 shift_id,
                 days,
-                positions_requested,
+                employee_count,
                 solution,
                 shifts_coverage
             )
@@ -642,7 +741,7 @@ class MultiZonePlanner():
         }
         campainSchedule = out['campainSchedule']
         for party in self.shift_with_names:
-            (shift_name, shift_code, utc, mp, schema_name, q) = party
+            (shift_name, shift_code, utc, mp, schema_name) = party
 
             print(f'Shift: {shift_code} ({shift_name})')
 
