@@ -783,7 +783,8 @@ class MultiZonePlanner():
                 axis=1)
 
             df['activities'] = df.apply(
-                lambda t: df_breaks.loc[str(t['employeeId']), t['day']],
+                # lambda t: df_breaks.loc[str(t['employeeId']), t['day']],
+                lambda t: df_breaks[df_breaks.index.isin([(str(t['employeeId']), t['day'])])],
                 axis=1
             )
 
