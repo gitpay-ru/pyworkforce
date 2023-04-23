@@ -19,8 +19,6 @@ from datetime import datetime, timedelta
 from pyworkforce.utils.common import get_datetime
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
-import random
-import itertools
 from strenum import StrEnum
 
 class Statuses(StrEnum):
@@ -54,7 +52,6 @@ class MultiZonePlanner():
         self.step_min = int(date_diff.total_seconds() / self.HMin)
         self.days = int(self.df.index[-1].strftime("%d"))
 
-        # self.__df_stats = None
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
@@ -141,10 +138,6 @@ class MultiZonePlanner():
             shifts[s_id] = (activities, min_between, max_between)
 
         return shifts
-
-    # @property
-    # def df_stats(self):
-    #     return self.__df_stats
 
     def solve(self):
         self.status = Statuses.NOT_STARTED
@@ -247,19 +240,6 @@ class MultiZonePlanner():
                     cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
 
-
-    def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
-        if shiftSize == 12:
-            # 12h shifts -> 10.5 * 16 = 176
-            max_shifts_count = 16
-        elif shiftSize == 9:
-            # 9h shifts -> 8 * 22 = 176
-            max_shifts_count = 22
-        else:
-            max_shifts_count = 0
-
-        return int(max_shifts_count * activitiesHoursPerSchema) #todo will work correct only with even number (22 16)
-
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
         shift_name = get_shift_short_name(shift, utc)
@@ -347,14 +327,6 @@ class MultiZonePlanner():
         ), axis=1)
 
         # Prepare required_resources
-        # HMin = 60
-        # DayH = 24
-        # min_date = min(self.df.index)
-        # max_date = max(self.df.index)
-        # days = (max_date - min_date).days + 1
-
-        # date_diff = self.df.index[1] - self.df.index[0]
-        # step_min = int(date_diff.total_seconds() / HMin)
         ts = int(self.HMin / self.step_min)
 
         self.df.index = self.df.index.tz_localize(tz='Europe/Moscow')
@@ -694,8 +666,6 @@ class MultiZonePlanner():
             f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def recalculate_stats(self):
-        # if self.__df_stats is None:
-        #     return
 
         print("Recalculate statistics: start")
 
