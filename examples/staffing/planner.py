@@ -11,10 +11,10 @@ import pytz
 eastern = pytz.timezone('US/Eastern')
 
 
-input_csv_path = '../_data_file.csv'
-input_meta_path = '../_meta_file.json'
+input_csv_path = '../_data_file_30d.csv'
+input_meta_path = '../_meta_file_7_9_30d.json'
 solver_profile_path = '../_solver_profile_file.json'
-output_dir = '../out'
+output_dir = '../out_30d'
 
 
 if output_dir and output_dir != '..':
@@ -31,11 +31,11 @@ with open(solver_profile_path, 'r', encoding='utf-8') as f:
 mzp = MultiZonePlanner(df, meta, profile, output_dir)
 # mzp.solve()
 
-mzp.schedule()
-mzp.roster()
-mzp.roster_breaks()
-mzp.roster_postprocess()
-mzp.combine_results()
-# mzp.recalculate_stats()
+# mzp.schedule()
+# mzp.roster()
+# mzp.roster_breaks()
+# mzp.roster_postprocess()
+# mzp.combine_results()
+mzp.recalculate_stats()
 
 # nohup python planner.py &
