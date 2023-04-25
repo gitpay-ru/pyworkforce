@@ -1,6 +1,9 @@
 import numpy as np
 from ortools.sat.python import cp_model
 
+from pyworkforce.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
+from pyworkforce.solver_params import SolverParams
+
 
 # https://github.com/google/or-tools/blob/master/examples/python/shift_scheduling_sat.py
 def negated_bounded_span(works, start, length):
@@ -125,15 +128,17 @@ class MinHoursRoster:
     required_resources: dict[list]
         Each key of the dict must be one of the shifts, the value must be a  list of length [days]
         specifying the number of resources to shift in each day for that shift
-    max_search_time: float, default = 240
-        Maximum time in seconds to search for a solution
-    num_search_workers: int, default = 2
-        Number of workers to search for a solution
     shift_constraints: list
         Work days contraints
     rest_constraints: list
         Rest days contraints
-    logging: boolean
+    solver_params: SolverParams
+        Defines parameters, to be used by solver, if there are any specified
+        It includes:
+            num_search_workers: int, Number of workers to search for a solution
+            solution_limit: int, Number of solutions to run
+            max_search_time: float, Maximum time in seconds to search for a solution
+            logging: boolean
     """
 
     def __init__(self, num_days: int,
@@ -143,11 +148,9 @@ class MinHoursRoster:
                  shifts: list,
                  shifts_hours: list,
                  required_resources: list,
-                 max_search_time: float = 540,
-                 num_search_workers=2,
                  shift_constraints = [],
                  rest_constraints = [],
-                 logging = False):
+                 solver_params: SolverParams = SolverParams.default()):
 
         self.num_days = num_days
         self.resources = resources
@@ -158,12 +161,10 @@ class MinHoursRoster:
         self.num_shifts = len(shifts)
         self.shifts_hours = shifts_hours
         self.required_resources = required_resources
-        self.max_search_time = max_search_time
-        self.num_search_workers = num_search_workers
         self.__deficit_weight = 1
         self.shift_constraints = shift_constraints
         self.rest_constraints = rest_constraints
-        self.logging = logging
+        self.__solver_params: SolverParams = solver_params
 
         self._status = None
         self.solver = None
@@ -279,11 +280,17 @@ class MinHoursRoster:
 
         print("Solving started...")
         self.solver = cp_model.CpSolver()
-        self.solver.parameters.max_time_in_seconds = self.max_search_time
-        self.solver.num_search_workers = self.num_search_workers
-        self.solver.parameters.log_search_progress = self.logging
+        if self.__solver_params.max_iteration_search_time:
+            self.solver.parameters.max_time_in_seconds = self.__solver_params.max_iteration_search_time
+        if self.__solver_params.num_search_workers:
+            self.solver.num_search_workers = self.__solver_params.num_search_workers
+        if self.__solver_params.do_logging:
+            self.solver.parameters.log_search_progress = self.__solver_params.do_logging
+        if self.__solver_params.solution_limit:
+            solution_printer = ObjectiveSolutionPrinterWithLimit(self.__solver_params.solution_limit)
+        else:
+            solution_printer = cp_model.ObjectiveSolutionPrinter()
 
-        solution_printer = cp_model.ObjectiveSolutionPrinter()
         self._status = self.solver.Solve(sch_model, solution_printer)
 
         # Output
