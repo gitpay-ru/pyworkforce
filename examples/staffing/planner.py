@@ -31,6 +31,7 @@ with open(solver_profile_path, 'r', encoding='utf-8') as f:
 mzp = MultiZonePlanner(df, meta, profile, output_dir)
 mzp.solve()
 
+# mzp.calc_required_positions()
 # mzp.schedule()
 # mzp.roster()
 # mzp.roster_breaks()
