@@ -11,6 +11,9 @@ def get_datetime(t):
 
 
 def positions_service_level(call_volume, aht, interval, art, positions):
+    if call_volume ==0:
+        return (0.0, 0.0, 0.0)
+
     erlang = ErlangC(transactions=call_volume, aht=aht, interval=interval, asa=art, shrinkage=0.0)
 
     zero_level_positions = erlang.required_positions(0.0)["positions"]

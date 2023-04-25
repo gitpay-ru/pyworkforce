@@ -19,8 +19,6 @@ from datetime import datetime, timedelta
 from pyworkforce.utils.common import get_datetime
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
-import random
-import itertools
 from strenum import StrEnum
 
 class Statuses(StrEnum):
@@ -35,6 +33,9 @@ class Statuses(StrEnum):
         return self in [Statuses.OPTIMAL, Statuses.FEASIBLE]
 
 class MultiZonePlanner():
+    HMin = 60
+    DayH = 24
+
     def __init__(self,
                  df: pd.DataFrame,
                  meta: any,
@@ -46,7 +47,11 @@ class MultiZonePlanner():
         self.output_dir = output_dir
         
         self.df = df
-        self.__df_stats = None
+
+        date_diff = self.df.index[1] - self.df.index[0]
+        self.step_min = int(date_diff.total_seconds() / self.HMin)
+        self.days = int(self.df.index[-1].strftime("%d"))
+
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
@@ -133,10 +138,6 @@ class MultiZonePlanner():
             shifts[s_id] = (activities, min_between, max_between)
 
         return shifts
-
-    @property
-    def df_stats(self):
-        return self.__df_stats
 
     def solve(self):
         self.status = Statuses.NOT_STARTED
@@ -239,19 +240,6 @@ class MultiZonePlanner():
                     cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
 
-
-    def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
-        if shiftSize == 12:
-            # 12h shifts -> 10.5 * 16 = 176
-            max_shifts_count = 16
-        elif shiftSize == 9:
-            # 9h shifts -> 8 * 22 = 176
-            max_shifts_count = 22
-        else:
-            max_shifts_count = 0
-
-        return int(max_shifts_count * activitiesHoursPerSchema) #todo will work correct only with even number (22 16)
-
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
         shift_name = get_shift_short_name(shift, utc)
@@ -259,7 +247,7 @@ class MultiZonePlanner():
 
     def get_breaks_intervals_per_slot(self, resource_break_intervals: dict):
         # "resource" ->  [(day_num, break_id, start, end)]
-        _days = 31
+        _days = self.days
         _interval_per_hour = 4
         empty_month = np.zeros(_days * 24 * _interval_per_hour).astype(int)
         _eom = len(empty_month)
@@ -287,7 +275,7 @@ class MultiZonePlanner():
 
     def get_breaks_per_day(self, resource_break_intervals: dict):
         # "resource" ->  [(day_num, break_id, start, end)]
-        _days = 31
+        _days = self.days
         _interval_per_hour = 4
         _full_day = 24*_interval_per_hour
         _eom = _days * _full_day
@@ -339,15 +327,7 @@ class MultiZonePlanner():
         ), axis=1)
 
         # Prepare required_resources
-        HMin = 60
-        DayH = 24
-        min_date = min(self.df.index)
-        max_date = max(self.df.index)
-        days = (max_date - min_date).days + 1
-
-        date_diff = self.df.index[1] - self.df.index[0]
-        step_min = int(date_diff.total_seconds() / HMin)
-        ts = int(HMin / step_min)
+        ts = int(self.HMin / self.step_min)
 
         self.df.index = self.df.index.tz_localize(tz='Europe/Moscow')
 
@@ -373,12 +353,12 @@ class MultiZonePlanner():
             employee_count = self.shift_data[shift_name].employee_count
 
             required_resources = []
-            for i in range(days):
-                df_short = df[i * DayH * ts : (i + 1) * DayH * ts]
+            for i in range(self.days):
+                df_short = df[i * self.DayH * ts : (i + 1) * self.DayH * ts]
                 required_resources.append(df_short['positions_quantile'].tolist())
 
-            scheduler = MinAbsDifference(num_days = days,  # S
-                                periods = DayH * ts,  # P
+            scheduler = MinAbsDifference(num_days = self.days,  # S
+                                periods = self.DayH * ts,  # P
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
@@ -399,7 +379,7 @@ class MultiZonePlanner():
             self.dump_scheduling_output_rostering_input(
                 shift_name,
                 shift_id,
-                days,
+                self.days,
                 positions_requested,
                 solution,
                 shifts_coverage
@@ -581,7 +561,7 @@ class MultiZonePlanner():
 
             # This is virtual empty shift, to be used as a filler for rest days
             empty_shift = np.array(all_zeros_shift()) * 1
-            empty_schedule = pd.DataFrame(index = [i for i in range(31)])   # todo: fix 31 day constant
+            empty_schedule = pd.DataFrame(index = [i for i in range(self.days)])
 
             # Rostering - breaks = schedule
             df['shifted_resources_per_slot'] = df.apply(
@@ -613,7 +593,13 @@ class MultiZonePlanner():
         print(df_total)
         plot_xy_per_interval(f'{self.output_dir}/rostering.png', df_total, x='index', y=["positions", "resources_shifts"])
 
-        self.__df_stats = to_df_stats(df_total)
+        
+        __df_stats = to_df_stats(df_total)
+
+
+        __df_stats.to_csv(f'{self.output_dir}/stats.csv')
+        # with open(f'{self.output_dir}/stats.json', 'w', encoding='utf-8') as f:
+        #             f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
         print("Done rostering postprocessing")
         return "Done"
@@ -680,15 +666,15 @@ class MultiZonePlanner():
             f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
     def recalculate_stats(self):
-        if self.__df_stats is None:
-            return
 
         print("Recalculate statistics: start")
 
-        self.__df_stats = calculate_stats(self.__df_stats)
+        __df_stats = pd.read_csv(f'{self.output_dir}/stats.csv')
+
+        __df_stats = calculate_stats(__df_stats)
 
         # dump statistics to .json
-        result = self.__df_stats.to_json(orient="records")
+        result = __df_stats.to_json(orient="records")
         parsed = json.loads(result)
 
         print("Writing statistics to .json")
