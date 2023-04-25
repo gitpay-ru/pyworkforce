@@ -82,6 +82,9 @@ def get_1Day_df(time_start: time, time_end: time) -> pd.DataFrame:
 
 
 class MultiZonePlanner():
+    HMin = 60
+    DayH = 24
+
     def __init__(self,
                  df: pd.DataFrame,
                  meta: any,
@@ -93,6 +96,11 @@ class MultiZonePlanner():
         self.output_dir = output_dir
 
         self.df = df
+
+        date_diff = self.df.index[1] - self.df.index[0]
+        self.step_min = int(date_diff.total_seconds() / self.HMin)
+        self.days = int(self.df.index[-1].strftime("%d"))
+
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
@@ -435,18 +443,6 @@ class MultiZonePlanner():
                     cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
 
-    def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
-        if shiftSize == 12:
-            # 12h shifts -> 10.5 * 16 = 176
-            max_shifts_count = 16
-        elif shiftSize == 9:
-            # 9h shifts -> 8 * 22 = 176
-            max_shifts_count = 22
-        else:
-            max_shifts_count = 0
-
-        return int(max_shifts_count * activitiesHoursPerSchema) #todo will work correct only with even number (22 16)
-
     def get_shift_name_by_id(self, id, utc):
         shift = next(t for t in self.meta['shifts'] if t['id'] == id)
         shift_name = get_shift_short_name(shift, utc)
@@ -454,7 +450,7 @@ class MultiZonePlanner():
 
     def get_breaks_intervals_per_slot(self, resource_break_intervals: dict):
         # "resource" ->  [(day_num, break_id, start, end)]
-        _days = 31
+        _days = self.days
         _interval_per_hour = 4
         empty_month = np.zeros(_days * 24 * _interval_per_hour).astype(int)
         _eom = len(empty_month)
@@ -482,7 +478,7 @@ class MultiZonePlanner():
 
     def get_breaks_per_day(self, resource_break_intervals: dict):
         # "resource" ->  [(day_num, break_id, start, end)]
-        _days = 31
+        _days = self.days
         _interval_per_hour = 4
         _full_day = 24*_interval_per_hour
         _eom = _days * _full_day
@@ -595,7 +591,6 @@ class MultiZonePlanner():
 
         print("Done calculating required positions")
 
-
     def schedule(self):
         print("Start scheduling")
 
@@ -616,18 +611,17 @@ class MultiZonePlanner():
             required_resources = []
             capacity = []
 
-            for i in range(days):
-                df_short = df[i * DayH * self.ts : (i + 1) * DayH * self.ts]
+            for i in range(self.days):
+                df_short = df[i * self.DayH * self.ts : (i + 1) * self.DayH * self.ts]
                 required_resources.append(df_short['positions_quantile'].tolist())
                 capacity.append(df_short['capacity'].tolist())
 
-            scheduler = MinAbsDifference(num_days = days,  # S
-                                periods = DayH * self.ts,  # P
+            scheduler = MinAbsDifference(num_days = self.days,  # S
+                                periods = self.DayH * self.ts,  # P
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 # max_period_concurrency=capacity,  # gamma
                                 max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
-                                # max_period_concurrency=employee_count,
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
                                 solver_params=self.solver_profile.scheduler_params
@@ -643,7 +637,7 @@ class MultiZonePlanner():
             self.dump_scheduling_output_rostering_input(
                 shift_name,
                 shift_id,
-                days,
+                self.days,
                 employee_count,
                 solution,
                 shifts_coverage
@@ -815,7 +809,7 @@ class MultiZonePlanner():
 
             # This is virtual empty shift, to be used as a filler for rest days
             empty_shift = np.array(all_zeros_shift()) * 1
-            empty_schedule = pd.DataFrame(index = [i for i in range(31)])   # todo: fix 31 day constant
+            empty_schedule = pd.DataFrame(index = [i for i in range(self.days)])
 
             # Rostering - breaks = schedule
             df['shifted_resources_per_slot'] = df.apply(
