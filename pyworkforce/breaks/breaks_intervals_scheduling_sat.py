@@ -7,6 +7,7 @@ from collections import defaultdict
 from ortools.sat.python import cp_model
 
 from pyworkforce.breaks.breaks_coverage import calculate_coverage
+from pyworkforce.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
 from pyworkforce.solver_params import SolverParams
 
 
@@ -41,7 +42,7 @@ class BreaksIntervalsScheduling:
 
         self.break_optimums = self.get_expected_breaks_coverage()
 
-        self.solver_params = solver_params
+        self.__solver_params = solver_params
 
         # not using it now
         # self.intervals_demand = intervals_demand
@@ -216,12 +217,17 @@ class BreaksIntervalsScheduling:
             model.Minimize(sum(penalties))
 
         print("Solving started...")
-
-        # Solve the model.
         self.solver = cp_model.CpSolver()
-        self.solver.parameters.log_search_progress = self.solver_params.do_logging
-        self.solver.parameters.max_time_in_seconds = self.solver_params.max_iteration_search_time
-        solution_printer = cp_model.ObjectiveSolutionPrinter()
+        if self.__solver_params.max_iteration_search_time:
+            self.solver.parameters.max_time_in_seconds = self.__solver_params.max_iteration_search_time
+        if self.__solver_params.num_search_workers:
+            self.solver.num_search_workers = self.__solver_params.num_search_workers
+        if self.__solver_params.do_logging:
+            self.solver.parameters.log_search_progress = self.__solver_params.do_logging
+        if self.__solver_params.solution_limit:
+            solution_printer = ObjectiveSolutionPrinterWithLimit(self.__solver_params.solution_limit)
+        else:
+            solution_printer = cp_model.ObjectiveSolutionPrinter()
 
         self.status = self.solver.Solve(model, solution_printer)
 
@@ -230,7 +236,7 @@ class BreaksIntervalsScheduling:
         solution = {}
         if self.status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
 
-            if self.solver_params.do_logging:
+            if self.__solver_params.do_logging:
                 for p in penalties:
                     print(f'{p.Name()}: {self.solver.Value(p)}')
 
