@@ -1,4 +1,5 @@
 import codecs
+import datetime
 from pathlib import Path
 import json
 
@@ -90,9 +91,8 @@ class MultiZonePlanner():
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         self.output_dir = output_dir
-        
+
         self.df = df
-        self.__df_stats = None
         self.meta = meta
         # self.timezones = list(map(lambda t: int(t['utc']), self.meta['employees']))
 
@@ -117,7 +117,6 @@ class MultiZonePlanner():
         else:
             self.solver_profile = SolverProfile.default()
 
-
     def build_shift_meta(self):
         shifts = {}
 
@@ -133,7 +132,6 @@ class MultiZonePlanner():
             )
 
         return shifts
-
 
     def build_capacity_df(self) -> pd.DataFrame:
         campaign_utc = self.meta['campainUtc']
@@ -158,7 +156,6 @@ class MultiZonePlanner():
         return df_shifts
 
     def build_shifts(self):
-
         edf = pd.DataFrame(self.meta['employees'])
         edf['schema'] = edf.apply(lambda t: t['schemas'][0], axis=1)
         edf['shiftId'] = edf.apply(lambda t: self.get_shift_by_schema(t['schema']), axis=1)
@@ -219,12 +216,11 @@ class MultiZonePlanner():
 
         return shifts
 
-    @property
-    def df_stats(self):
-        return self.__df_stats
-
     def solve(self):
         self.status = Statuses.NOT_STARTED
+
+        # 0. Calculate required positions to shedule
+        self.calc_required_positions()
 
         # 1. Schedule shift
         self.schedule()
@@ -251,6 +247,121 @@ class MultiZonePlanner():
         # return the latest status of the rostering model
         # should be either OPTIMAL or FEASIBLE
         return self.status
+
+    def build_stats_df(self):
+
+        campaign_utc = int(self.meta['campainUtc'])
+        campaign_tz = timezone(timedelta(hours=campaign_utc))
+
+        # just a helper function to use
+        def replace_nan(df, col, what):
+            nans = df[col].isnull()
+            df.loc[nans, col] = [what for isnan in nans.values if isnan]
+            return df
+
+        def to_df_stats(df: pd.DataFrame):
+            df.reset_index(inplace=True)
+            df['tc'] = df_total['tc'].dt.tz_localize(campaign_tz)
+            df_total['tc'] = df_total['tc'].dt.strftime('%Y-%m-%d %H:%M:%S%z')
+
+            interested_columns = ['tc', 'call_volume', 'aht', 'service_level', 'art', 'positions', 'resources_shifts']
+
+            df = df[interested_columns]
+            df = df.rename(columns={'resources_shifts': 'scheduled_positions'})
+
+            return df
+
+        # prepate data for further sums
+        df_total = pd.read_csv(f'{self.output_dir}/required_positions.csv', encoding='utf-8')
+        df_total['tc'] = pd.to_datetime(df_total['tc'])
+        df_total['tc'] = df_total['tc'].dt.tz_localize(None)
+        df_total['resources_shifts'] = np.zeros(shape=len(df_total))
+        df_total['frac'] = np.zeros(shape=len(df_total))
+        df_total['positions_quantile'] = np.zeros(shape=len(df_total))
+        df_total.set_index('tc', inplace=True)
+        df_total.sort_index(inplace=True)
+
+        # This is virtual empty shift, to be used as a filler for rest days
+        empty_shift = np.array(all_zeros_shift()) * 1
+        empty_schedule = pd.DataFrame(index=[i for i in range(31)])  # todo: fix 31 day constant
+        periods_in_hour = 4
+
+        for party in self.shift_with_names:
+            (shift_id, shift_name, utc, *_) = party
+
+            print(f'Shift: {shift_name} ({shift_id})')
+
+            utc_shift = int(utc) - campaign_utc
+
+            # Load breaks and converto to df
+            # breaks are in the Shift (=employee) utc
+            with open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'r', encoding='utf-8') as f:
+                breaks = json.load(f)
+            list_breaks = self.get_breaks_intervals_per_slot(breaks['resource_break_intervals'])
+            df_breaks = pd.DataFrame(list_breaks, columns=["resource", "day", "breaks"])
+            df_breaks.set_index(["resource", "day"], inplace=True)
+
+            # Load rostering data
+            # Rostering is in the Shift (=employee) utc
+            with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r', encoding='utf-8') as f:
+                rostering = json.load(f)
+            df = pd.DataFrame(rostering['resource_shifts'])
+
+            # Rostering - breaks = schedule
+            df['shifted_resources_per_slot'] = df.apply(
+                lambda t: np.array(unwrap_shift(t['shift'])) * 1 - df_breaks.loc[str(t['resource']), t['day']][0],
+                axis=1
+            )
+
+            df1 = df[['day', 'shifted_resources_per_slot']]\
+                .groupby('day', as_index=True)['shifted_resources_per_slot']\
+                .apply(lambda x: np.sum(np.vstack(x), axis=0))\
+                .to_frame()
+
+            # on missed indexes (=days), NaN will be placed, because there are no any rest days in df1
+            df1 = pd.concat([df1, empty_schedule], axis=1)
+            df1 = replace_nan(df1, 'shifted_resources_per_slot', empty_shift)
+            # new items are at the end with propper index - just sort them to be moved to correct position
+            df1 = df1.sort_index(ascending=True)
+
+            np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
+            arr = df1['shifted_resources_per_slot'].values
+            arr = np.concatenate(arr)
+
+            df3 = pd.read_csv(f'{self.output_dir}/required_positions_{shift_name}.csv', encoding='utf-8')
+            # todo: Store intermediate files either with correct (=shift) TZ or without any TZ at all
+            df3['tc'] = pd.to_datetime(df3['tc'])
+            df3['tc'] = df3['tc'].dt.tz_localize(None)
+            df3.set_index('tc', inplace=True)
+            df3.sort_index()  # just to be on a safe side
+            # df3.reset_index(inplace=True)
+
+            df3['resources_shifts'] = arr.tolist()
+
+            # just copy some rows for further vaerification
+            df3 = df3.shift(periods = -1 * utc_shift*periods_in_hour, fill_value = 0)
+
+            if df_total is None:
+                # this is to just copy required positions
+                # todo: invent pre-schedule step and persist self.df results to .csv + load it here into df_total
+                df_total = df3
+            else:
+                df_total['resources_shifts'] += df3['resources_shifts']
+                df_total['frac'] += df3['frac']
+                df_total['positions_quantile'] += df3['positions_quantile']
+
+        # final formating
+        df_total.reset_index(inplace=True)
+        df_total['tc'] = df_total['tc'].dt.tz_localize(campaign_tz)
+        df_total['tc'] = df_total['tc'].dt.strftime('%Y-%m-%d %H:%M:%S%z')
+
+        df_total = df_total[['tc', 'call_volume', 'aht', 'service_level', 'art', 'positions', 'resources_shifts']]
+        df_total['positions'] = df_total['positions'].astype(int)
+        df_total['resources_shifts'] = df_total['resources_shifts'].astype(int)
+
+        df_total = df_total.rename(columns={'resources_shifts': 'scheduled_positions'})
+
+        return df_total
 
     def dump_stat_and_plot(self, shift_suffix, solution, df):
         resources_shifts = solution['resources_shifts']
@@ -297,7 +408,7 @@ class MultiZonePlanner():
         schema = next(t for t in self.meta['schemas'] if t['id'] == schema_id)
         shift_id = schema['shifts'][0]['shiftId']
         return shift_id
-    
+
     def get_shift_size(self, shift_id):
         shift = next(t for t in self.meta['shifts'] if t['id'] == shift_id)
         return dt.strptime(shift['duration'], "%H:%M").hour
@@ -323,7 +434,6 @@ class MultiZonePlanner():
                 if not activity['isPaid']:
                     cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
-
 
     def get_activities_hours_per_horizon_by_schema(self, minWorkingHours, shiftSize, activitiesHoursPerSchema):
         if shiftSize == 12:
@@ -411,15 +521,24 @@ class MultiZonePlanner():
 
         return result
 
+    @property
+    def ts(self):
+        HMin = 60
+        DayH = 24
 
-    def schedule(self):
-        print("Start")
-        print(self.shift_with_names)
+        date_diff = self.df.index[1] - self.df.index[0]
+        step_min = int(date_diff.total_seconds() / HMin)
+        ts = int(HMin / step_min)
+
+        return ts
+
+    def calc_required_positions(self):
+        print("Start calculating required positions")
 
         self.df['positions'] = self.df.apply(lambda row: required_positions(
             call_volume=row['call_volume'],
             aht=row['aht'],
-            interval=15*60, # interval should be passed within the same dimension as aht & art
+            interval=15 * 60,  # interval should be passed within the same dimension as aht & art
             art=row['art'],
             service_level=row['service_level']
         ), axis=1)
@@ -427,71 +546,83 @@ class MultiZonePlanner():
         campaign_utc = int(self.meta['campainUtc'])
         campaign_tz = timezone(timedelta(hours=campaign_utc))
 
-        # Prepare required_resources
-        HMin = 60
-        DayH = 24
-        min_date = min(self.df.index)
-        max_date = max(self.df.index)
-        days = (max_date - min_date).days + 1
-
-        date_diff = self.df.index[1] - self.df.index[0]
-        step_min = int(date_diff.total_seconds() / HMin)
-        ts = int(HMin / step_min)
-
         self.df.index = self.df.index.tz_localize(tz=campaign_tz)
+        self.df.to_csv(f'{self.output_dir}/required_positions.csv', encoding='utf-8')
 
+        # 'df_capacity' is in a campaign tz
         df_capacity = self.build_capacity_df()
 
         for party in self.shift_with_names:
-            (shift_id, shift_name, utc, employee_count, schema) = party
-            utc_shift = int(utc) - campaign_utc
+            (shift_id, shift_name, shift_utc, employee_count, schema) = party
+            print(shift_name)
 
-            # shift = self.meta['shifts'][0] #todo map
-            shift_names = [shift_name]
-            shifts_coverage = get_shift_coverage(shift_names)
-            # cover_check = [int(any(l)) for l in zip(*shifts_spec.values())]
+            utc_delta = int(shift_utc) - campaign_utc
+            shift_tz = timezone(timedelta(hours=int(shift_utc)))
 
+            # 'df' is in a campaign tz
             df = self.df.copy()
 
-            df_my_capacity = df_capacity[[shift_name, 'total']]
+            df_my_capacity = df_capacity[[shift_name, 'total']].copy()
             df_my_capacity.rename(columns={shift_name: 'capacity'}, inplace=True)
             df_my_capacity['capacity'] = df_my_capacity['capacity'].astype(int)
             df_my_capacity['frac'] = df_my_capacity['capacity'] / df_my_capacity['total']
 
             df = df.reset_index()
-            df['time'] = df['tc'].apply(lambda t: t.time())
-
+            df['time'] = df['tc'].dt.time
             df.set_index('time', inplace=True)
-            # since capacity is by time (not by datetime!!!) - then need to merge by time portion only
 
+            # since capacity is by time (not by datetime!!!) - then need to merge by time portion only
             df = pd.merge(df, df_my_capacity[['frac', 'capacity']], how='inner', left_index=True, right_index=True)
             df = df.reset_index(drop=True)  # don't need 'time' index anymore, was used got joins only
             df.set_index('tc', inplace=True)
             df.sort_index(inplace=True)
 
-            df['positions_quantile'] = np.ceil(df['positions'] * df['frac'])
-            df['positions_quantile'] = df['positions_quantile'].astype(int)
-            # df['positions_quantile'] = df['positions'].apply(lambda t: math.ceil(t * employee_count))
+            df['positions_quantile'] = np.ceil(df['positions'] * df['frac']).astype(int)
 
-            # df = df.shift(periods=(-1 * ts * utc_shift), fill_value = 0) # - this is wrong, need go to opposite direction
-            # df = df.shift(periods=(ts * utc_shift), fill_value=0)
-            if utc_shift != 0:
+            # tz_convert will make shift starting from 01:00 (e.g. when switching from +3 to +4)
+            # but we need to keep the schedule starting from 00:00
+            # df.index = df.index.tz_convert(tz=shift_tz)
+
+            df.index = df.index.tz_localize(None)  # 1. switch off timezones
+            # 2. roll (=erase) data to match statistics to the target tz
+            if utc_delta != 0:
                 # original idea - use np.roll to avoid replacing with zeros
-                df = roll_rows(df, ts * utc_shift)
+                # roll records down: 00h in +3 tz, is 01h in +4 tz
+                df = roll_rows(df, self.ts * utc_delta)
+            df.index = df.index.tz_localize(shift_tz)  # 3. switch on new tz
 
-            # shift_id -> shjft_name in prefix because id's will override each other from different zones
-            df.to_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
+            df.to_csv(f'{self.output_dir}/required_positions_{shift_name}.csv', encoding='utf-8')
+
+        print("Done calculating required positions")
+
+
+    def schedule(self):
+        print("Start scheduling")
+
+        DayH = 24
+        min_date = min(self.df.index)
+        max_date = max(self.df.index)
+        days = (max_date - min_date).days + 1
+
+        for party in self.shift_with_names:
+            (shift_id, shift_name, utc, employee_count, schema) = party
+
+            shift_names = [shift_name]
+            shifts_coverage = get_shift_coverage(shift_names)
+
+            df = pd.read_csv(f'{self.output_dir}/required_positions_{shift_name}.csv')
+            df.set_index('tc', inplace=True)
 
             required_resources = []
             capacity = []
 
             for i in range(days):
-                df_short = df[i * DayH * ts : (i + 1) * DayH * ts]
+                df_short = df[i * DayH * self.ts : (i + 1) * DayH * self.ts]
                 required_resources.append(df_short['positions_quantile'].tolist())
                 capacity.append(df_short['capacity'].tolist())
 
             scheduler = MinAbsDifference(num_days = days,  # S
-                                periods = DayH * ts,  # P
+                                periods = DayH * self.ts,  # P
                                 shifts_coverage = shifts_coverage,
                                 required_resources = required_resources,
                                 # max_period_concurrency=capacity,  # gamma
@@ -499,9 +630,7 @@ class MultiZonePlanner():
                                 # max_period_concurrency=employee_count,
                                 # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
                                 max_shift_concurrency=employee_count,  # beta
-                                max_search_time=self.solver_profile.scheduler_params.max_iteration_search_time,
-                                num_search_workers=self.solver_profile.scheduler_params.num_search_workers,
-                                logging = self.solver_profile.scheduler_params.do_logging
+                                solver_params=self.solver_profile.scheduler_params
                                 )
 
             solution = scheduler.solve()
@@ -526,7 +655,7 @@ class MultiZonePlanner():
                 df.copy()
             )
 
-        return "Done schedule"
+        return "Done scheduling"
 
     def roster(self):
         print("Start rostering")
@@ -580,9 +709,7 @@ class MultiZonePlanner():
                                     required_resources=shifts_info["required_resources"],
                                     shift_constraints=work_constraints,
                                     rest_constraints=rest_constraints,
-                                    max_search_time=self.solver_profile.roster_params.max_iteration_search_time,
-                                    num_search_workers=self.solver_profile.roster_params.num_search_workers,
-                                    logging = self.solver_profile.roster_params.do_logging
+                                    solver_params=self.solver_profile.roster_params
                                     )
 
             solution = solver.solve()
@@ -667,15 +794,7 @@ class MultiZonePlanner():
             df.loc[nans, col] = [what for isnan in nans.values if isnan]
             return df
 
-        def to_df_stats(df: pd.DataFrame):
-            interested_columns = ['tc', 'call_volume', 'aht', 'service_level', 'art', 'positions', 'resources_shifts']
-
-            df = df[interested_columns]
-            df = df.rename(columns={'resources_shifts': 'scheduled_positions'})
-
-            return df
-
-        df_total = None
+        df_total: pd.DataFrame = None
 
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
@@ -715,9 +834,9 @@ class MultiZonePlanner():
             np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
             arr = df1['shifted_resources_per_slot'].values
             arr = np.concatenate(arr)
-            df3 = pd.read_csv(f'{self.output_dir}/scheduling_output_stage1_{shift_name}.csv')
-            df3['resources_shifts'] = arr.tolist()
 
+            df3 = pd.read_csv(f'{self.output_dir}/required_positions_{shift_name}.csv')
+            df3['resources_shifts'] = arr.tolist()
             plot_xy_per_interval(f'{self.output_dir}/rostering_{shift_name}.png', df3, x='index', y=["positions_quantile", "resources_shifts"])
 
             if df_total is None:
@@ -725,68 +844,78 @@ class MultiZonePlanner():
             else:
                 df_total['resources_shifts'] += df3['resources_shifts']
 
-        print(df_total)
         plot_xy_per_interval(f'{self.output_dir}/rostering.png', df_total, x='index', y=["positions", "resources_shifts"])
-
-        self.__df_stats = to_df_stats(df_total)
 
         print("Done rostering postprocessing")
         return "Done"
 
     def combine_results(self):
+        print(f'Start combining results')
+
+        def time_str_to_datetime(time_str, day, month, year, tz, format):
+            t = dt.strptime(time_str, format)
+            return datetime.datetime(year=year, month=month, day=day, hour=t.hour, minute=t.minute, second=t.second, tzinfo=tz)
+
+        def shift_name_to_datetime(shift, day, month, year, tz):
+            time_str = get_start_from_shift_short_name(shift)
+            return time_str_to_datetime(time_str, day, month, year, tz, format="%H:%M:%S")
+
+
         campain_utc = self.meta['campainUtc']
+        campaign_tz = timezone(timedelta(hours=campain_utc))
+
+        min_date = min(self.df.index)  # 2023-03-01 00:00:00 (TimeStamp)
+        m = min_date.month
+        y = min_date.year
+
         out = {
             "campainUtc": campain_utc,
             "campainSchedule": []
         }
+
         campainSchedule = out['campainSchedule']
         for party in self.shift_with_names:
-            (shift_name, shift_code, utc, mp, schema_name) = party
+            (shift_name, shift_code, shift_utc, mp, schema_name) = party
+            shift_tz = timezone(timedelta(hours=shift_utc))
 
             print(f'Shift: {shift_code} ({shift_name})')
+
+            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r', encoding='utf-8') as f:
+                rostering = json.load(f)
+
+            df = pd.DataFrame(rostering['resource_shifts'])
+            df['shiftTimeStartLocal'] = df.apply(lambda t: shift_name_to_datetime(t['shift'], (t['day'] + 1), m, y, shift_tz), axis=1)
+            df['shiftTimeStartLocal'] = df['shiftTimeStartLocal'].dt.tz_convert(tz=campaign_tz)
+            df['schemaId'] = schema_name
+            df['shiftId'] = shift_name
+            df['employeeId'] = df['resource']
+            df['employeeUtc'] = shift_utc
+            df['shiftTimeStart'] = df['shiftTimeStartLocal'].dt.time
+            df['shiftDate'] = df['shiftTimeStartLocal'].dt.strftime('%d.%m.%y')
 
             # Load breaks and converto to df
             with open(f'{self.output_dir}/breaks_output_{shift_code}.json', 'r', encoding='utf-8') as f:
                 breaks = json.load(f)
             list_breaks = self.get_breaks_per_day(breaks['resource_break_intervals'])
-            # output: [ (resource, day, break_id, start_time, end_time ]
-            df_breaks = pd.DataFrame(list_breaks, columns=["resource", "day", "activityId", "activityTimeStart", "activityTimeEnd"])
+            df_breaks = pd.DataFrame(list_breaks,
+                                     columns=["resource", "day", "activityId", "activityTimeStart", "activityTimeEnd"])
+
+            # df_breaks['activityTimeStart'] = df_breaks.apply(
+            #     lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") - timedelta(hours=delta), '%H:%M'), axis=1)
+            df_breaks['activityTimeStartLocal'] = df_breaks.apply(
+                lambda t: time_str_to_datetime(t['activityTimeStart'], t['day'] + 1, m, y, shift_tz, format="%H:%M"), axis=1)
+            df_breaks['activityTimeStart'] = df_breaks['activityTimeStartLocal'].dt.tz_convert(tz=campaign_tz).dt.time
+
+            # df_breaks['activityTimeEnd'] = df_breaks.apply(
+            #     lambda t: format(dt.strptime(t['activityTimeEnd'], "%H:%M") - timedelta(hours=delta), '%H:%M'), axis=1)
+            df_breaks['activityTimeEndLocal'] = df_breaks.apply(
+                lambda t: time_str_to_datetime(t['activityTimeEnd'], t['day'] + 1, m, y, shift_tz, format="%H:%M"),axis=1)
+            df_breaks['activityTimeEnd'] = df_breaks['activityTimeEndLocal'].dt.tz_convert(tz=campaign_tz).dt.time
+
             df_breaks.set_index(["resource", "day"], inplace=True)
-
-            with open(f'{self.output_dir}/rostering_output_{shift_code}.json', 'r') as f:
-                rostering = json.load(f)
-
-            df = pd.DataFrame(rostering['resource_shifts'])
-            df['shiftTimeStartLocal'] = df.apply(
-                lambda t: get_start_from_shift_short_name(t['shift']), axis=1
-            )
-
-            delta = utc - campain_utc
-
-            df['schemaId'] = schema_name
-            df['shiftId'] = shift_name
-            df['employeeId'] = df['resource']
-            df['employeeUtc'] = utc
-            min_date = min(self.df.index)
-
-            df['shiftTimeStart'] = df.apply(
-                lambda t: format(dt.strptime(t['shiftTimeStartLocal'], "%H:%M:%S") - timedelta(hours=delta), '%H:%M'),
-                axis=1)
-            df['shiftDate'] = df.apply(lambda t: format(min_date - timedelta(hours=delta) - timedelta(days=t['day']), "%d.%m.%y"), axis=1)
-
-            df_breaks['activityTimeStart'] = df_breaks.apply(
-                lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") - timedelta(hours=delta), '%H:%M'),
-                axis=1)
-
-            df_breaks['activityTimeEnd'] = df_breaks.apply(
-                lambda t: format(dt.strptime(t['activityTimeEnd'], "%H:%M") - timedelta(hours=delta), '%H:%M'),
-                axis=1)
-
+            df_breaks = df_breaks[['activityTimeStart', 'activityTimeEnd']]
             df['activities'] = df.apply(
-                # lambda t: df_breaks.loc[str(t['employeeId']), t['day']],
-                lambda t: df_breaks[df_breaks.index.isin([(str(t['employeeId']), t['day'])])],
-                axis=1
-            )
+                lambda t: df_breaks[df_breaks.index.isin([(str(t['employeeId']), t['day'])])], axis=1)
 
             res = json.loads(df[['employeeId', 'employeeUtc', 'schemaId', 'shiftId', 'shiftDate', 'shiftTimeStart',
                                  'activities']].to_json(orient="records"))
@@ -795,22 +924,22 @@ class MultiZonePlanner():
         with open(f'{self.output_dir}/rostering.json', 'w', encoding='utf-8') as f:
             f.write(json.dumps(out, indent=2, ensure_ascii=False))
 
+        print(f'Done combining results')
+
     def recalculate_stats(self):
-        if self.__df_stats is None:
-            return
+        print("Start calculating statistics")
 
-        print("Recalculate statistics: start")
-
-        self.__df_stats = calculate_stats(self.__df_stats)
+        df_stats = self.build_stats_df()
+        df_stats = calculate_stats(df_stats)
 
         # dump statistics to .json
-        result = self.__df_stats.to_json(orient="records")
+        result = df_stats.to_json(orient="records")
         parsed = json.loads(result)
 
         print("Writing statistics to .json")
 
-        with open(f'{self.output_dir}/statistics_output.json', 'w') as f:
+        with open(f'{self.output_dir}/statistics_output.json', 'w', encoding='utf-8') as f:
             f.write(json.dumps(parsed, indent=2))
 
-        print("Recalculate statistics: done")
+        print("Done calculating statistics")
 
