@@ -160,7 +160,6 @@ class MultiZonePlanner():
         df_shifts = pd.concat(dfs, axis=1)
         df_shifts['total'] = df_shifts.sum(axis=1)
 
-
         return df_shifts
 
     def build_shifts(self):
@@ -291,7 +290,7 @@ class MultiZonePlanner():
 
         # This is virtual empty shift, to be used as a filler for rest days
         empty_shift = np.array(all_zeros_shift()) * 1
-        empty_schedule = pd.DataFrame(index=[i for i in range(31)])  # todo: fix 31 day constant
+        empty_schedule = pd.DataFrame(index=[i for i in range(self.days)])
         periods_in_hour = 4
 
         for party in self.shift_with_names:
@@ -560,8 +559,9 @@ class MultiZonePlanner():
 
             df_my_capacity = df_capacity[[shift_name, 'total']].copy()
             df_my_capacity.rename(columns={shift_name: 'capacity'}, inplace=True)
-            df_my_capacity['capacity'] = df_my_capacity['capacity'].astype(int)
+            # df_my_capacity['capacity'] = df_my_capacity['capacity'].astype(int)
             df_my_capacity['frac'] = df_my_capacity['capacity'] / df_my_capacity['total']
+            df_my_capacity['frac'].fillna(0.0, inplace=True)  # if after division == NaN -> 0.0
 
             df = df.reset_index()
             df['time'] = df['tc'].dt.time
