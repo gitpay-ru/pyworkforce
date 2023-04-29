@@ -439,7 +439,9 @@ class MultiZonePlanner():
             activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
             if activity != None:
                 if not activity['isPaid']:
-                    cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
+                    h = dt.strptime(activity['duration'], "%H:%M").hour
+                    m = dt.strptime(activity['duration'], "%H:%M").minute
+                    cx += h + m / 60.0
         return cx
 
     def get_shift_name_by_id(self, id, utc):
