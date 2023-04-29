@@ -651,12 +651,16 @@ class MultiZonePlanner():
 
         return "Done scheduling"
 
-    def roster(self):
-        print("Start rostering")
+    def roster(self, skip_existing: bool = False):
+        print(f"Start rostering, skip existing calcs = {skip_existing}")
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
-
             print(f'Shift: {shift_name} {shift_id}')
+
+            if Path(f'{self.output_dir}/rostering_output_{shift_name}.json').exists() and skip_existing:
+                print(f'Shift: {self.output_dir}/rostering_output_{shift_name}.json found, skipping it')
+                continue
+
             with open(f'{self.output_dir}/scheduling_output_rostering_input_{shift_name}.json', 'r') as f:
                 shifts_info = json.load(f)
 
