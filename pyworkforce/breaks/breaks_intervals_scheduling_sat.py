@@ -1,14 +1,11 @@
 import enum
-import itertools
-import math
-import operator
 from collections import defaultdict
 
 from ortools.sat.python import cp_model
 
 from pyworkforce.breaks.breaks_coverage import calculate_coverage
-from pyworkforce.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
-from pyworkforce.solver_params import SolverParams
+from pyworkforce.utils.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
+from pyworkforce.utils.solver_params import SolverParams
 
 
 class AdjustmentMode(enum.Enum):

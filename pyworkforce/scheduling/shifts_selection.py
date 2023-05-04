@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from ortools.sat.python import cp_model
 
-from pyworkforce.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
+from pyworkforce.utils.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
 from pyworkforce.scheduling.base import BaseShiftScheduler
-from pyworkforce.solver_params import SolverParams
+from pyworkforce.utils.solver_params import SolverParams
 
 
 class MinAbsDifference(BaseShiftScheduler):
@@ -65,8 +65,8 @@ class MinAbsDifference(BaseShiftScheduler):
 
         # Resources: Number of resources assigned in day d to shift s
         resources = np.empty(shape=(self.num_days, self.num_shifts), dtype='object')
-        # transition resources: Variable to change domain coordinates from min |x-a|
-        # to min t, s.t t>= x-a and t>= a-x
+        # transition resources: Variable to change domain coordinates from min |x-a| to min t,
+        # s.t t>= x-a and t>= a-x
         transition_resources = np.empty(shape=(self.num_days, self.num_periods), dtype='object')
 
         # Resources
@@ -80,7 +80,7 @@ class MinAbsDifference(BaseShiftScheduler):
                                                                  self.max_period_concurrency,
                                                                  f'transition_resources_d{d}p{p}')
 
-        # Constrains
+        # Constraints
 
         # transition must be between x-a and a-x
         for d in range(self.num_days):

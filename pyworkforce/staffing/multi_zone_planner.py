@@ -7,21 +7,17 @@ import pandas as pd
 import numpy as np
 
 from pyworkforce.breaks.breaks_intervals_scheduling_sat import BreaksIntervalsScheduling, AdjustmentMode
-from pyworkforce.solver_profile import SolverProfile
+from pyworkforce.utils.solver_profile import SolverProfile
 from pyworkforce.staffing.stats.calculate_stats import calculate_stats
 from pyworkforce.utils.breaks_spec import build_break_spec, build_intervals_map
 from pyworkforce.utils.shift_spec import get_start_from_shift_short_name, get_start_from_shift_short_name_mo, \
     required_positions, get_shift_short_name, get_shift_coverage, unwrap_shift, \
     all_zeros_shift, get_duration_from_shift_short_name, ShiftSchema
 from pyworkforce.plotters.scheduling import plot_xy_per_interval
-import math
 from datetime import datetime as dt
 from datetime import timedelta, timezone, time, date
-from pyworkforce.utils.common import get_datetime
 from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
-import random
-import itertools
 from strenum import StrEnum
 
 class Statuses(StrEnum):
@@ -370,19 +366,59 @@ class MultiZonePlanner():
 
         return df_total
 
-    def dump_stat_and_plot(self, shift_suffix, solution, df):
+    def dump_stat_and_plot(self, shift_name, solution, df):
         resources_shifts = solution['resources_shifts']
         df3 = pd.DataFrame(resources_shifts)
         df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
         df4 = df3[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
         np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
-        df4.to_csv(f'{self.output_dir}/shifted_resources_per_slot_{shift_suffix}.csv')
+        df4.to_csv(f'{self.output_dir}/shifted_resources_per_slot_{shift_name}.csv')
         arr = df4['shifted_resources_per_slot'].values
         arr = np.concatenate(arr)
         df['resources_shifts'] = arr.tolist()
-        df.to_csv(f'{self.output_dir}/scheduling_output_stage2_{shift_suffix}.csv')
+        df.to_csv(f'{self.output_dir}/scheduling_output_stage2_{shift_name}.csv')
 
-        plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_suffix}.png', df, x='index', y=["positions", "resources_shifts"])
+        plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_name}.png', df, x='index', y=["positions", "resources_shifts"])
+
+    def plot_scheduling(self, schedule_results):
+        periods_in_hour = 4
+        campaign_utc = self.meta['campainUtc']
+
+        df_sum = None
+
+        for (shift_name, shift_utc, solution, df) in schedule_results:
+            utc_delta = shift_utc - campaign_utc
+            resources_shifts = solution['resources_shifts']
+
+            df3 = pd.DataFrame(resources_shifts)
+            df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
+
+            df4 = df3[['day', 'shifted_resources_per_slot']]\
+                .groupby('day', as_index=False)['shifted_resources_per_slot']\
+                .apply(lambda x: np.sum(np.vstack(x), axis = 0))\
+                .to_frame()
+
+            arr = df4['shifted_resources_per_slot'].values
+            arr = np.concatenate(arr)
+
+            df['resources_shifts'] = arr.tolist()
+
+            df.reset_index(inplace=True)
+            # make it tz-agnopdtic
+            df['tc'] = pd.to_datetime(df['tc'])
+            df['tc'] = df['tc'].dt.tz_localize(None)
+            df.set_index('tc', inplace=True)
+            df.sort_index(inplace=True)
+            # anf shift rows according to tz delta, this won't shift the index itself
+            df = df.shift(periods=-1 * utc_delta * periods_in_hour, fill_value=0)
+
+            if df_sum is None:
+                df_sum = df.copy()
+            else:
+                df_sum['positions_quantile'] += df['positions_quantile']
+                df_sum['resources_shifts'] += df['resources_shifts']
+
+        plot_xy_per_interval(f'{self.output_dir}/scheduling.png', df_sum, x='index', y=["positions", "resources_shifts"])
 
     def dump_scheduling_output_rostering_input(self, shift_suffix, shift_id, days, num_resources, solution, shifts_spec):
         with open(f'{self.output_dir}/scheduling_output_{shift_suffix}.json', 'w') as f:
@@ -601,12 +637,15 @@ class MultiZonePlanner():
         max_date = max(self.df.index)
         days = (max_date - min_date).days + 1
 
+        schedule_results = []
+
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, employee_count, schema) = party
 
             shift_names = [shift_name]
             shifts_coverage = get_shift_coverage(shift_names)
 
+            # required positions .csv is in a shift timezone already
             df = pd.read_csv(f'{self.output_dir}/required_positions_{shift_name}.csv')
             df.set_index('tc', inplace=True)
 
@@ -650,6 +689,12 @@ class MultiZonePlanner():
                 solution,
                 df.copy()
             )
+
+            schedule_results.append(
+                (shift_name, utc, solution,  df.copy())
+            )
+
+        self.plot_scheduling(schedule_results)
 
         return "Done scheduling"
 

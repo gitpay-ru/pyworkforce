@@ -1,4 +1,4 @@
-from pyworkforce.solver_params import SolverParams
+from pyworkforce.utils.solver_params import SolverParams
 
 
 class SolverProfile:
