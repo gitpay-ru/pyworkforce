@@ -1,8 +1,10 @@
 import numpy as np
 from ortools.sat.python import cp_model
 
-from pyworkforce.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
-from pyworkforce.solver_params import SolverParams
+from pyworkforce.utils.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
+from pyworkforce.utils.solver_params import SolverParams
+
+from enum import IntEnum
 
 
 # https://github.com/google/or-tools/blob/master/examples/python/shift_scheduling_sat.py
@@ -101,6 +103,11 @@ def add_soft_sequence_constraint(model, works, hard_min, soft_min, min_cost,
 
     return cost_literals, cost_coefficients
 
+class Penalties(IntEnum):
+    TargetMismatch = 1
+    Oversize = 5
+
+
 class MinHoursRoster:
     """
 
@@ -161,7 +168,6 @@ class MinHoursRoster:
         self.num_shifts = len(shifts)
         self.shifts_hours = shifts_hours
         self.required_resources = required_resources
-        self.__deficit_weight = 1
         self.shift_constraints = shift_constraints
         self.rest_constraints = rest_constraints
         self.__solver_params: SolverParams = solver_params
@@ -190,7 +196,8 @@ class MinHoursRoster:
         for n in range(self.num_resource):
             for d in range(self.num_days):
                 for s in range(self.num_shifts):
-                    shifted_resource[n][d][s] = sch_model.NewBoolVar(f'resource_shifts_n{n}d{d}s{s}')
+                    # shifted_resource[n][d][s] = sch_model.NewBoolVar(f'resource_shifts_n{n}d{d}s{s}')
+                    shifted_resource[n][d][s] = sch_model.NewIntVar(0, 1, f'resource_shifts_n{n}d{d}s{s}')
 
         # Constraints
 
@@ -202,13 +209,38 @@ class MinHoursRoster:
         # The number of shifted resource must be >= that required resource, for each day and shift
         for d in range(self.num_days):
             for s in range(self.num_shifts):
-                works = [shifted_resource[n][d][s] for n in range(self.num_resource)]
-                delta = sch_model.NewIntVar(0, self.num_resource, f'delta_d{d}s{s}')
-                sch_model.Add(sum(works) >= self.required_resources[self.shifts[s]][d] - delta)
-                sch_model.Add(sum(works) <= self.required_resources[self.shifts[s]][d] + delta)
+                works = sum([shifted_resource[n][d][s] for n in range(self.num_resource)])
+                required_resources = self.required_resources[self.shifts[s]][d]
 
+                max_delta = max(self.num_resource,required_resources)
+                # max_delta = self.required_resources[self.shifts[s]][d]
+                delta = sch_model.NewIntVar(0, max_delta, f'delta_d{d}s{s}')
+                sch_model.Add(works >= required_resources - delta)
+                sch_model.Add(works <= required_resources + delta)
+
+                # Delta could be above or below target, make penalty for mismatch
+                # 1
                 objective_int_vars.append(delta)
-                objective_int_coeffs.append(self.__deficit_weight)
+                objective_int_coeffs.append(Penalties.TargetMismatch)
+
+                # For exceeded value - make additional penalty
+                # 2
+                delta_signed = sch_model.NewIntVar(-max_delta, max_delta, f'delta_signed_d{d}s{s}')
+                sch_model.Add(delta_signed == works - required_resources)
+                delta_positive = sch_model.NewIntVar(0, max_delta, f'delta_positive_d{d}s{s}')
+                # model.AddAbsEquality(delta_positive[i], delta_signed).OnlyEnforceIf(delta_signed > 0)
+                sch_model.AddMaxEquality(delta_positive, [delta_signed, 0])
+
+                # objective_int_vars.append(delta_positive)
+                # objective_int_coeffs.append(Penalties.Oversize)
+
+                # For exceeded value - make exponential penalty
+                # 3
+                delta_sq = sch_model.NewIntVar(0, max_delta * max_delta, f'delta_sq_d{d}s{s}')
+                sch_model.AddMultiplicationEquality(delta_sq, [delta_positive, delta_positive])
+
+                objective_int_vars.append(delta_sq)
+                objective_int_coeffs.append(Penalties.TargetMismatch)
 
         # A resource can at most, work 1 shift per day
         for n in range(self.num_resource):
@@ -216,17 +248,26 @@ class MinHoursRoster:
                 sch_model.Add(sum(shifted_resource[n][d][s] for s in range(self.num_shifts)) <= 1)
 
         intA = 4 #aligner based on 15 mins slot
+        # constraints = []
         # Min w h
         for n in range(self.num_resource):
-            sch_model.Add(
-                sum(shifted_resource[n][d][s] * int(intA * self.shifts_hours[s])
-                    for d in range(self.num_days) for s in range(self.num_shifts)) >= intA * self.resources_min_w_hours[n])
-        
-        # Max w h
-        for n in range(self.num_resource):
-            sch_model.Add(
-                sum(shifted_resource[n][d][s] * int(intA * self.shifts_hours[s])
-                    for d in range(self.num_days) for s in range(self.num_shifts)) <= intA * self.resources_max_w_hours[n])
+            sum_works = sum(shifted_resource[n][d][s] * int(intA*self.shifts_hours[s])
+                            for d in range(self.num_days) for s in range(self.num_shifts))
+            lb = int(intA*self.resources_min_w_hours[n])
+            rb = int(intA*self.resources_max_w_hours[n])
+            sch_model.Add(lb <= sum_works).WithName(f'sum_works_ints_resource_n{n}_ge{lb}')
+            sch_model.Add(sum_works <= rb).WithName(f'sum_works_ints_resource_n{n}_le{rb}')
+
+        # for n in range(self.num_resource):
+        #     sch_model.Add(
+        #         sum(shifted_resource[n][d][s] * int(intA*self.shifts_hours[s])
+        #             for d in range(self.num_days) for s in range(self.num_shifts)) >= int(intA*self.resources_min_w_hours[n]))
+        #
+        # # # Max w h
+        # for n in range(self.num_resource):
+        #     sch_model.Add(
+        #         sum(shifted_resource[n][d][s] * int(intA*self.shifts_hours[s])
+        #             for d in range(self.num_days) for s in range(self.num_shifts)) <= int(intA*self.resources_max_w_hours[n]))
 
         # Resource shift constraints -- for all employees are same (per day)
         # 1. First we create a new matrix which represents resource working per day
@@ -280,18 +321,27 @@ class MinHoursRoster:
 
         print("Solving started...")
         self.solver = cp_model.CpSolver()
-        if self.__solver_params.max_iteration_search_time:
-            self.solver.parameters.max_time_in_seconds = self.__solver_params.max_iteration_search_time
+
+        max_search_time = self.__solver_params.get_max_iteration_search_time_by_resources(self.num_resource)
+        if max_search_time:
+            self.solver.parameters.max_time_in_seconds = max_search_time
+
         if self.__solver_params.num_search_workers:
             self.solver.num_search_workers = self.__solver_params.num_search_workers
+
         if self.__solver_params.do_logging:
             self.solver.parameters.log_search_progress = self.__solver_params.do_logging
+
         if self.__solver_params.solution_limit:
             solution_printer = ObjectiveSolutionPrinterWithLimit(self.__solver_params.solution_limit)
         else:
             solution_printer = cp_model.ObjectiveSolutionPrinter()
 
         self._status = self.solver.Solve(sch_model, solution_printer)
+
+        # if self.__solver_params.do_logging:
+        #     for ct in constraints:
+        #         print(f'Constraint #{ct.Index()}: {ct.Name()}, {ct.__str__()}')
 
         # Output
         if self._status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
