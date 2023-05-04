@@ -219,13 +219,13 @@ class MinHoursRoster:
         for n in range(self.num_resource):
             sch_model.Add(
                 sum(shifted_resource[n][d][s] * int(intA * self.shifts_hours[s])
-                    for d in range(self.num_days) for s in range(self.num_shifts)) >= intA * self.resources_min_w_hours[n])
+                    for d in range(self.num_days) for s in range(self.num_shifts)) >= int(intA * self.resources_min_w_hours[n]))
         
         # Max w h
         for n in range(self.num_resource):
             sch_model.Add(
                 sum(shifted_resource[n][d][s] * int(intA * self.shifts_hours[s])
-                    for d in range(self.num_days) for s in range(self.num_shifts)) <= intA * self.resources_max_w_hours[n])
+                    for d in range(self.num_days) for s in range(self.num_shifts)) <= int(intA * self.resources_max_w_hours[n]))
 
         # Resource shift constraints -- for all employees are same (per day)
         # 1. First we create a new matrix which represents resource working per day
