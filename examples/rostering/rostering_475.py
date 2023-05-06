@@ -23,7 +23,7 @@ rest_constraints = [
 num_resources = int(shifts_info["num_resources"])
 
 resources = [f'#{i}' for i in range(num_resources)]
-resources_min_w_hours = [168 for _ in range(num_resources)]
+resources_min_w_hours = [176 for _ in range(num_resources)]
 resources_max_w_hours = [176 for _ in range(num_resources)]
 shifts_hours = [int(i.split('_')[1]) - 1.0 for i in shifts_info["shifts"]]
 
