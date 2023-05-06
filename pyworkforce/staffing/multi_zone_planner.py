@@ -958,7 +958,7 @@ class MultiZonePlanner():
             df_breaks['activityTimeEnd'] = df_breaks['activityTimeEndLocal'].dt.tz_convert(tz=campaign_tz).dt.time
 
             df_breaks.set_index(["resource", "day"], inplace=True)
-            df_breaks = df_breaks[['activityTimeStart', 'activityTimeEnd']]
+            df_breaks = df_breaks[['activityId', 'activityTimeStart', 'activityTimeEnd']]
             df['activities'] = df.apply(
                 lambda t: df_breaks[df_breaks.index.isin([(str(t['employeeId']), t['day'])])], axis=1)
 
