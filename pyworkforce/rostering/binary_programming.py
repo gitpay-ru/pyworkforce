@@ -220,8 +220,8 @@ class MinHoursRoster:
 
                 # Delta could be above or below target, make penalty for mismatch
                 # 1
-                objective_int_vars.append(delta)
-                objective_int_coeffs.append(Penalties.TargetMismatch)
+                # objective_int_vars.append(delta)
+                # objective_int_coeffs.append(Penalties.TargetMismatch)
 
                 # For exceeded value - make additional penalty
                 # 2
@@ -232,7 +232,7 @@ class MinHoursRoster:
                 sch_model.AddMaxEquality(delta_positive, [delta_signed, 0])
 
                 # objective_int_vars.append(delta_positive)
-                # objective_int_coeffs.append(Penalties.Oversize)
+                # objective_int_coeffs.append(Penalties.TargetMismatch)
 
                 # For exceeded value - make exponential penalty
                 # 3
@@ -339,12 +339,16 @@ class MinHoursRoster:
 
         self._status = self.solver.Solve(sch_model, solution_printer)
 
-        # if self.__solver_params.do_logging:
-        #     for ct in constraints:
-        #         print(f'Constraint #{ct.Index()}: {ct.Name()}, {ct.__str__()}')
-
         # Output
         if self._status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+
+            # if self.__solver_params.do_logging:
+            #     for v in objective_bool_vars:
+            #         print(f'Variable #{v.Index()}, {v.Name()} = {self.solver.BooleanValue(v)}')
+            #
+            #     for v in objective_int_vars:
+            #         print(f'Variable #{v.Index()}, {v.Name()} = {self.solver.Value(v)}')
+
             resource_shifts = []
             resting_resource = []
             shifted_hours = 0
