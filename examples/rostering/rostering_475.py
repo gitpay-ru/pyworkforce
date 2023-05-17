@@ -2,7 +2,8 @@ import json
 from pyworkforce.rostering.binary_programming import MinHoursRoster
 from pyworkforce.utils.solver_params import SolverParams
 
-# scheduler_data_path = os.path.dirname(os.path.realpath(__file__))
+# this test could be used to quickly validate rostering results
+# it accepts a scheduler output file with shifts required positions
 
 with open('scheduling_output_rostering_input_x_4_9_06-00_12-45_15.json', 'r') as f:
     shifts_info = json.load(f)
