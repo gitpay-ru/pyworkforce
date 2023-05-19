@@ -699,6 +699,57 @@ class MultiZonePlanner():
         return "Done scheduling"
 
     def roster(self, skip_existing: bool = False):
+
+        CHUNK_SIZE = 1
+
+        def chunker(seq, size):
+            if size > 0:
+                return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+            else:
+                return seq
+
+        def aggregate_solutions(agg, value):
+            if agg is None:
+                return value
+
+            agg['cost'] += value['cost']
+            agg['shifted_hours'] += value['shifted_hours']
+            agg['total_resources'] += value['total_resources']
+            agg['total_shifts'] += value['total_shifts']
+            agg['resting_days'] += value['resting_days']
+            agg['resource_shifts'] += value['resource_shifts']
+            agg['resting_resource'] += value['resting_resource']
+
+            return agg
+
+        def reduce_positions(main: dict, reducer: dict):
+            # shift_name -> [list of scheduled positions]
+            result = {}
+            for s in main:
+                result[s] = [0 if i==0 else (i-j) for i,j in zip(main[s], reducer[s])] # to avoid required negatives
+
+            return result
+
+        def resource_shifts_to_shifts_positions(days:int, shift_names:list, resource_shifts:dict):
+            # resource_shifts:
+            # [{'id': 0, 'resource': 'c1fcffd5-1eb7-c38b-7209-a6106d66cc84', 'day': 1, 'shift': 'x_9_12_45'},
+            #  {'id': 0, 'resource': 'c1fcffd5-1eb7-c38b-7209-a6106d66cc84', 'day': 2, 'shift': 'x_9_12_45'},
+            #  {'id': 0, 'resource': 'c1fcffd5-1eb7-c38b-7209-a6106d66cc84', 'day': 3, 'shift': 'x_9_12_45'},
+            #   ...
+            #  ]
+
+            shift_positions = {}
+
+            for s in shift_names:
+                shift_positions[s] = [0 for _ in range(days)]
+
+            for rs in resource_shifts:
+                shift = rs['shift']
+                day = rs['day']
+                shift_positions[shift][day] += 1
+
+            return shift_positions
+
         print(f"Start rostering, skip existing calcs = {skip_existing}")
         for party in self.shift_with_names:
             (shift_id, shift_name, utc, *_) = party
@@ -731,7 +782,7 @@ class MultiZonePlanner():
             # constraint:
             #   (hard_min, soft_min, penalty, soft_max, hard_max, penalty)
             work_constraints = [
-                # no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
+                # e.g.: no low bound, optimum - from 5 to 5 without penalty, more than 5 are forbidden
                 # (0, 5, 0, 5, 5, 0)
 
                 # work at least 'work_min', but no more than 'work_max',
@@ -740,32 +791,52 @@ class MultiZonePlanner():
             ]
 
             rest_constraints = [
-
                 # 1 to 3 non penalized holidays
                 (shift_data.holidays_min, shift_data.holidays_min, 0, shift_data.holidays_max, shift_data.holidays_max, 0)
             ]
 
-            solver = MinHoursRoster(num_days=shifts_info["num_days"],
-                                    resources=resources,
-                                    resources_min_w_hours = resources_min_w_hours,
-                                    resources_max_w_hours = resources_max_w_hours,
-                                    shifts=shifts_info["shifts"],
-                                    shifts_hours=shifts_hours,
-                                    required_resources=shifts_info["required_resources"],
-                                    shift_constraints=work_constraints,
-                                    rest_constraints=rest_constraints,
-                                    solver_params=self.solver_profile.roster_params
-                                    )
+            num_days = shifts_info["num_days"]
+            shifts = shifts_info["shifts"]
+            required_resources = shifts_info["required_resources"]
 
-            solution = solver.solve()
+            agg_solution = None
 
-            # if solution not feasible -> stop it and return result
-            self.status = Statuses(solution['status'])
-            if not self.status.is_ok():
-                raise Exception(f'Rostering for {shift_name} failed with status {self.status}')
+            print(f"Solving by chunks, CHUNK_SIZE = {CHUNK_SIZE}")
+
+            for i, chunk in enumerate(zip(chunker(resources, CHUNK_SIZE),
+                                          chunker(resources_min_w_hours, CHUNK_SIZE),
+                                          chunker(resources_max_w_hours, CHUNK_SIZE))):
+
+                print(f"Chunk #{i}")
+
+                (resources_chunk, min_w_hours_chunk, max_w_hours_chunk) = chunk
+
+                solver = MinHoursRoster(num_days=num_days,
+                                        resources=resources_chunk,
+                                        resources_min_w_hours = min_w_hours_chunk,
+                                        resources_max_w_hours = max_w_hours_chunk,
+                                        shifts=shifts,
+                                        shifts_hours=shifts_hours,
+                                        required_resources=required_resources,
+                                        shift_constraints=work_constraints,
+                                        rest_constraints=rest_constraints,
+                                        solver_params=self.solver_profile.roster_params
+                                        )
+
+                solution = solver.solve()
+
+                # if solution not feasible -> stop it and return result
+                self.status = Statuses(solution['status'])
+                if not self.status.is_ok():
+                    raise Exception(f'Rostering for {shift_name} failed with status {self.status}')
+
+                shift_positions = resource_shifts_to_shifts_positions(num_days, shifts, solution['resource_shifts'])
+
+                agg_solution = aggregate_solutions(agg_solution, solution)
+                required_resources = reduce_positions(required_resources, shift_positions)
 
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'w') as f:
-                f.write(json.dumps(solution, indent = 2))
+                f.write(json.dumps(agg_solution, indent = 2))
 
         print("Done rostering")
         return

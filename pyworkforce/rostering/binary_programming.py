@@ -220,27 +220,27 @@ class MinHoursRoster:
 
                 # Delta could be above or below target, make penalty for mismatch
                 # 1
-                # objective_int_vars.append(delta)
-                # objective_int_coeffs.append(Penalties.TargetMismatch)
+                objective_int_vars.append(delta)
+                objective_int_coeffs.append(Penalties.TargetMismatch)
 
                 # For exceeded value - make additional penalty
                 # 2
-                delta_signed = sch_model.NewIntVar(-max_delta, max_delta, f'delta_signed_d{d}s{s}')
-                sch_model.Add(delta_signed == works - required_resources)
-                delta_positive = sch_model.NewIntVar(0, max_delta, f'delta_positive_d{d}s{s}')
-                # model.AddAbsEquality(delta_positive[i], delta_signed).OnlyEnforceIf(delta_signed > 0)
-                sch_model.AddMaxEquality(delta_positive, [delta_signed, 0])
-
+                # delta_signed = sch_model.NewIntVar(-max_delta, max_delta, f'delta_signed_d{d}s{s}')
+                # sch_model.Add(delta_signed == works - required_resources)
+                # delta_positive = sch_model.NewIntVar(0, max_delta, f'delta_positive_d{d}s{s}')
+                # # model.AddAbsEquality(delta_positive[i], delta_signed).OnlyEnforceIf(delta_signed > 0)
+                # sch_model.AddMaxEquality(delta_positive, [delta_signed, 0])
+                #
                 # objective_int_vars.append(delta_positive)
                 # objective_int_coeffs.append(Penalties.TargetMismatch)
 
                 # For exceeded value - make exponential penalty
                 # 3
-                delta_sq = sch_model.NewIntVar(0, max_delta * max_delta, f'delta_sq_d{d}s{s}')
-                sch_model.AddMultiplicationEquality(delta_sq, [delta_positive, delta_positive])
-
-                objective_int_vars.append(delta_sq)
-                objective_int_coeffs.append(Penalties.TargetMismatch)
+                # delta_sq = sch_model.NewIntVar(0, max_delta * max_delta, f'delta_sq_d{d}s{s}')
+                # sch_model.AddMultiplicationEquality(delta_sq, [delta_positive, delta_positive])
+                #
+                # objective_int_vars.append(delta_sq)
+                # objective_int_coeffs.append(Penalties.TargetMismatch)
 
         # A resource can at most, work 1 shift per day
         for n in range(self.num_resource):
