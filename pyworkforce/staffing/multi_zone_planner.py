@@ -20,6 +20,7 @@ from pyworkforce.scheduling import MinAbsDifference
 from pyworkforce.rostering.binary_programming import MinHoursRoster
 from strenum import StrEnum
 
+
 class Statuses(StrEnum):
     NOT_STARTED = 'NOT_STARTED',
     UNKNOWN = 'UNKNOWN',
@@ -45,7 +46,7 @@ def hh_mm(time_string):
     hh = int(time_string.split(":")[0])
     mm = int(time_string.split(":")[1])
 
-    return (hh, mm)
+    return hh, mm
 
 
 def hh_mm_time(time_string) -> time:
@@ -55,15 +56,15 @@ def hh_mm_time(time_string) -> time:
 
 def hh_mm_timedelta(time_string) -> timedelta:
     (hh, mm) = hh_mm(time_string)
-    return  timedelta(hours=hh, minutes=mm)
+    return timedelta(hours=hh, minutes=mm)
 
 
-def get_1Day_df(time_start: time, time_end: time) -> pd.DataFrame:
+def get_1day_df(time_start: time, time_end: time) -> pd.DataFrame:
     intervals = int(24*60/15)
     t = [time(hour=int(i * 15 / 60), minute=i * 15 % 60) for i in range(intervals)]
 
     if time_end > time_start:
-        presence = [1 if (t[i] >= time_start and t[i] < time_end) else 0 for i in range(intervals)]
+        presence = [1 if (time_start <= t[i] < time_end) else 0 for i in range(intervals)]
     else:
         presence = [1 if (t[i] >= time_start or t[i] < time_end) else 0 for i in range(intervals)]
 
@@ -77,7 +78,7 @@ def get_1Day_df(time_start: time, time_end: time) -> pd.DataFrame:
     return df
 
 
-class MultiZonePlanner():
+class MultiZonePlanner:
     HMin = 60
     DayH = 24
 
@@ -85,8 +86,8 @@ class MultiZonePlanner():
                  df: pd.DataFrame,
                  meta: any,
                  solver_profile: any,
-                 output_dir: str,
-             ):
+                 output_dir: str
+                 ):
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         self.output_dir = output_dir
@@ -116,7 +117,7 @@ class MultiZonePlanner():
 
         self.status = Statuses.NOT_STARTED
 
-        if solver_profile != None:
+        if solver_profile is not None:
             self.solver_profile = SolverProfile.from_json(solver_profile)
         else:
             self.solver_profile = SolverProfile.default()
@@ -146,7 +147,7 @@ class MultiZonePlanner():
             (shift_start, *_, shift_end) = self.shift_meta_by_id[shift_id]
 
             delta_utc = campaign_utc - employee_utc
-            df = get_1Day_df(shift_start, shift_end)  # "tc": time, "works": int
+            df = get_1day_df(shift_start, shift_end)  # "tc": time, "works": int
             df[shift_name] = df['works'] * employee_count
 
             # make utc shift from employee local daytime to campaign datetime
@@ -165,7 +166,7 @@ class MultiZonePlanner():
         edf_g = edf.groupby(['utc', 'shiftId', 'schema'])['id'].agg(['count'])
         shift_with_names = []
 
-        # [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ('c8e4261e-3de3-4343-abda-dc65e4042495', '+3', 33, 'x_9_6_13_15', 0.09041095890410959), ('c8e4261e-3de3-4343-abda-dc65e4042490', '+3', 32, 'x_12_6_13_15', 0.08767123287671233), ('22e4261e-3de3-4343-abda-dc65e4042496', '-3', 150, 'x_9_6_13_15', 0.410958904109589)]
+        # e.g.: [('c8e4261e-3de3-4343-abda-dc65e4042494', '+6', 150, 'x_9_6_13_15', 0.410958904109589), ..]
         for index, row in edf_g.iterrows():
             utc = index[0]
             shift_orig_id = index[1]
@@ -181,7 +182,7 @@ class MultiZonePlanner():
             meta_schema = next(t for t in self.meta['schemas'] if t['id'] == schema_name)
 
             self.shift_data[shift_name] = ShiftSchema(
-                shift_name = shift_name,
+                shift_name=shift_name,
                 shift_id=shift_orig_id,
                 schema_id=schema_name,
                 utc=utc,
@@ -262,18 +263,6 @@ class MultiZonePlanner():
             df.loc[nans, col] = [what for isnan in nans.values if isnan]
             return df
 
-        def to_df_stats(df: pd.DataFrame):
-            df.reset_index(inplace=True)
-            df['tc'] = df_total['tc'].dt.tz_localize(campaign_tz)
-            df_total['tc'] = df_total['tc'].dt.strftime('%Y-%m-%d %H:%M:%S%z')
-
-            interested_columns = ['tc', 'call_volume', 'aht', 'service_level', 'art', 'positions', 'resources_shifts']
-
-            df = df[interested_columns]
-            df = df.rename(columns={'resources_shifts': 'scheduled_positions'})
-
-            return df
-
         # prepate data for further sums
         df_total = pd.read_csv(f'{self.output_dir}/required_positions.csv', encoding='utf-8')
         df_total['tc'] = pd.to_datetime(df_total['tc'])
@@ -324,7 +313,7 @@ class MultiZonePlanner():
             # on missed indexes (=days), NaN will be placed, because there are no any rest days in df1
             df1 = pd.concat([df1, empty_schedule], axis=1)
             df1 = replace_nan(df1, 'shifted_resources_per_slot', empty_shift)
-            # new items are at the end with propper index - just sort them to be moved to correct position
+            # new items are at the end with proper index - just sort them to be moved to correct position
             df1 = df1.sort_index(ascending=True)
 
             np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
@@ -341,8 +330,8 @@ class MultiZonePlanner():
 
             df3['resources_shifts'] = arr.tolist()
 
-            # just copy some rows for further vaerification
-            df3 = df3.shift(periods = -1 * utc_shift*periods_in_hour, fill_value = 0)
+            # just copy some rows for further verification
+            df3 = df3.shift(periods=-1 * utc_shift*periods_in_hour, fill_value=0)
 
             if df_total is None:
                 # this is to just copy required positions
@@ -353,7 +342,7 @@ class MultiZonePlanner():
                 df_total['frac'] += df3['frac']
                 df_total['positions_quantile'] += df3['positions_quantile']
 
-        # final formating
+        # final formatting
         df_total.reset_index(inplace=True)
         df_total['tc'] = df_total['tc'].dt.tz_localize(campaign_tz)
         df_total['tc'] = df_total['tc'].dt.strftime('%Y-%m-%d %H:%M:%S%z')
@@ -369,8 +358,10 @@ class MultiZonePlanner():
     def dump_stat_and_plot(self, shift_name, solution, df):
         resources_shifts = solution['resources_shifts']
         df3 = pd.DataFrame(resources_shifts)
-        df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
-        df4 = df3[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot'].apply(lambda x: np.sum(np.vstack(x), axis = 0)).to_frame()
+        df3['shifted_resources_per_slot'] = df3.apply(
+            lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
+        df4 = df3[['day', 'shifted_resources_per_slot']].groupby('day', as_index=False)['shifted_resources_per_slot']\
+            .apply(lambda x: np.sum(np.vstack(x), axis=0)).to_frame()
         np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
         df4.to_csv(f'{self.output_dir}/shifted_resources_per_slot_{shift_name}.csv')
         arr = df4['shifted_resources_per_slot'].values
@@ -378,7 +369,9 @@ class MultiZonePlanner():
         df['resources_shifts'] = arr.tolist()
         df.to_csv(f'{self.output_dir}/scheduling_output_stage2_{shift_name}.csv')
 
-        plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_name}.png', df, x='index', y=["positions", "resources_shifts"])
+        plot_xy_per_interval(f'{self.output_dir}/scheduling_{shift_name}.png', df,
+                             x='index',
+                             y=["positions", "resources_shifts"])
 
     def plot_scheduling(self, schedule_results):
         periods_in_hour = 4
@@ -391,11 +384,12 @@ class MultiZonePlanner():
             resources_shifts = solution['resources_shifts']
 
             df3 = pd.DataFrame(resources_shifts)
-            df3['shifted_resources_per_slot'] = df3.apply(lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
+            df3['shifted_resources_per_slot'] = df3.apply(
+                lambda t: np.array(unwrap_shift(t['shift'])) * t['resources'], axis=1)
 
             df4 = df3[['day', 'shifted_resources_per_slot']]\
                 .groupby('day', as_index=False)['shifted_resources_per_slot']\
-                .apply(lambda x: np.sum(np.vstack(x), axis = 0))\
+                .apply(lambda x: np.sum(np.vstack(x), axis=0))\
                 .to_frame()
 
             arr = df4['shifted_resources_per_slot'].values
@@ -404,7 +398,7 @@ class MultiZonePlanner():
             df['resources_shifts'] = arr.tolist()
 
             df.reset_index(inplace=True)
-            # make it tz-agnopdtic
+            # make it tz-agnostic
             df['tc'] = pd.to_datetime(df['tc'])
             df['tc'] = df['tc'].dt.tz_localize(None)
             df.set_index('tc', inplace=True)
@@ -418,17 +412,19 @@ class MultiZonePlanner():
                 df_sum['positions_quantile'] += df['positions_quantile']
                 df_sum['resources_shifts'] += df['resources_shifts']
 
-        plot_xy_per_interval(f'{self.output_dir}/scheduling.png', df_sum, x='index', y=["positions", "resources_shifts"])
+        plot_xy_per_interval(f'{self.output_dir}/scheduling.png', df_sum,
+                             x='index',
+                             y=["positions", "resources_shifts"])
 
     def dump_scheduling_output_rostering_input(self, shift_suffix, shift_id, days, num_resources, solution, shifts_spec):
         with open(f'{self.output_dir}/scheduling_output_{shift_suffix}.json', 'w') as f:
-                f.write(json.dumps(solution, indent=2))
+            f.write(json.dumps(solution, indent=2))
 
         resources_shifts = solution['resources_shifts']
         df1 = pd.DataFrame(resources_shifts)
         df2 = df1.pivot(index='shift', columns='day', values='resources').rename_axis(None, axis=0)
 
-        df2['combined']= df2.values.tolist()
+        df2['combined']=df2.values.tolist()
 
         rostering = {
             'num_days': days,
@@ -464,7 +460,7 @@ class MultiZonePlanner():
         # lambda t: format(dt.strptime(t['activityTimeStart'], "%H:%M") + timedelta(hours=delta), '%H:%M'),
         for activity_id in shift['activities']:
             activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
-            if activity != None:
+            if activity is not None:
                 cx += dt.strptime(activity['duration'], "%H:%M").minute / 60.0
         return cx
 
@@ -473,7 +469,7 @@ class MultiZonePlanner():
         cx = 0
         for activity_id in shift['activities']:
             activity = next(t for t in self.meta['activities'] if t['id'] == activity_id)
-            if activity != None:
+            if activity is not None:
                 if not activity['isPaid']:
                     h = dt.strptime(activity['duration'], "%H:%M").hour
                     m = dt.strptime(activity['duration'], "%H:%M").minute
@@ -541,7 +537,7 @@ class MultiZonePlanner():
                     start_from_day -= _full_day
 
                 end_from_day_inclusive = end - day_n*_full_day
-                #end_from_day_inclusive = (end - 1) - day_n * _full_day
+                # end_from_day_inclusive = (end - 1) - day_n * _full_day
                 if (end_from_day_inclusive >= _full_day):
                     end_from_day_inclusive -= _full_day
 
@@ -556,12 +552,9 @@ class MultiZonePlanner():
 
     @property
     def ts(self):
-        HMin = 60
-        DayH = 24
-
         date_diff = self.df.index[1] - self.df.index[0]
-        step_min = int(date_diff.total_seconds() / HMin)
-        ts = int(HMin / step_min)
+        step_min = int(date_diff.total_seconds() / self.HMin)
+        ts = int(self.HMin / step_min)
 
         return ts
 
@@ -657,16 +650,16 @@ class MultiZonePlanner():
                 required_resources.append(df_short['positions_quantile'].tolist())
                 capacity.append(df_short['capacity'].tolist())
 
-            scheduler = MinAbsDifference(num_days = self.days,  # S
-                                periods = self.DayH * self.ts,  # P
-                                shifts_coverage = shifts_coverage,
-                                required_resources = required_resources,
-                                # max_period_concurrency=capacity,  # gamma
-                                max_period_concurrency = int(df['positions_quantile'].max()),  # gamma
-                                # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
-                                max_shift_concurrency=employee_count,  # beta
-                                solver_params=self.solver_profile.scheduler_params
-                                )
+            scheduler = MinAbsDifference(num_days=self.days,  # S
+                                         periods=self.DayH * self.ts,  # P
+                                         shifts_coverage=shifts_coverage,
+                                         required_resources=required_resources,
+                                         # max_period_concurrency=capacity,  # gamma
+                                         # max_period_concurrency=int(df['positions_quantile'].max()),  # gamma
+                                         # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
+                                         # max_shift_concurrency=employee_count,  # beta
+                                         # solver_params=self.solver_profile.scheduler_params
+                                        )
 
             solution = scheduler.solve()
 
@@ -726,7 +719,7 @@ class MultiZonePlanner():
             # shift_name -> [list of scheduled positions]
             result = {}
             for s in main:
-                result[s] = [0 if i==0 else (i-j) for i,j in zip(main[s], reducer[s])] # to avoid required negatives
+                result[s] = [0 if i==0 else (i-j) for i,j in zip(main[s], reducer[s])]  # to avoid required negatives
 
             return result
 
@@ -786,7 +779,7 @@ class MultiZonePlanner():
                 # (0, 5, 0, 5, 5, 0)
 
                 # work at least 'work_min', but no more than 'work_max',
-                # 'work_max' is both lower and upper soft intertval -> deltas are penalized by 1
+                # 'work_max' is both lower and upper soft interval -> deltas are penalized by 1
                 (shift_data.work_min, shift_data.work_min, 0, shift_data.work_max, shift_data.work_max, 0)
             ]
 
@@ -868,7 +861,7 @@ class MultiZonePlanner():
             (breaks_ids, min_delay, max_delay) = self.shift_activities[shift_id]
             breaks_specs = [self.activities_by_id[b] for b in breaks_ids]
 
-            # 2. Rostering gives Employee' schedules
+            # 2. Rostering gives Employee's schedules
             with open(f'{self.output_dir}/rostering_output_{shift_name}.json', 'r') as f:
                 rostering = json.load(f)
 
@@ -891,15 +884,13 @@ class MultiZonePlanner():
 
             self.status = Statuses(solution['status'])
             if not self.status.is_ok():
-                raise Exception(f'Breakes for {shift_name} failed with status {self.status}')
+                raise Exception(f'Breaks rostering for {shift_name} failed with status {self.status}')
 
             with codecs.open(f'{self.output_dir}/breaks_output_{shift_name}.json', 'w', encoding='utf-8') as f:
                 json.dump(solution, f, indent=2, ensure_ascii=False)
 
-
         print("Done breaks rostering")
         return "Done"
-
 
     def roster_postprocess(self):
         print("Start rostering postprocessing")
@@ -944,7 +935,7 @@ class MultiZonePlanner():
             # on missed indexes (=days), NaN will be placed, because there are no any rest days in df1
             df1 = pd.concat([df1, empty_schedule], axis=1)
             df1 = replace_nan(df1, 'shifted_resources_per_slot', empty_shift)
-            # new items are at the end with propper index - just sort them to be moved to correct position
+            # new items are at the end with proper index - just sort them to be moved to correct position
             df1 = df1.sort_index(ascending=True)
 
             np.set_printoptions(linewidth=np.inf, formatter=dict(float=lambda x: "%3.0i" % x))
