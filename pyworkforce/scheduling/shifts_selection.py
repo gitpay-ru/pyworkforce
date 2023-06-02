@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 from ortools.sat.python import cp_model
+
+from pyworkforce.utils.objective_solution_printer_with_limit import ObjectiveSolutionPrinterWithLimit
 from pyworkforce.scheduling.base import BaseShiftScheduler
+from pyworkforce.utils.solver_params import SolverParams
 
 
 class MinAbsDifference(BaseShiftScheduler):
@@ -11,9 +14,7 @@ class MinAbsDifference(BaseShiftScheduler):
                  required_resources: list,
                  max_period_concurrency: int,
                  max_shift_concurrency: int,
-                 max_search_time: float = 120.0,
-                 num_search_workers=2,
-                 logging = False,
+                 solver_params: SolverParams = SolverParams.default(),
                  *args, **kwargs):
         """
         The "optimal" criteria is defined as the number of resources per shift
@@ -41,16 +42,14 @@ class MinAbsDifference(BaseShiftScheduler):
             Number of workers to search for a solution
         """
 
-        self.logging = logging
+        self.__solver_params: SolverParams = solver_params
 
         super().__init__(num_days,
                          periods,
                          shifts_coverage,
                          required_resources,
                          max_period_concurrency,
-                         max_shift_concurrency,
-                         max_search_time,
-                         num_search_workers)
+                         max_shift_concurrency)
 
     def solve(self):
         """
@@ -66,8 +65,8 @@ class MinAbsDifference(BaseShiftScheduler):
 
         # Resources: Number of resources assigned in day d to shift s
         resources = np.empty(shape=(self.num_days, self.num_shifts), dtype='object')
-        # transition resources: Variable to change domain coordinates from min |x-a|
-        # to min t, s.t t>= x-a and t>= a-x
+        # transition resources: Variable to change domain coordinates from min |x-a| to min t,
+        # s.t t>= x-a and t>= a-x
         transition_resources = np.empty(shape=(self.num_days, self.num_periods), dtype='object')
 
         # Resources
@@ -81,7 +80,7 @@ class MinAbsDifference(BaseShiftScheduler):
                                                                  self.max_period_concurrency,
                                                                  f'transition_resources_d{d}p{p}')
 
-        # Constrains
+        # Constraints
 
         # transition must be between x-a and a-x
         for d in range(self.num_days):
@@ -106,14 +105,18 @@ class MinAbsDifference(BaseShiftScheduler):
             sum(transition_resources[d][p] for d in range(self.num_days) for p in range(self.num_periods)))
 
         print("Solving started...")
-        # self.status = self.solver.Solve(sch_model)
-
         self.solver = cp_model.CpSolver()
-        self.solver.parameters.max_time_in_seconds = self.max_search_time
-        self.solver.num_search_workers = self.num_search_workers
-        self.solver.parameters.log_search_progress = self.logging
+        if self.__solver_params.max_iteration_search_time:
+            self.solver.parameters.max_time_in_seconds = self.__solver_params.max_iteration_search_time
+        if self.__solver_params.num_search_workers:
+            self.solver.num_search_workers = self.__solver_params.num_search_workers
+        if self.__solver_params.do_logging:
+            self.solver.parameters.log_search_progress = self.__solver_params.do_logging
+        if self.__solver_params.solution_limit:
+            solution_printer = ObjectiveSolutionPrinterWithLimit(self.__solver_params.solution_limit)
+        else:
+            solution_printer = cp_model.ObjectiveSolutionPrinter()
 
-        solution_printer = cp_model.ObjectiveSolutionPrinter()
         self.status = self.solver.Solve(sch_model, solution_printer)
 
         if self.status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:

@@ -1,5 +1,21 @@
 {
-  "scheduling": { "logging": false, "max_iteration_search_time": 30.0, "num_search_workers": 20 },
-  "rostering": { "logging": true, "max_iteration_search_time": 300.0, "num_search_workers": 20 },
-  "breaks": { "logging": false, "max_iteration_search_time": 300.0, "num_search_workers": 20 }
+  "scheduling": {
+    "logging": false,
+    "max_iteration_search_time": 30.0
+  },
+  "rostering": {
+    "logging": false,
+    "max_iteration_search_time_by_resources": {
+        "0-10": 300,
+        "11-50": 600,
+        "51-100": 3600,
+        "101-200": 10800,
+        "default": 21600
+      },
+      "solution_limit": 50
+  },
+  "breaks": {
+    "logging": false,
+    "max_iteration_search_time": 300.0
+  }
 }

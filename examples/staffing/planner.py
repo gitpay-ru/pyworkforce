@@ -11,10 +11,10 @@ import pytz
 eastern = pytz.timezone('US/Eastern')
 
 
-input_csv_path = '../_data_file_30d.csv'
-input_meta_path = '../_meta_file_7_9_30d.json'
-solver_profile_path = '../_solver_profile_file.json'
-output_dir = '../out_30d'
+input_csv_path = '../out_475/_data_file_475.csv'
+input_meta_path = '../out_475/_meta_file_475.json'
+solver_profile_path = '../out_475/_solver_profile_file_475.json'
+output_dir = '../out_475/out'
 
 
 if output_dir and output_dir != '..':
@@ -29,10 +29,10 @@ with open(solver_profile_path, 'r', encoding='utf-8') as f:
     profile = json.load(f)
 
 mzp = MultiZonePlanner(df, meta, profile, output_dir)
-mzp.solve()
+# mzp.solve()
 
-# mzp.calc_required_positions()
-# mzp.schedule()
+mzp.calc_required_positions()
+mzp.schedule()
 # mzp.roster()
 # mzp.roster_breaks()
 # mzp.roster_postprocess()

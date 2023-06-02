@@ -1,3 +1,4 @@
+import datetime
 from collections import deque
 from re import sub
 import numpy as np
@@ -9,6 +10,28 @@ from datetime import datetime as dt
 HMin = 60
 DayH = 24
 HMDELIMITER = '-'
+
+def hh_mm(time_string, delimiter = ':'):
+    hh = int(time_string.split(delimiter)[0])
+    mm = int(time_string.split(delimiter)[1])
+
+    return (hh, mm)
+
+
+def hh_mm_time(time_string, offset = None, delimiter = ':') -> datetime.time:
+    (hh, mm) = hh_mm(time_string, delimiter)
+
+    if offset is not None:
+        tz = datetime.timezone(datetime.timedelta(hours=offset))
+        return datetime.time(hour=hh, minute=mm, tzinfo=tz)
+
+    return datetime.time(hour=hh, minute=mm)
+
+
+def hh_mm_timedelta(time_string, delimiter = ':') -> datetime.timedelta:
+    (hh, mm) = hh_mm(time_string, delimiter)
+    return datetime.timedelta(hours=hh, minutes=mm)
+
 
 def get_start_from_shift_short_name(name):
     # 3_12_7_45
@@ -74,40 +97,31 @@ def upscale_and_shift(a, time_scale, shift_right_pos):
   items.rotate(shift_right_pos)
   return list(items)
 
+def rotate(a, shift_right_pos):
+  items = deque([val for val in a])
+  items.rotate(shift_right_pos)
+  return list(items)
 
-def genereate_shifts_coverage(shift_hours, name, horizon_in_hours, start_hour, start_txt, end_hour, end_txt, step_mins):
-  time_scale = int(HMin / step_mins)
+def genereate_shifts_coverage(base_spec, name, horizon_in_hours, start_hour, start_min, end_hour, end_min, step_mins):
   if (start_hour == end_hour):
-    start_min = int(start_txt.split(HMDELIMITER)[1])
-    end_min = int(end_txt.split(HMDELIMITER)[1])
-    slots = (end_min - start_min) // step_mins
+    slots = (end_min - start_min) // step_mins + 1
     res = {}
     for i in range(slots):
         s_name = f'{name}_{horizon_in_hours}_{start_hour}_{i * step_mins}'
-        res[s_name] = upscale_and_shift(shift_hours, time_scale, i) 
+        res[s_name] = rotate(base_spec, i)
     return res
   else:
-    slots = time_scale * (end_hour - start_hour)
+    slots = ((end_hour * HMin + end_min) - (start_hour * HMin + start_min)) // step_mins + 1  # add 1 - to include end
     res = {}
     for i in range(slots):
         s_name = f'{name}_{horizon_in_hours}_{start_hour + (i * step_mins // HMin)}_{i * step_mins % HMin}'
-        res[s_name] = upscale_and_shift(shift_hours, time_scale, i) 
+        res[s_name] = rotate(base_spec, i)
     return res
 
 
 def unwrap_shift(encoded_shift_name, with_breaks = False):
-    t = decode_shift_spec(encoded_shift_name)
-    if (with_breaks):
-        base_spec = [1 if (i < t.duration and i != t.duration // 2) else 0 for i in range(DayH)]
-    else:
-        base_spec = [1 if (i < t.duration) else 0 for i in range(DayH)]
-    base_spec = deque(base_spec)
-    base_spec.rotate(t.start)
-    base_spec = list(base_spec)
-
-    step_mins = 15 #todo
-    scaled = upscale_and_shift(base_spec, HMin // step_mins, t.offset // step_mins)
-    return scaled
+    t = ShiftSpec.decode_shift_spec(encoded_shift_name)
+    return t.generate_coverage()
 
 
 def all_zeros_shift():
@@ -118,44 +132,100 @@ def all_zeros_shift():
     return scaled
 
 
-def decode_shift_spec(encoded_shift_name):
-    cx = encoded_shift_name.count('_')
-    class Object(object):
-        def __str__(self):
-            return "todo: replace tostring()"
-    t = Object()
-    if cx == 3:
-        name, duration, start, offset = encoded_shift_name.split('_')
-        t.offset = int(offset)
-    elif cx == 4:
-        name, duration, start, end, step = encoded_shift_name.split('_')
-        t.end = int(end)
-        t.step = int(step)
-    elif cx == 5:
-        utc, name, duration, start, end, step = encoded_shift_name.split('_')
-        t.end = int(end.split(HMDELIMITER)[0])
-        t.end_txt = end
-        t.step = int(step)
-    else:
-        raise "Shift spec not supported"
+class ShiftSpec(object):
+    def __init__(self, name, name_prefix, offset, start_start, start_end, duration_hours, step_minutes):
+        self._name = name
+        self._name_prefix = name_prefix
+        self._offset = offset
+        self._start_start = start_start
+        self._start_end = start_end
+        self._duration_hours = duration_hours
+        self._step_minutes = step_minutes
 
-    t.name = name
-    t.duration = int(duration)
-    t.start = int(start.split(HMDELIMITER)[0])
-    t.start_txt = start
-    return t
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def name_prefix(self) -> str:
+        return self._name_prefix
+
+    @property
+    def offset(self) -> int:
+        return self._offset
+
+    @property
+    def start_start(self) -> datetime.time:
+        return self._start_start
+
+    @property
+    def start_end(self) -> datetime.time:
+        return self._start_end
+
+    @property
+    def duration_hours(self) -> int:
+        return self._duration_hours
+
+    @property
+    def step_minutes(self) -> int:
+        return self._step_minutes
+
+    @staticmethod
+    def decode_shift_spec(encoded_shift_name):  # x_3_9_06-00_12-45_15
+        cx = encoded_shift_name.count('_')
+
+        if cx == 3:  # 'x_9_6_0'
+            name, duration, start_hour, start_min = encoded_shift_name.split('_')
+            return ShiftSpec(name = encoded_shift_name, name_prefix=name,
+                             offset = 0,
+                             duration_hours=int(duration),
+                             start_start=datetime.time(hour=int(start_hour), minute=int(start_min)),
+                             start_end=None,
+                             step_minutes=15
+                             )
+        elif cx == 4:
+            name, duration, start, end, step = encoded_shift_name.split('_')
+            return ShiftSpec(name=encoded_shift_name, name_prefix=name,
+                             duration_hours=int(duration),
+                             step_minutes=int(step),
+                             start_start=hh_mm_time(start, delimiter='-'),
+                             start_end=datetime.time(hour=int(end)))
+        elif cx == 5:  # x_3_9_06-00_12-45_15
+            name, utc, duration, start, end, step = encoded_shift_name.split('_')
+
+            return ShiftSpec(name=encoded_shift_name, name_prefix=name,
+                             offset=int(utc),
+                             duration_hours=int(duration),
+                             step_minutes=int(step),
+                             start_start=hh_mm_time(start, offset=int(utc), delimiter='-'),
+                             start_end=hh_mm_time(end, offset=int(utc), delimiter='-'))
+        else:
+            raise "Shift spec not supported"
+
+    def generate_coverage(self) -> list:
+        slots = DayH * HMin // self.step_minutes
+        duration = self.duration_hours * HMin // self.step_minutes
+        start_offset = (self.start_start.hour * HMin + self.start_start.minute) // self.step_minutes
+
+        base_spec = [1 if (i < duration) else 0 for i in range(slots)]
+
+        base_spec = deque(base_spec)
+        base_spec.rotate(start_offset)
+        base_spec = list(base_spec)
+
+        return base_spec
 
 
 def get_shift_coverage(shifts):
     shift_cover = {}
     for i in shifts:
-        a = decode_shift_spec(i)
-        base_spec = [1 if (i < a.duration) else 0 for i in range(DayH)]
+        a: ShiftSpec = ShiftSpec.decode_shift_spec(i)
+        base_spec = a.generate_coverage()
 
-        base_spec = deque(base_spec)
-        base_spec.rotate(a.start)
-        base_spec = list(base_spec)
-        res = genereate_shifts_coverage(base_spec, a.name, a.duration, a.start, a.start_txt, a.end, a.end_txt, a.step)
+        res = genereate_shifts_coverage(base_spec, a.name_prefix, a.duration_hours,
+                                        a.start_start.hour, a.start_start.minute,
+                                        a.start_end.hour, a.start_end.minute,
+                                        a.step_minutes)
         shift_cover = shift_cover | res
 
     return shift_cover
