@@ -1,0 +1,23 @@
+{
+  "scheduling": {
+    "logging": false,
+    "max_iteration_search_time": 600.0,
+    "solution_limit": 25
+  },
+  "rostering": {
+    "logging": true,
+    "max_iteration_search_time_by_resources": {
+      "0-10": 300,
+      "11-50": 600,
+      "51-100": 3600,
+      "101-200": 10800,
+      "default": 21600
+    },
+    "solution_limit": 50
+  },
+  "breaks": {
+    "logging": false,
+    "max_iteration_search_time": 3600.0,
+    "solution_limit": 25
+  }
+}
