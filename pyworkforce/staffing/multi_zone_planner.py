@@ -1,5 +1,6 @@
 import codecs
 import datetime
+import math
 from pathlib import Path
 import json
 
@@ -654,11 +655,11 @@ class MultiZonePlanner:
                                          periods=self.DayH * self.ts,  # P
                                          shifts_coverage=shifts_coverage,
                                          required_resources=required_resources,
-                                         # max_period_concurrency=capacity,  # gamma
-                                         # max_period_concurrency=int(df['positions_quantile'].max()),  # gamma
-                                         # max_shift_concurrency=int(df['positions_quantile'].mean()),  # beta
-                                         # max_shift_concurrency=employee_count,  # beta
-                                         # solver_params=self.solver_profile.scheduler_params
+                                         max_period_concurrency=math.ceil(df['positions_quantile'].max()),  # gamma
+                                         # don't need to smudge data, if peaks are needed -> they are needed
+                                         # max_shift_concurrency=math.ceil(df['positions_quantile'].mean()),  # beta
+                                         max_shift_concurrency=math.ceil(df['positions_quantile'].max()),  # beta
+                                         solver_params=self.solver_profile.scheduler_params
                                         )
 
             solution = scheduler.solve()
